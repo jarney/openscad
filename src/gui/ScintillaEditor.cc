@@ -32,6 +32,21 @@
 #include <string>
 #include <vector>
 
+#include <QtNodes/ConnectionStyle>
+#include <QtNodes/DataFlowGraphModel>
+#include <QtNodes/DataFlowGraphicsScene>
+#include <QtNodes/GraphicsView>
+#include <QtNodes/NodeData>
+#include <QtNodes/NodeDelegateModelRegistry>
+
+#include "nodes/OpenSCADModels.hpp"
+
+using QtNodes::ConnectionStyle;
+using QtNodes::DataFlowGraphicsScene;
+using QtNodes::DataFlowGraphModel;
+using QtNodes::GraphicsView;
+using QtNodes::NodeDelegateModelRegistry;
+
 #include "core/Settings.h"
 #include "gui/Preferences.h"
 #include "gui/ScadLexer.h"
@@ -102,12 +117,49 @@ QsciScintilla::WhitespaceVisibility SettingsConverter::toShowWhitespaces(const s
   }
 }
 
+static void setQtNodeStyle(void)
+{
+    ConnectionStyle::setConnectionStyle(
+        R"(
+  {
+    "ConnectionStyle": {
+      "ConstructionColor": "gray",
+      "NormalColor": "black",
+      "SelectedColor": "gray",
+      "SelectedHaloColor": "deepskyblue",
+      "HoveredColor": "deepskyblue",
+
+      "LineWidth": 3.0,
+      "ConstructionLineWidth": 2.0,
+      "PointDiameter": 10.0,
+
+      "UseDataDefinedColors": true
+    }
+  }
+  )");
+}
+
 ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
 {
   api = nullptr;
   lexer = nullptr;
+
+  qtab = new QTabWidget(this);
+
   scintillaLayout = new QVBoxLayout(this);
-  qsci = new QsciScintilla(this);
+  qsci = new QsciScintilla(qtab);
+
+  setQtNodeStyle();
+  qnode_registry = SCADModels::registerDataModels();
+
+  qnode_dataFlowGraphModel = std::make_shared<DataFlowGraphModel>(qnode_registry);
+  qnode_scene = new DataFlowGraphicsScene(*qnode_dataFlowGraphModel, qtab);
+  qnode_view = new GraphicsView(qnode_scene);
+
+  QString sourceName("Source");
+  QString nodeName("Nodes");
+  qtab->addTab(qsci, sourceName);
+  qtab->addTab(qnode_view, nodeName);
 
   contentsRendered = false;
   findState = 0;  // FIND_HIDDEN
@@ -171,7 +223,7 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
   // NOLINTEND(bugprone-suspicious-enum-usage)
 
   scintillaLayout->setContentsMargins(0, 0, 0, 0);
-  scintillaLayout->addWidget(qsci);
+  scintillaLayout->addWidget(qtab);
 
   qsci->setUtf8(true);
   qsci->setFolding(QsciScintilla::BoxedTreeFoldStyle, 4);

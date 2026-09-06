@@ -134,14 +134,27 @@ else()
   )
 endif()
 
+add_executable(OpenSCADNodes src/nodes/main.cpp)
+set_target_properties(OpenSCADNodes PROPERTIES
+  OUTPUT_NAME "nodes"
+)
+add_executable(OpenSCADProcessor src/nodes/processor.cpp)
+set_target_properties(OpenSCADProcessor PROPERTIES
+  OUTPUT_NAME "processor"
+)
+
+
 add_library(OpenSCADLibInternal STATIC)
 target_link_libraries(OpenSCADExe PUBLIC OpenSCADLibInternal)
+target_link_libraries(OpenSCADNodes PUBLIC OpenSCADLibInternal)
+target_link_libraries(OpenSCADProcessor PUBLIC OpenSCADLibInternal)
 set_target_properties(OpenSCADLibInternal PROPERTIES
     OUTPUT_NAME "openscadinternal" # results in `libopenscadinternal`
 )
 
 add_library(svg STATIC)
 target_link_libraries(OpenSCADExe PUBLIC svg)
+target_link_libraries(OpenSCADNodes PUBLIC svg)
 # TODO: https://github.com/openscad/openscad/issues/6369 - Update includes so we don't need this, which also prevents trivially including other parts of OpenSCAD.
 target_include_directories(svg PUBLIC
   "src"
@@ -165,6 +178,10 @@ target_sources(svg PRIVATE
   src/libsvg/use.cc
   src/libsvg/util.cc
 )
+target_compile_options(OpenSCADLibInternal PRIVATE -DNODE_EDITOR_SHARED)
+target_compile_options(OpenSCADExe PRIVATE -DNODE_EDITOR_SHARED)
+target_compile_options(OpenSCADNodes PRIVATE -DNODE_EDITOR_SHARED)
+target_compile_options(OpenSCADProcessor PRIVATE -DNODE_EDITOR_SHARED)
 
 if (MINGW)
   # Configure Debug flags (MinGW) to keep rich symbols and avoid PE/COFF
@@ -251,15 +268,15 @@ find_package(Sanitizers)
 
 # Strict c++17, e.g. no GNU extensions
 if (MSVC) # For MSVC, errors show up when using c++ 17 for build.
-  set_target_properties(OpenSCADLibInternal svg OpenSCADExe PROPERTIES
+  set_target_properties(OpenSCADLibInternal svg OpenSCADExe OpenSCADNodes PROPERTIES
     CXX_STANDARD 20
   )
 else()
-  set_target_properties(OpenSCADLibInternal svg OpenSCADExe PROPERTIES
+  set_target_properties(OpenSCADLibInternal svg OpenSCADExe OpenSCADNodes PROPERTIES
     CXX_STANDARD 17
   )
 endif()
-set_target_properties(OpenSCADLibInternal svg OpenSCADExe PROPERTIES
+set_target_properties(OpenSCADLibInternal svg OpenSCADExe OpenSCADNodes PROPERTIES
   # Output compilation database (compile_commands.json), so we can e.g. run clang-tidy or other tools separately
   EXPORT_COMPILE_COMMANDS ON
   LINKER_LANGUAGE CXX
@@ -273,6 +290,7 @@ if(("${CMAKE_CXX_COMPILER_FRONTEND_VARIANT}" STREQUAL "GNU") OR
   target_link_options(svg BEFORE PUBLIC "-v")
   target_link_options(OpenSCADLibInternal BEFORE PUBLIC "-v")
   target_link_options(OpenSCADExe BEFORE PUBLIC "-v")
+  target_link_options(OpenSCADNodes BEFORE PUBLIC "-v")
 endif()
 
 set(SUFFIX "" CACHE STRING "Installation suffix for binary (e.g. 'nightly')")
@@ -465,6 +483,7 @@ macro(find_graphics)
     target_link_libraries(OpenSCADLibInternal PUBLIC ${OPENGL_LIBRARIES})
     message(STATUS "OpenGL: ${OPENGL_LIBRARIES}")
   endif()
+  target_link_libraries(OpenSCADLibInternal PRIVATE QtNodes)
 endmacro(find_graphics)
 
 if (MSVC)
@@ -1292,6 +1311,11 @@ set(INPUT_DRIVER_SOURCES
 
 set(GUI_SOURCES
   ${GUI_SOURCES}
+
+  src/nodes/OpenSCADModels.cpp
+  src/nodes/OpenSCADEvaluator.cpp
+  src/nodes/OpenSCADSerializer.cpp
+
   src/openscad_gui.cc
   src/gui/AutoUpdater.cc
   src/gui/GeometryWorker.cc
