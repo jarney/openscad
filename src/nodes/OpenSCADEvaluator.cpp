@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <QString>
 #include <QtNodes/Definitions>
+#include "OpenSCADModels.hpp"
 #include "OpenSCADEvaluator.hpp"
 
 static void
@@ -23,7 +24,6 @@ findOutputNodes(
 		fprintf(stderr, "Only one geometry node must be connected to output\n");
 	    }
 	    else {
-		fprintf(stderr, "Processing node %d\n", nodeId);
 		outputNodes.push_back(nodeId);
 	    }
 	
@@ -31,18 +31,37 @@ findOutputNodes(
     }
 }
 
-static void processNode(const QtNodes::DataFlowGraphModel & model, QtNodes::NodeId nodeId)
+static std::vector<QtNodes::NodeId> connectedNodes(const QtNodes::DataFlowGraphModel & model, QtNodes::NodeId nodeId)
 {
-	auto connections = model.connections(nodeId, QtNodes::PortType::In, 0);
+    auto connections = model.allConnectionIds(nodeId);
+    std::vector<QtNodes::NodeId> connected_nodes;
+    for (auto connection : connections) {
+	if (nodeId == connection.outNodeId) continue;
+	if (std::find(connected_nodes.begin(), connected_nodes.end(), connection.outNodeId) == connected_nodes.end()) {
+	    connected_nodes.push_back(connection.outNodeId);
+	}
+    }
+    return connected_nodes;
+}
 
-	QString nodeType = model.nodeData(nodeId, QtNodes::NodeRole::Type).value<QString>();
+// We make the assumption here that the graph is cycle-free.
+// If there are cycles, this will blow up.
+static std::string processNode(const QtNodes::DataFlowGraphModel & model, QtNodes::NodeId nodeId, int depth)
+{
+    std::vector<QtNodes::NodeId> connected_nodes = connectedNodes(model, nodeId);
+    std::vector<std::string> input_data;
+    for (auto pred : connected_nodes) {
+	input_data.push_back(processNode(model, pred, depth+1));
+    }
+	
+    BaseSCADModel *nodeData = model.delegateModel<BaseSCADModel>(nodeId);
+    
+    return nodeData->process(input_data);
 }
 
 
 void evaluateToSCAD(const QtNodes::DataFlowGraphModel & model)
 {
-    fprintf(stderr, "Performing scene evaluation to OpenSCAD\n");
-
 //    virtual std::unordered_set<NodeId> allNodeIds() const = 0;
     std::vector<QtNodes::NodeId> outputNodes;
 
@@ -57,7 +76,8 @@ void evaluateToSCAD(const QtNodes::DataFlowGraphModel & model)
     for (auto nodeId : outputNodes) {
 	// Output nodes should have only one
 	// input connection at index 0.
-	processNode(model, nodeId);
+	auto out = processNode(model, nodeId, 0);
+	fprintf(stderr, "%s\n", out.c_str());
     }
 
     // Next, for each output node, wire up all of the input ports upstream.

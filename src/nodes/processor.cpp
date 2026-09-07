@@ -27,7 +27,5 @@ int main(int argc, char *argv[])
     dataFlowGraphModel.load(object);
     
     evaluateToSCAD(dataFlowGraphModel);
-
-    fprintf(stderr, "Processing node file\n");
     return 0;
 }

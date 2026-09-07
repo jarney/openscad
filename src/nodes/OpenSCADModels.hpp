@@ -49,13 +49,18 @@ public:
 //    void compute() override;
     void addInputPort(std::unique_ptr<BaseSCADPort> inputPort);
     void addOutputPort(std::unique_ptr<BaseSCADPort> outputPort);
+    void setProcessor(std::function<std::string(const std::vector<std::string> &)> processor);
+
+    std::string process(const std::vector<std::string> & input) const;
+    
+    static std::string default_processor(const std::vector<std::string> & input);
 
 protected:
     std::string _name;
     std::string _caption;
     std::vector<std::unique_ptr<BaseSCADPort>> _inputPorts;
     std::vector<std::unique_ptr<BaseSCADPort>> _outputPorts;
-
+    std::function<std::string(const std::vector<std::string> &)> _processor;
     
 //    std::weak_ptr<DecimalData> _number1;
 //    std::weak_ptr<DecimalData> _number2;
@@ -67,16 +72,25 @@ public:
     using RegistryItemPtr = QtNodes::NodeDelegateModelRegistry::RegistryItemPtr;
 
     static std::shared_ptr<QtNodes::NodeDelegateModelRegistry> registerDataModels();
+    std::string f_default_process(const std::vector<std::string> & input);
     
     // Primitives
     static RegistryItemPtr f_prim_sphere();
+        static std::string f_prim_sphere_process(const std::vector<std::string> & input);
+    
     static RegistryItemPtr f_prim_cube();
+        static std::string f_prim_cube_process(const std::vector<std::string> & input);
+    
     static RegistryItemPtr f_prim_cylinder();
+        static std::string f_prim_cylinder_process(const std::vector<std::string> & input);
 
     // Boolean operations
     static RegistryItemPtr f_op_union();
+        static std::string f_op_union_process(const std::vector<std::string> & input);
     static RegistryItemPtr f_op_difference();
+        static std::string f_op_difference_process(const std::vector<std::string> & input);
     static RegistryItemPtr f_op_intersection();
+        static std::string f_op_intersection_process(const std::vector<std::string> & input);
 
     // Transformations
     static RegistryItemPtr f_xform_translate();
@@ -105,11 +119,17 @@ public:
 
     // Literal Constants
     static RegistryItemPtr f_const_true();
+        static std::string f_const_true_process(const std::vector<std::string> & input);
     static RegistryItemPtr f_const_false();
+        static std::string f_const_false_process(const std::vector<std::string> & input);
     static RegistryItemPtr f_const_int();
+        static std::string f_const_int_process(const std::vector<std::string> & input);
     static RegistryItemPtr f_const_float();
+        static std::string f_const_float_process(const std::vector<std::string> & input);
     static RegistryItemPtr f_const_string();
+        static std::string f_const_string_process(const std::vector<std::string> & input);
 
     // Outputs
     static RegistryItemPtr f_output();
+    static std::string f_output_process(const std::vector<std::string> & input);
 };
