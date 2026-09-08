@@ -2,4 +2,4 @@
 
 #include <QtNodes/DataFlowGraphModel>
 
-void evaluateToSCAD(const QtNodes::DataFlowGraphModel & model);
+std::string evaluateToSCAD(const QtNodes::DataFlowGraphModel & model);

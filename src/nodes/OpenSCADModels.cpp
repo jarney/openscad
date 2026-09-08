@@ -75,34 +75,47 @@ void BaseSCADModel::setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::
     _inputPorts.at(portIndex)->setData(data);
 }
 
-void
-BaseSCADModel::addInputPort(std::unique_ptr<BaseSCADPort> inputPort)
+
+std::string
+BaseSCADModel::inputPortName(QtNodes::PortIndex portIndex) const
 {
+    return _inputPortNames.at(portIndex);
+}
+std::string
+BaseSCADModel::outputPortName(QtNodes::PortIndex portIndex) const
+{
+    return _outputPortNames.at(portIndex);
+}
+
+void
+BaseSCADModel::addInputPort(std::unique_ptr<BaseSCADPort> inputPort, std::string inputPortName)
+{
+    _inputPortNames[_inputPorts.size()] = inputPortName;
     _inputPorts.push_back(std::move(inputPort));
 }
 
 void
-BaseSCADModel::addOutputPort(std::unique_ptr<BaseSCADPort> outputPort)
+BaseSCADModel::addOutputPort(std::unique_ptr<BaseSCADPort> outputPort, std::string outputPortName)
 {
+    _outputPortNames[_outputPorts.size()] = outputPortName;
     _outputPorts.push_back(std::move(outputPort));
 }
 
 void
-BaseSCADModel::setProcessor(std::function<std::string(const std::vector<std::string> &)> processor)
+BaseSCADModel::setProcessor(NodeProcessor processor)
 {
     _processor = processor;
 }
 
-std::string
-BaseSCADModel::process(const std::vector<std::string> & input) const
+void
+BaseSCADModel::process(const PortFunctionData & input, PortFunctionData & output) const
 {
-    return _processor(input);
+    _processor(*this, input, output);
 }
 
-std::string
-BaseSCADModel::default_processor(const std::vector<std::string> & input)
+void
+BaseSCADModel::default_processor(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return std::string();
 }
 
 /*********************************************/
@@ -155,21 +168,32 @@ static const QtNodes::NodeDataType DATA_LIST{"list", "List"};
 static const QtNodes::NodeDataType DATA_SOLID_GEOMETRY{"geometry", "Solid Geometry"};
 static const QtNodes::NodeDataType DATA_PLANE_GEOMETRY{"plane", "Plane Geometry"};
 
+std::string FIND(const PortFunctionData & input, std::string key, std::string def)
+{
+    const auto it = input.find(key);
+    if (it == input.end()) {
+	fprintf(stderr, "Could not find key %s returning default\n", key.c_str());
+	return def;
+    }
+    return it->second;
+}
+
 // Primitives
 SCADModels::RegistryItemPtr
 SCADModels::f_prim_sphere()
 {
     auto model = std::make_unique<BaseSCADModel>("prim_sphere", "Sphere");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "radius/diameter"));
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_BOOL, "is_diameter"));
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "r"), "r");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_BOOL, "is_diameter"), "is_diameter");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_prim_sphere_process);
     return model;
 }
-std::string
-SCADModels::f_prim_sphere_process(const std::vector<std::string> & input)
+
+void
+SCADModels::f_prim_sphere_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return std::string("        sphere(") + std::string("r=") + input.at(0) + std::string(");\n");
+    output["Geometry"] = std::string("        sphere(") + std::string("r=") + FIND(input, "r", "15.0") + std::string(");\n");
 }
 
 
@@ -177,41 +201,41 @@ SCADModels::RegistryItemPtr
 SCADModels::f_prim_cube()
 {
     auto model = std::make_unique<BaseSCADModel>("prim_cube", "Cube");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "x"));
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "y"));
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "z"));
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "x"), "x");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "y"), "y");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "z"), "z");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_prim_cube_process);
     return model;
 }
 
-std::string
-SCADModels::f_prim_cube_process(const std::vector<std::string> & input)
+void
+SCADModels::f_prim_cube_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return std::string("        cube([") +
-		       input.at(0) + std::string(", ") +
-		       input.at(1) + std::string(", ") +
-		       input.at(2) +
-		       std::string("]);\n");
+    output["Geometry"] = std::string("        cube([") +
+	FIND(input, "x", "15.0") + std::string(", ") +
+	FIND(input, "y", "15.0") + std::string(", ") +
+	FIND(input, "z", "15.0") +
+	std::string("]);\n");
 }
 
 SCADModels::RegistryItemPtr
 SCADModels::f_prim_cylinder()
 {
     auto model = std::make_unique<BaseSCADModel>("prim_cylinder", "Cylinder");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "r"));
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "h"));
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "r"), "r");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "h"), "h");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_prim_cylinder_process);
     return model;
 }
-std::string
-SCADModels::f_prim_cylinder_process(const std::vector<std::string> & input)
+void
+SCADModels::f_prim_cylinder_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return std::string("cylinder(") +
-		       "r=" + input.at(0) + std::string(", ") +
-		       "h=" + input.at(1) +
-		       std::string(");");
+    output["Geometry"] = std::string("cylinder(") +
+	FIND(input, "r", "15") + std::string(", ") +
+	FIND(input, "h", "15") +
+	std::string(");");
 }
 
 // Boolean operations
@@ -219,21 +243,21 @@ SCADModels::RegistryItemPtr
 SCADModels::f_op_union()
 {
     auto model = std::make_unique<BaseSCADModel>("op_union", "Union");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "a"), "a");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "b"), "b");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_op_union_process);
     return model;
 }
-std::string
-SCADModels::f_op_union_process(const std::vector<std::string> & input)
+void
+SCADModels::f_op_union_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return std::string("union() {\n") +
+    output["Geometry"] = std::string("union() {\n") +
 	std::string("    {\n") + 
-        input.at(0) + 
+        FIND(input, "a", "{}") +
 	std::string("    }") + 
 	std::string("    {\n") +
-	input.at(1) +
+        FIND(input, "b", "{}") +
 	std::string("    }") + 
 	std::string("};");
 }
@@ -243,21 +267,21 @@ SCADModels::RegistryItemPtr
 SCADModels::f_op_difference()
 {
     auto model = std::make_unique<BaseSCADModel>("op_difference", "Difference");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "a"), "a");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "b"), "b");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_op_difference_process);
     return model;
 }
-std::string
-SCADModels::f_op_difference_process(const std::vector<std::string> & input)
+void
+SCADModels::f_op_difference_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return std::string("difference() {\n") +
+    output["Geometry"] = std::string("difference() {\n") +
 	std::string("    {\n") + 
-        input.at(0) + 
+        FIND(input, "a", "{}") +
 	std::string("    }") + 
 	std::string("    {\n") +
-	input.at(1) +
+        FIND(input, "b", "{}") +
 	std::string("    }") + 
 	std::string("};");
 }
@@ -267,22 +291,22 @@ SCADModels::RegistryItemPtr
 SCADModels::f_op_intersection()
 {
     auto model = std::make_unique<BaseSCADModel>("op_intersection", "Intersection");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"));
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "a"), "a");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "b"), "b");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_op_intersection_process);
     return model;
 }
-std::string
-SCADModels::f_op_intersection_process(const std::vector<std::string> & input)
+void
+SCADModels::f_op_intersection_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     fprintf(stderr, "Processing intersection\n");
-    return std::string("intersection() {\n") +
+    output["Geometry"] = std::string("intersection() {\n") +
 	std::string("    {\n") + 
-        input.at(0) + 
+        FIND(input, "a", "{}") +
 	std::string("    }") + 
 	std::string("    {\n") +
-	input.at(1) +
+        FIND(input, "b", "{}") +
 	std::string("    }") + 
 	std::string("};");
 }
@@ -318,14 +342,14 @@ SCADModels::RegistryItemPtr
 SCADModels::f_const_true()
 {
     auto model = std::make_unique<BaseSCADModel>("const_true", "True");
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_BOOL));
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_BOOL), "value");
     model->setProcessor(f_const_true_process);
     return model;
 }
-std::string
-SCADModels::f_const_true_process(const std::vector<std::string> & input)
+void
+SCADModels::f_const_true_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return std::string("true");
+    output["value"] = std::string("true");
 }
 
 
@@ -333,14 +357,14 @@ SCADModels::RegistryItemPtr
 SCADModels::f_const_false()
 {
     auto model = std::make_unique<BaseSCADModel>("const_false", "False");
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_BOOL));
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_BOOL), "value");
     model->setProcessor(f_const_false_process);
     return model;
 }
-std::string
-SCADModels::f_const_false_process(const std::vector<std::string> & input)
+void
+SCADModels::f_const_false_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return std::string("false");
+    output["value"] = std::string("false");
 }
 
 // Other Constants
@@ -348,14 +372,14 @@ SCADModels::RegistryItemPtr
 SCADModels::f_const_int()
 {
     auto model = std::make_unique<BaseSCADModel>("const_int", "Integer");
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_INT));
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_INT), "value");
     model->setProcessor(f_const_int_process);
     return model;
 }
-std::string
-SCADModels::f_const_int_process(const std::vector<std::string> & input)
+void
+SCADModels::f_const_int_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return std::string("15");
+    output["value"] = std::string("15");
 }
 
 
@@ -363,14 +387,14 @@ SCADModels::RegistryItemPtr
 SCADModels::f_const_float()
 {
     auto model = std::make_unique<BaseSCADModel>("const_float", "Float");
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT));
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT), "value");
     model->setProcessor(f_const_float_process);
     return model;
 }
-std::string
-SCADModels::f_const_float_process(const std::vector<std::string> & input)
+void
+SCADModels::f_const_float_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return std::string("15.0");
+    output["value"] = std::string("15.0");
 }
 
 
@@ -378,26 +402,33 @@ SCADModels::RegistryItemPtr
 SCADModels::f_const_string()
 {
     auto model = std::make_unique<BaseSCADModel>("const_string", "String");
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_STRING));
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_STRING), "value");
     model->setProcessor(f_const_string_process);
     return model;
 }
-std::string SCADModels::f_const_string_process(const std::vector<std::string> & input)
+void
+SCADModels::f_const_string_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return std::string("\"constant string\"");
+    output["value"] = std::string("\"constant string\"");
 }
 
 SCADModels::RegistryItemPtr
 SCADModels::f_output()
 {
     auto model = std::make_unique<BaseSCADModel>("output", "Output");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY));
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY), "out");
     model->setProcessor(f_output_process);
     return model;
 }
-std::string SCADModels::f_output_process(const std::vector<std::string> & input)
+void
+SCADModels::f_output_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    return input.at(0);
+    std::string s = FIND(input, "out", "//No Geometry Output\n");
+    fprintf(stderr, "Output geometry %s\n", s.c_str());
+    for (const auto & it : input) {
+	fprintf(stderr, "Output map is %s -> %s\n", it.first.c_str(), it.second.c_str());
+    }
+    output["out"] = s;
 }
 
 std::shared_ptr<QtNodes::NodeDelegateModelRegistry>

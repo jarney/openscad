@@ -40,6 +40,7 @@
 #include <QtNodes/NodeDelegateModelRegistry>
 
 #include "nodes/OpenSCADModels.hpp"
+#include "nodes/OpenSCADEvaluator.hpp"
 
 using QtNodes::ConnectionStyle;
 using QtNodes::DataFlowGraphicsScene;
@@ -160,6 +161,11 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
   QString nodeName("Nodes");
   qtab->addTab(qsci, sourceName);
   qtab->addTab(qnode_view, nodeName);
+
+  connect(qtab, &QTabWidget::currentChanged, [this]() {
+      std::string val = evaluateToSCAD(*this->qnode_dataFlowGraphModel);
+      this->qsci->setText(QString::fromStdString(val));
+  });
 
   contentsRendered = false;
   findState = 0;  // FIND_HIDDEN

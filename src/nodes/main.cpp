@@ -1,3 +1,4 @@
+#include <Qsci/qsciscintilla.h>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QJsonDocument>
@@ -14,6 +15,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QTabWidget>
 
 #include <QtGui/QScreen>
 
@@ -80,8 +82,24 @@ int main(int argc, char *argv[])
     l->addWidget(menuBar);
     auto scene = new DataFlowGraphicsScene(dataFlowGraphModel, &mainWidget);
 
+    auto qtab = new QTabWidget(&mainWidget);
+    auto qtabLayout = new QVBoxLayout(qtab);
+    l->addWidget(qtab);
+    
+    QString nodeName("Nodes");
     auto view = new GraphicsView(scene);
-    l->addWidget(view);
+    qtab->addTab(view, nodeName);
+
+    auto qsci = new QsciScintilla(qtab);
+    QString sourceName("Source");
+    qtab->addTab(qsci, sourceName);
+
+    QObject::connect(qtab, &QTabWidget::currentChanged, [&dataFlowGraphModel, &qsci]() {
+	std::string val = evaluateToSCAD(dataFlowGraphModel);
+	qsci->setText(QString::fromStdString(val));
+    });
+    
+    //l->addWidget(view);
     l->setContentsMargins(0, 0, 0, 0);
     l->setSpacing(0);
 
