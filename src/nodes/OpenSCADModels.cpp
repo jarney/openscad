@@ -183,7 +183,7 @@ SCADModels::f_prim_sphere()
 {
     auto model = std::make_unique<BaseSCADModel>("sphere", "Sphere");
     model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "is_diameter"), "is_diameter");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "d"), "d");
     model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_prim_sphere_process);
     return model;
@@ -192,8 +192,160 @@ SCADModels::f_prim_sphere()
 void
 SCADModels::f_prim_sphere_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    output["Geometry"] = std::string("        sphere(") + std::string("r=") + FIND(input, "r", "15.0") + std::string(");\n");
+    std::string out = std::string();
+    out += std::string("sphere(");
+    if (KEY_EXISTS(input, "r")) {
+	out += std::string("r=") + FIND(input, "r", "15.0");
+    }
+    else if (KEY_EXISTS(input, "d")) {
+	out += std::string("d=") + FIND(input, "d", "30.0");
+    }
+    out += std::string(");\n");
+    output["Geometry"] = out;
+    
 }
+
+SCADModels::RegistryItemPtr
+SCADModels::f_util_color()
+{
+    auto model = std::make_unique<BaseSCADModel>("color", "Color");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "c"), "color");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "alpha"), "alpha");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_util_color_process);
+    return model;
+}
+
+void
+SCADModels::f_util_color_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::string out = std::string();
+    out += std::string("color(");
+    if (KEY_EXISTS(input, "color")) {
+	out += std::string("c=") + FIND(input, "color", "15.0") + ", ";
+    }
+    else if (KEY_EXISTS(input, "alpha")) {
+	out += std::string("alpha=") + FIND(input, "alpha", "30.0");
+    }
+    out += std::string(") {\n");
+    out += FIND(input, "Geometry", "");
+    out += std::string("}\n");
+    output["Geometry"] = out;
+}
+
+
+SCADModels::RegistryItemPtr
+SCADModels::f_xform_translate()
+{
+    auto model = std::make_unique<BaseSCADModel>("translate", "Translate");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "vector"), "vector");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_xform_translate_process);
+    return model;
+}
+void
+SCADModels::f_xform_translate_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::string out = std::string();
+    out += std::string("translate(");
+    out += std::string("v=") + FIND(input, "vector", "[0,0,0]");
+    out += std::string(") {\n");
+    out += FIND(input, "Geometry", "");
+    out += std::string("}\n");
+    output["Geometry"] = out;
+}
+SCADModels::RegistryItemPtr
+SCADModels::f_xform_mirror()
+{
+    auto model = std::make_unique<BaseSCADModel>("mirror", "Mirror");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "vector"), "vector");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_xform_mirror_process);
+    return model;
+}
+void
+SCADModels::f_xform_mirror_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::string out = std::string();
+    out += std::string("mirror(");
+    out += std::string("v=") + FIND(input, "vector", "[0,0,0]");
+    out += std::string(") {\n");
+    out += FIND(input, "Geometry", "");
+    out += std::string("}\n");
+    output["Geometry"] = out;
+}
+SCADModels::RegistryItemPtr
+SCADModels::f_xform_scale()
+{
+    auto model = std::make_unique<BaseSCADModel>("scale", "Scale");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "vector"), "vector");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_xform_scale_process);
+    return model;
+}
+void
+SCADModels::f_xform_scale_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::string out = std::string();
+    out += std::string("scale(");
+    out += std::string("v=") + FIND(input, "vector", "[0,0,0]");
+    out += std::string(") {\n");
+    out += FIND(input, "Geometry", "");
+    out += std::string("}\n");
+    output["Geometry"] = out;
+}
+
+SCADModels::RegistryItemPtr
+SCADModels::f_xform_resize()
+{
+    auto model = std::make_unique<BaseSCADModel>("resize", "Resize");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "vector"), "vector");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_xform_resize_process);
+    return model;
+}
+void
+SCADModels::f_xform_resize_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::string out = std::string();
+    out += std::string("resize(");
+    out += std::string("v=") + FIND(input, "vector", "[0,0,0]");
+    out += std::string(") {\n");
+    out += FIND(input, "Geometry", "");
+    out += std::string("}\n");
+    output["Geometry"] = out;
+}
+
+SCADModels::RegistryItemPtr
+SCADModels::f_flow_if()
+{
+    auto model = std::make_unique<BaseSCADModel>("if", "If");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "condition"), "condition");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "a"), "a");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "b"), "b");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_flow_if_process);
+    return model;
+}
+void
+SCADModels::f_flow_if_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::string out = std::string();
+    out += std::string("if(");
+    out += FIND(input, "condition", "true");
+    out += std::string(") {\n");
+    out += FIND(input, "a", "");
+    out += std::string("} else {\n");
+    out += FIND(input, "b", "");
+    out += std::string("}\n");
+    output["Geometry"] = out;
+}
+
 
 
 SCADModels::RegistryItemPtr
@@ -261,6 +413,51 @@ SCADModels::f_op_union_process(const BaseSCADModel & model, const PortFunctionDa
 	std::string("};");
 }
 
+SCADModels::RegistryItemPtr
+SCADModels::f_op_hull()
+{
+    auto model = std::make_unique<BaseSCADModel>("hull", "Convex Hull");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "a"), "a");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "b"), "b");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_op_hull_process);
+    return model;
+}
+void
+SCADModels::f_op_hull_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    output["Geometry"] = std::string("hull() {\n") +
+	std::string("    {\n") + 
+        FIND(input, "a", "{}") +
+	std::string("    }") + 
+	std::string("    {\n") +
+        FIND(input, "b", "{}") +
+	std::string("    }") + 
+	std::string("};");
+}
+
+SCADModels::RegistryItemPtr
+SCADModels::f_op_minkowski()
+{
+    auto model = std::make_unique<BaseSCADModel>("minkowski", "Minkowski");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "a"), "a");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "b"), "b");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_op_minkowski_process);
+    return model;
+}
+void
+SCADModels::f_op_minkowski_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    output["Geometry"] = std::string("minkowski() {\n") +
+	std::string("    {\n") + 
+        FIND(input, "a", "{}") +
+	std::string("    }") + 
+	std::string("    {\n") +
+        FIND(input, "b", "{}") +
+	std::string("    }") + 
+	std::string("};");
+}
 
 SCADModels::RegistryItemPtr
 SCADModels::f_op_difference()
@@ -740,7 +937,11 @@ SCADModels::registerDataModels()
     ret->registerModel(SCADModels::f_op_union, "Boolean Operators");
     ret->registerModel(SCADModels::f_op_difference, "Boolean Operators");
     ret->registerModel(SCADModels::f_op_intersection, "Boolean Operators");
+    ret->registerModel(SCADModels::f_op_hull, "Boolean Operators");
+    ret->registerModel(SCADModels::f_op_minkowski, "Boolean Operators");
 
+    ret->registerModel(SCADModels::f_util_color, "Utility");
+    
     ret->registerModel(SCADModels::f_const_true, "Constants");
     ret->registerModel(SCADModels::f_const_false, "Constants");
     ret->registerModel(SCADModels::f_const_int, "Constants");
@@ -752,6 +953,21 @@ SCADModels::registerDataModels()
     ret->registerModel(SCADModels::f_const_version_num, "Constants");
 
     ret->registerModel(SCADModels::f_output, "Output");
+
+    // Flow control
+    //ret->registerModel(SCADModels::f_flow_for);
+    ret->registerModel(SCADModels::f_flow_if, "Flow Control");
+    //ret->registerModel(SCADModels::f_flow_let);
+    //ret->registerModel(SCADModels::f_flow_group);
+
+    // Transformations
+    ret->registerModel(SCADModels::f_xform_translate, "Transform");
+    //ret->registerModel(SCADModels::f_xform_offset, "Transform");
+    ret->registerModel(SCADModels::f_xform_scale, "Transform");
+    //ret->registerModel(SCADModels::f_xform_rotate, "Transform");
+    ret->registerModel(SCADModels::f_xform_mirror, "Transform");
+    ret->registerModel(SCADModels::f_xform_resize, "Transform");
+    //ret->registerModel(SCADModels::f_xform_multmatrix, "Transform");
 
     // Math functions:
     

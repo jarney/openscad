@@ -86,106 +86,128 @@ public:
     static std::shared_ptr<QtNodes::NodeDelegateModelRegistry> registerDataModels();
     std::string f_default_process(const PortFunctionData & input, PortFunctionData & output);
     
-    // Primitives
-    static RegistryItemPtr f_prim_sphere();
-    static void f_prim_sphere_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
-    
-    static RegistryItemPtr f_prim_cube();
-    static void f_prim_cube_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
-    
-    static RegistryItemPtr f_prim_cylinder();
-    static void f_prim_cylinder_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
+    // Math
+#define _OPENSCAD_NODE_PROCESSOR_PROTOTYPE const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output
+#define _OPENSCAD_NODE_DECL(name)                                    \
+    static RegistryItemPtr f_##name();                               \
+    static void f_##name##_process(_OPENSCAD_NODE_PROCESSOR_PROTOTYPE);
 
+    // 3d Primitives
+    _OPENSCAD_NODE_DECL(prim_sphere);
+    _OPENSCAD_NODE_DECL(prim_cube);
+    _OPENSCAD_NODE_DECL(prim_cylinder);
+    _OPENSCAD_NODE_DECL(prim_polyhedron);
+    _OPENSCAD_NODE_DECL(prim_linear_extrude);
+    _OPENSCAD_NODE_DECL(prim_rotate_extrude);
+    _OPENSCAD_NODE_DECL(prim_fill);
+
+    // 2d primitives
+    _OPENSCAD_NODE_DECL(prim_circle);
+    _OPENSCAD_NODE_DECL(prim_polygon);
+    _OPENSCAD_NODE_DECL(prim_surface);
+    _OPENSCAD_NODE_DECL(prim_square);
+    
     // Boolean operations
-    static RegistryItemPtr f_op_union();
-    static void f_op_union_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
-    static RegistryItemPtr f_op_difference();
-    static void f_op_difference_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
-    static RegistryItemPtr f_op_intersection();
-    static void f_op_intersection_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
+    _OPENSCAD_NODE_DECL(op_union);
+    _OPENSCAD_NODE_DECL(op_difference);
+    _OPENSCAD_NODE_DECL(op_intersection);
+    _OPENSCAD_NODE_DECL(op_hull);
+    _OPENSCAD_NODE_DECL(op_minkowski);
+
+    // Special module operations
+    _OPENSCAD_NODE_DECL(mod_children);
+
+    // Debug/utility
+    _OPENSCAD_NODE_DECL(util_echo);
+    _OPENSCAD_NODE_DECL(util_assert);
+    _OPENSCAD_NODE_DECL(util_render);
+    _OPENSCAD_NODE_DECL(util_color);
+
+    // Flow control
+    _OPENSCAD_NODE_DECL(flow_for);
+    _OPENSCAD_NODE_DECL(flow_if);
+    _OPENSCAD_NODE_DECL(flow_let);
+    _OPENSCAD_NODE_DECL(flow_group);
 
     // Transformations
-    static RegistryItemPtr f_xform_translate();
-    static RegistryItemPtr f_xform_rotate_euler();
-    static RegistryItemPtr f_xform_rotate_axis_angle();
-    static RegistryItemPtr f_xform_rotate_quat();
+    _OPENSCAD_NODE_DECL(xform_translate);
+    _OPENSCAD_NODE_DECL(xform_offset);
+    _OPENSCAD_NODE_DECL(xform_scale);
+    _OPENSCAD_NODE_DECL(xform_rotate);
+    _OPENSCAD_NODE_DECL(xform_mirror);
+    _OPENSCAD_NODE_DECL(xform_resize);
+    _OPENSCAD_NODE_DECL(xform_multmatrix);
     
-    // Math
-#define FUNCTION_PROCESSOR_PROTOTYPE const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output
-#define FUNCTION_DECL(prefix, name)                                          \
-    static RegistryItemPtr f_##prefix##_##name();                            \
-    static void f_##prefix##_##name##_process(FUNCTION_PROCESSOR_PROTOTYPE);
+    _OPENSCAD_NODE_DECL(math_asin);
+    _OPENSCAD_NODE_DECL(math_sin);
+    _OPENSCAD_NODE_DECL(math_acos);
+    _OPENSCAD_NODE_DECL(math_cos);
+    _OPENSCAD_NODE_DECL(math_abs);
+    _OPENSCAD_NODE_DECL(math_atan);
+    _OPENSCAD_NODE_DECL(math_atan2);
+    _OPENSCAD_NODE_DECL(math_tan);
+    _OPENSCAD_NODE_DECL(math_sign);
+    _OPENSCAD_NODE_DECL(math_ceil);
+    _OPENSCAD_NODE_DECL(math_floor);
+    _OPENSCAD_NODE_DECL(math_round);
+    _OPENSCAD_NODE_DECL(math_ln);
+    _OPENSCAD_NODE_DECL(math_log);
+    _OPENSCAD_NODE_DECL(math_exp);
+    _OPENSCAD_NODE_DECL(math_pow);
+    _OPENSCAD_NODE_DECL(math_sqrt);
+    _OPENSCAD_NODE_DECL(math_min);
+    _OPENSCAD_NODE_DECL(math_max);
+    _OPENSCAD_NODE_DECL(math_concat);
+    _OPENSCAD_NODE_DECL(math_norm);
+    _OPENSCAD_NODE_DECL(math_len);
+    _OPENSCAD_NODE_DECL(math_str);
+    _OPENSCAD_NODE_DECL(math_chr);
+    _OPENSCAD_NODE_DECL(math_ord);
+    _OPENSCAD_NODE_DECL(math_cross);
 
-    FUNCTION_DECL(math, asin);
-    FUNCTION_DECL(math, sin);
-    FUNCTION_DECL(math, acos);
-    FUNCTION_DECL(math, cos);
-    FUNCTION_DECL(math, abs);
-    FUNCTION_DECL(math, atan);
-    FUNCTION_DECL(math, atan2);
-    FUNCTION_DECL(math, tan);
-    FUNCTION_DECL(math, sign);
-    FUNCTION_DECL(math, ceil);
-    FUNCTION_DECL(math, floor);
-    FUNCTION_DECL(math, round);
-    FUNCTION_DECL(math, ln);
-    FUNCTION_DECL(math, log);
-    FUNCTION_DECL(math, exp);
-    FUNCTION_DECL(math, pow);
-    FUNCTION_DECL(math, sqrt);
-    FUNCTION_DECL(math, min);
-    FUNCTION_DECL(math, max);
-    FUNCTION_DECL(math, concat);
-    FUNCTION_DECL(math, norm);
-    FUNCTION_DECL(math, len);
-    FUNCTION_DECL(math, str);
-    FUNCTION_DECL(math, chr);
-    FUNCTION_DECL(math, ord);
-    FUNCTION_DECL(math, cross);
-
-    FUNCTION_DECL(math, add);
-    FUNCTION_DECL(math, subtract);
-    FUNCTION_DECL(math, multiply);
-    FUNCTION_DECL(math, divide);
-    FUNCTION_DECL(math, modulo);
-    FUNCTION_DECL(math, exponentiate);
-    FUNCTION_DECL(math, lt);
-    FUNCTION_DECL(math, leq);
-    FUNCTION_DECL(math, eq);
-    FUNCTION_DECL(math, geq);
-    FUNCTION_DECL(math, gt);
-    FUNCTION_DECL(math, and);
-    FUNCTION_DECL(math, or);
-    FUNCTION_DECL(math, not);
+    _OPENSCAD_NODE_DECL(math_add);
+    _OPENSCAD_NODE_DECL(math_subtract);
+    _OPENSCAD_NODE_DECL(math_multiply);
+    _OPENSCAD_NODE_DECL(math_divide);
+    _OPENSCAD_NODE_DECL(math_modulo);
+    _OPENSCAD_NODE_DECL(math_exponentiate);
+    _OPENSCAD_NODE_DECL(math_lt);
+    _OPENSCAD_NODE_DECL(math_leq);
+    _OPENSCAD_NODE_DECL(math_eq);
+    _OPENSCAD_NODE_DECL(math_geq);
+    _OPENSCAD_NODE_DECL(math_gt);
+    _OPENSCAD_NODE_DECL(math_and);
+    _OPENSCAD_NODE_DECL(math_or);
+    _OPENSCAD_NODE_DECL(math_not);
     
-    FUNCTION_DECL(math, is_bool);
-    FUNCTION_DECL(math, is_string);
-    FUNCTION_DECL(math, is_num);
-    FUNCTION_DECL(math, is_function);
-    FUNCTION_DECL(math, is_list);
-    FUNCTION_DECL(math, is_undef);
+    _OPENSCAD_NODE_DECL(math_is_bool);
+    _OPENSCAD_NODE_DECL(math_is_string);
+    _OPENSCAD_NODE_DECL(math_is_num);
+    _OPENSCAD_NODE_DECL(math_is_function);
+    _OPENSCAD_NODE_DECL(math_is_list);
+    _OPENSCAD_NODE_DECL(math_is_undef);
 
     // Literal Constants
-    FUNCTION_DECL(const, true);
-    FUNCTION_DECL(const, false);
-    FUNCTION_DECL(const, int);
-    FUNCTION_DECL(const, float);
-    FUNCTION_DECL(const, string);
-    FUNCTION_DECL(const, undef);
-    FUNCTION_DECL(const, version);
-    FUNCTION_DECL(const, version_num);
-    FUNCTION_DECL(const, pi);
+    _OPENSCAD_NODE_DECL(const_true);
+    _OPENSCAD_NODE_DECL(const_false);
+    _OPENSCAD_NODE_DECL(const_int);
+    _OPENSCAD_NODE_DECL(const_float);
+    _OPENSCAD_NODE_DECL(const_string);
+    _OPENSCAD_NODE_DECL(const_undef);
+    _OPENSCAD_NODE_DECL(const_version);
+    _OPENSCAD_NODE_DECL(const_version_num);
+    _OPENSCAD_NODE_DECL(const_pi);
 
-    FUNCTION_DECL(math, rands);
-    FUNCTION_DECL(math, lookup);
-    FUNCTION_DECL(math, search);
-    FUNCTION_DECL(math, parent_module);
+    _OPENSCAD_NODE_DECL(math_rands);
+    _OPENSCAD_NODE_DECL(math_lookup);
+    _OPENSCAD_NODE_DECL(math_search);
+    _OPENSCAD_NODE_DECL(math_parent_module);
     
-    FUNCTION_DECL(import, dxf_dim);
-    FUNCTION_DECL(import, dxf_cross);
+    _OPENSCAD_NODE_DECL(import_dxf_dim);
+    _OPENSCAD_NODE_DECL(import_dxf_cross);
 
-#undef FUNCTION_DECL
-#undef FUNCTION_PROCESSOR_PROTOTYPE
+#undef _OPENSCAD_NODE_DECL
+#undef _OPENSCAD_NODE_PROCESSOR_PROTOTYPE
 
     // Outputs
     static RegistryItemPtr f_output();
