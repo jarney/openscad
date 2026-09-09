@@ -158,17 +158,7 @@ BaseSCADPort::getData() const
 
 /*********************************************/
 
-static const QtNodes::NodeDataType DATA_FLOAT{"float", "Float"};
-static const QtNodes::NodeDataType DATA_INT{"integer", "Integer"};
-static const QtNodes::NodeDataType DATA_BOOL{"bool", "Boolean"};
-static const QtNodes::NodeDataType DATA_STRING{"string", "String"};
-static const QtNodes::NodeDataType DATA_VECTOR2{"vector2", "Vector 2d"};
-static const QtNodes::NodeDataType DATA_VECTOR3{"vector3", "Vector 3d"};
-static const QtNodes::NodeDataType DATA_LIST{"list", "List"};
-static const QtNodes::NodeDataType DATA_SOLID_GEOMETRY{"geometry", "Solid Geometry"};
-static const QtNodes::NodeDataType DATA_PLANE_GEOMETRY{"plane", "Plane Geometry"};
-
-std::string FIND(const PortFunctionData & input, std::string key, std::string def)
+static std::string FIND(const PortFunctionData & input, std::string key, std::string def)
 {
     const auto it = input.find(key);
     if (it == input.end()) {
@@ -177,14 +167,23 @@ std::string FIND(const PortFunctionData & input, std::string key, std::string de
     }
     return it->second;
 }
+static bool KEY_EXISTS(const PortFunctionData & input, std::string key)
+{
+    const auto it = input.find(key);
+    if (it == input.end()) {
+	return false;
+    }
+    return true;
+    
+}
 
 // Primitives
 SCADModels::RegistryItemPtr
 SCADModels::f_prim_sphere()
 {
-    auto model = std::make_unique<BaseSCADModel>("prim_sphere", "Sphere");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "r"), "r");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_BOOL, "is_diameter"), "is_diameter");
+    auto model = std::make_unique<BaseSCADModel>("sphere", "Sphere");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "is_diameter"), "is_diameter");
     model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_prim_sphere_process);
     return model;
@@ -200,10 +199,10 @@ SCADModels::f_prim_sphere_process(const BaseSCADModel & model, const PortFunctio
 SCADModels::RegistryItemPtr
 SCADModels::f_prim_cube()
 {
-    auto model = std::make_unique<BaseSCADModel>("prim_cube", "Cube");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "x"), "x");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "y"), "y");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "z"), "z");
+    auto model = std::make_unique<BaseSCADModel>("cube", "Cube");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "x"), "x");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "y"), "y");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "z"), "z");
     model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_prim_cube_process);
     return model;
@@ -222,9 +221,9 @@ SCADModels::f_prim_cube_process(const BaseSCADModel & model, const PortFunctionD
 SCADModels::RegistryItemPtr
 SCADModels::f_prim_cylinder()
 {
-    auto model = std::make_unique<BaseSCADModel>("prim_cylinder", "Cylinder");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "r"), "r");
-    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT, "h"), "h");
+    auto model = std::make_unique<BaseSCADModel>("cylinder", "Cylinder");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "h"), "h");
     model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_prim_cylinder_process);
     return model;
@@ -242,7 +241,7 @@ SCADModels::f_prim_cylinder_process(const BaseSCADModel & model, const PortFunct
 SCADModels::RegistryItemPtr
 SCADModels::f_op_union()
 {
-    auto model = std::make_unique<BaseSCADModel>("op_union", "Union");
+    auto model = std::make_unique<BaseSCADModel>("union", "Union");
     model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "a"), "a");
     model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "b"), "b");
     model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -266,7 +265,7 @@ SCADModels::f_op_union_process(const BaseSCADModel & model, const PortFunctionDa
 SCADModels::RegistryItemPtr
 SCADModels::f_op_difference()
 {
-    auto model = std::make_unique<BaseSCADModel>("op_difference", "Difference");
+    auto model = std::make_unique<BaseSCADModel>("difference", "Difference");
     model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "a"), "a");
     model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "b"), "b");
     model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -290,7 +289,7 @@ SCADModels::f_op_difference_process(const BaseSCADModel & model, const PortFunct
 SCADModels::RegistryItemPtr
 SCADModels::f_op_intersection()
 {
-    auto model = std::make_unique<BaseSCADModel>("op_intersection", "Intersection");
+    auto model = std::make_unique<BaseSCADModel>("intersection", "Intersection");
     model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "a"), "a");
     model->addInputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "b"), "b");
     model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -311,38 +310,91 @@ SCADModels::f_op_intersection_process(const BaseSCADModel & model, const PortFun
 	std::string("};");
 }
 
-// Transformations
-//    static RegistryItemPtr f_xform_translate();
-//    static RegistryItemPtr f_xform_rotate_euler();
-//    static RegistryItemPtr f_xform_rotate_axis_angle();
-//    static RegistryItemPtr f_xform_rotate_quat();
-    
-    // Numerics
-//    static RegistryItemPtr f_math_modulus();
-//    static RegistryItemPtr f_math_add();
-//    static RegistryItemPtr f_math_sub();
-//    static RegistryItemPtr f_math_mul();
-//    static RegistryItemPtr f_math_div();
-//    static RegistryItemPtr f_math_sin();
-//    static RegistryItemPtr f_math_cos();
-//    static RegistryItemPtr f_math_asin();
-//    static RegistryItemPtr f_math_acos();
 
-    // Vector3
-//    static RegistryItemPtr f_vector3_dot();
-//    static RegistryItemPtr f_vector3_cross();
-//    static RegistryItemPtr f_vector3_scale();
-//    static RegistryItemPtr f_vector3_length();
-//    static RegistryItemPtr f_vector3_decompose();
-//    static RegistryItemPtr f_vector3_compose();
+SCADModels::RegistryItemPtr
+SCADModels::f_math_rands()
+{
+    auto model = std::make_unique<BaseSCADModel>("rands", "Random Vector");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "min"), "max");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "min"), "max");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "n"), "n");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "seed"), "seed");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_math_rands_process);
+    return model;
+}
+void
+SCADModels::f_math_rands_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    auto args = std::string();
 
+    args += FIND(input, "min", "0");
+    args += std::string(", ");
+    args += FIND(input, "max", "100");
+    args += std::string(", ");
+    args += FIND(input, "n", "1");
+    if (KEY_EXISTS(input, "seed")) {
+	args += std::string(", ");
+	args += FIND(input, "seed", "0");
+    }
+    output["Geometry"] = std::string("rands(") + args + std::string(")");
+}
+
+SCADModels::RegistryItemPtr
+SCADModels::f_import_dxf_dim()
+{
+    auto model = std::make_unique<BaseSCADModel>("dxf_dim", "Read DXF Dimension");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "file"), "file");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "name"), "name");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "layer"), "layer");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "origin"), "origin");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "scale"), "scale");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "out"), "out");
+    model->setProcessor(f_import_dxf_dim_process);
+    return model;
+}
+void
+SCADModels::f_import_dxf_dim_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    output["out"] = std::string("dxf_dim(") +
+	std::string("file=") + FIND(input, "file", "0") + "," +
+	std::string("name=") + FIND(input, "name", "0") + "," +
+	std::string("layer=") + FIND(input, "layer", "0") + "," +
+	std::string("origin=") + FIND(input, "origin", "0") + "," +
+	std::string("scale=") + FIND(input, "scale", "0") +
+	std::string(")");
+
+}
+
+SCADModels::RegistryItemPtr
+SCADModels::f_import_dxf_cross()
+{
+    auto model = std::make_unique<BaseSCADModel>("dxf_cross", "Read DXF Origin");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "file"), "file");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "layer"), "layer");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "origin"), "origin");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "scale"), "scale");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "out"), "out");
+    model->setProcessor(f_import_dxf_cross_process);
+    return model;
+}
+void
+SCADModels::f_import_dxf_cross_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    output["out"] = std::string("dxf_cross(") +
+	std::string("file=") + FIND(input, "file", "0") + "," +
+	std::string("layer=") + FIND(input, "layer", "0") + "," +
+	std::string("origin=") + FIND(input, "origin", "0") + "," +
+	std::string("scale=") + FIND(input, "scale", "0") +
+	std::string(")");
+}
 
 // Boolean Constants
 SCADModels::RegistryItemPtr
 SCADModels::f_const_true()
 {
     auto model = std::make_unique<BaseSCADModel>("const_true", "True");
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_BOOL), "value");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_true_process);
     return model;
 }
@@ -357,7 +409,7 @@ SCADModels::RegistryItemPtr
 SCADModels::f_const_false()
 {
     auto model = std::make_unique<BaseSCADModel>("const_false", "False");
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_BOOL), "value");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_false_process);
     return model;
 }
@@ -372,7 +424,7 @@ SCADModels::RegistryItemPtr
 SCADModels::f_const_int()
 {
     auto model = std::make_unique<BaseSCADModel>("const_int", "Integer");
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_INT), "value");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_int_process);
     return model;
 }
@@ -387,7 +439,7 @@ SCADModels::RegistryItemPtr
 SCADModels::f_const_float()
 {
     auto model = std::make_unique<BaseSCADModel>("const_float", "Float");
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_FLOAT), "value");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_float_process);
     return model;
 }
@@ -402,7 +454,7 @@ SCADModels::RegistryItemPtr
 SCADModels::f_const_string()
 {
     auto model = std::make_unique<BaseSCADModel>("const_string", "String");
-    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_STRING), "value");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_string_process);
     return model;
 }
@@ -410,6 +462,58 @@ void
 SCADModels::f_const_string_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["value"] = std::string("\"constant string\"");
+}
+SCADModels::RegistryItemPtr
+SCADModels::f_const_undef()
+{
+    auto model = std::make_unique<BaseSCADModel>("const_undef", "Undefined");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE), "value");
+    model->setProcessor(f_const_undef_process);
+    return model;
+}
+void
+SCADModels::f_const_undef_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    output["value"] = std::string("undef");
+}
+SCADModels::RegistryItemPtr
+SCADModels::f_const_pi()
+{
+    auto model = std::make_unique<BaseSCADModel>("PI", "PI");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE), "value");
+    model->setProcessor(f_const_pi_process);
+    return model;
+}
+void
+SCADModels::f_const_pi_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    output["value"] = std::string("PI");
+}
+SCADModels::RegistryItemPtr
+SCADModels::f_const_version()
+{
+    auto model = std::make_unique<BaseSCADModel>("version", "Version");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE), "value");
+    model->setProcessor(f_const_version_process);
+    return model;
+}
+void
+SCADModels::f_const_version_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    output["value"] = std::string("version()");
+}
+SCADModels::RegistryItemPtr
+SCADModels::f_const_version_num()
+{
+    auto model = std::make_unique<BaseSCADModel>("version_num", "Version Number");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE), "value");
+    model->setProcessor(f_const_pi_process);
+    return model;
+}
+void
+SCADModels::f_const_version_num_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    output["value"] = std::string("version_num()");
 }
 
 SCADModels::RegistryItemPtr
@@ -431,6 +535,199 @@ SCADModels::f_output_process(const BaseSCADModel & model, const PortFunctionData
     output["out"] = s;
 }
 
+#define UNARY_FUNCTION_BODY(prefix, name, description, input, atype, output, outtype, body) \
+SCADModels::RegistryItemPtr                                                     \
+SCADModels::f_##prefix##_##name() {                                             \
+    auto model = std::make_unique<BaseSCADModel>(#name, description);           \
+    model->addInputPort(std::make_unique<BaseSCADPort>(atype), input);          \
+    model->addOutputPort(std::make_unique<BaseSCADPort>(outtype), output);      \
+    model->setProcessor(f_##prefix##_##name##_process);                         \
+    return model;                                                               \
+}                                                                               \
+void									        \
+SCADModels::f_##prefix##_##name##_process(                                      \
+    const BaseSCADModel & model,                                                \
+    const PortFunctionData & _input,                                            \
+    PortFunctionData & _output                                                  \
+    )						                                \
+{                                                                               \
+    _output[output] = body;                                                     \
+}
+
+#define BINARY_FUNCTION_BODY(prefix, name, description, a, atype, b, btype, output, outtype, body) \
+SCADModels::RegistryItemPtr                                                     \
+SCADModels::f_##prefix##_##name() {                                             \
+    auto model = std::make_unique<BaseSCADModel>(#name, description);           \
+    model->addInputPort(std::make_unique<BaseSCADPort>(atype), a);              \
+    model->addInputPort(std::make_unique<BaseSCADPort>(btype), b);              \
+    model->addOutputPort(std::make_unique<BaseSCADPort>(outtype), output);      \
+    model->setProcessor(f_##prefix##_##name##_process);                         \
+    return model;                                                               \
+}                                                                               \
+void									        \
+SCADModels::f_##prefix##_##name##_process(                                      \
+    const BaseSCADModel & model,                                                \
+    const PortFunctionData & _input,                                            \
+    PortFunctionData & _output                                                  \
+    )						                                \
+{                                                                               \
+    _output[output] = body;                                                     \
+}
+
+UNARY_FUNCTION_BODY(math, asin, "Arc Sine", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("asin(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, sin, "Sine", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("sin(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, acos, "Arc Cosine", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("acos(") + FIND(_input, "x", "1") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, cos, "Cosine", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("cos(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, abs, "Absolute Value", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("abs(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, atan, "Arc Tangent", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("atan(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, tan, "Tangent", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("tan(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, sign, "Sign", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("sign(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, ceil, "Ceiling", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("ceil(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, floor, "Floor", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("floor(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, round, "Round", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("round(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, ln, "Natural Log", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("ln(") + FIND(_input, "x", "2.718") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, log, "Log Base 10", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("log(") + FIND(_input, "x", "10") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, exp, "Exponential(e)", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("exp(") + FIND(_input, "x", "1") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, sqrt, "Square Root", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("sqrt(") + FIND(_input, "x", "1") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, norm, "Norm", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+     (std::string("norm(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, len, "Length", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+     (std::string("len(") + FIND(_input, "x", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, is_bool, "Is Boolean", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("is_bool(") + FIND(_input, "x", "true") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, is_string, "Is String", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("is_string(") + FIND(_input, "x", "true") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, is_num, "Is Number", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("is_num(") + FIND(_input, "x", "true") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, is_function, "Is Function", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("is_function") + FIND(_input, "x", "true") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, is_list, "Is List", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("is_list") + FIND(_input, "x", "true") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, is_undef, "Is Undefined", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("is_undef") + FIND(_input, "x", "true") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, str, "To String", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("str(") + FIND(_input, "x", "true") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, chr, "To Char", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("chr(") + FIND(_input, "x", "true") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, ord, "To Ordinal", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("ord(") + FIND(_input, "x", "true") + std::string(")"))
+    )
+
+
+BINARY_FUNCTION_BODY(math, max, "Maximum", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+     (std::string("max(") + FIND(_input, "a", "0") + "," + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, pow, "Power", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+     (std::string("pow(") + FIND(_input, "a", "0") + "," + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, min, "Minimum", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+     (std::string("min(") + FIND(_input, "a", "0") + "," + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, concat, "Concatenate", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+     (std::string("concat(") + FIND(_input, "a", "0") + "," + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, atan2, "Arc Tan(2)", "x", DATA_VARIABLE, "y", DATA_VARIABLE, "out", DATA_VARIABLE,
+     (std::string("atan2(") + FIND(_input, "x", "0") + "," + FIND(_input, "y", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, cross, "Cross Product", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+     (std::string("cross(") + FIND(_input, "a", "[1,0,0]") + "," + FIND(_input, "b", "[0,1,0]") + std::string(")"))
+    )
+
+BINARY_FUNCTION_BODY(math, add, "Add", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + "+" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, subtract, "Subtract", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + "-" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, multiply, "Multiply", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + "*" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, divide, "Divide", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + "/" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, modulo, "Modulo", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + "%" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, exponentiate, "Exponentiate", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + "^" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, lt, "Less Than", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + "<" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, leq, "Less Than or Equal", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + "<=" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, eq, "Equal", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + "==" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, geq, "Greater Than or Equal", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + ">=" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, gt, "Greater Than", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + ">" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, and, "And", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + "&&" + FIND(_input, "b", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, or, "Or", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(") + FIND(_input, "a", "0") + "||" + FIND(_input, "b", "0") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, not, "Greater Than", "a", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("(!") + FIND(_input, "a", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, lookup, "Lookup", "value", DATA_VARIABLE, "table", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("lookup(") + FIND(_input, "value", "0") + ", " + FIND(_input, "table", "0") + std::string(")"))
+    )
+BINARY_FUNCTION_BODY(math, search, "Search for value", "needle", DATA_VARIABLE, "haystack", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("search(") + FIND(_input, "needle", "0") + ", " + FIND(_input, "haystack", "[]") + std::string(")"))
+    )
+UNARY_FUNCTION_BODY(math, parent_module, "Parent Module Name", "index", DATA_VARIABLE, "out", DATA_VARIABLE,
+    (std::string("parent_module(") + FIND(_input, "needle", "0") + std::string(")"))
+    )
+
+//    ret->registerModel(SCADModels::f_math_rands, "Math");
+
+
 std::shared_ptr<QtNodes::NodeDelegateModelRegistry>
 SCADModels::registerDataModels()
 {
@@ -449,8 +746,71 @@ SCADModels::registerDataModels()
     ret->registerModel(SCADModels::f_const_int, "Constants");
     ret->registerModel(SCADModels::f_const_float, "Constants");
     ret->registerModel(SCADModels::f_const_string, "Constants");
+    ret->registerModel(SCADModels::f_const_undef, "Constants");
+    ret->registerModel(SCADModels::f_const_pi, "Constants");
+    ret->registerModel(SCADModels::f_const_version, "Constants");
+    ret->registerModel(SCADModels::f_const_version_num, "Constants");
 
     ret->registerModel(SCADModels::f_output, "Output");
+
+    // Math functions:
+    
+    ret->registerModel(SCADModels::f_math_asin, "Math");
+    ret->registerModel(SCADModels::f_math_sin, "Math");
+    ret->registerModel(SCADModels::f_math_acos, "Math");
+    ret->registerModel(SCADModels::f_math_abs, "Math");
+    ret->registerModel(SCADModels::f_math_atan, "Math");
+    ret->registerModel(SCADModels::f_math_atan2, "Math");
+    ret->registerModel(SCADModels::f_math_cos, "Math");
+    ret->registerModel(SCADModels::f_math_tan, "Math");
+    ret->registerModel(SCADModels::f_math_sign, "Math");
+    ret->registerModel(SCADModels::f_math_ceil, "Math");
+    ret->registerModel(SCADModels::f_math_floor, "Math");
+    ret->registerModel(SCADModels::f_math_round, "Math");
+    ret->registerModel(SCADModels::f_math_ln, "Math");
+    ret->registerModel(SCADModels::f_math_len, "Math");
+    ret->registerModel(SCADModels::f_math_log, "Math");
+    ret->registerModel(SCADModels::f_math_exp, "Math");
+    ret->registerModel(SCADModels::f_math_sqrt, "Math");
+    ret->registerModel(SCADModels::f_math_concat, "Math");
+    ret->registerModel(SCADModels::f_math_min, "Math");
+    ret->registerModel(SCADModels::f_math_pow, "Math");
+    ret->registerModel(SCADModels::f_math_max, "Math");
+    ret->registerModel(SCADModels::f_math_norm, "Math");
+    ret->registerModel(SCADModels::f_math_str, "Math");
+    ret->registerModel(SCADModels::f_math_chr, "Math");
+    ret->registerModel(SCADModels::f_math_ord, "Math");
+    ret->registerModel(SCADModels::f_math_cross, "Math");
+
+    ret->registerModel(SCADModels::f_math_add, "Math");
+    ret->registerModel(SCADModels::f_math_subtract, "Math");
+    ret->registerModel(SCADModels::f_math_multiply, "Math");
+    ret->registerModel(SCADModels::f_math_divide, "Math");
+    ret->registerModel(SCADModels::f_math_modulo, "Math");
+    ret->registerModel(SCADModels::f_math_exponentiate, "Math");
+    ret->registerModel(SCADModels::f_math_lt, "Math");
+    ret->registerModel(SCADModels::f_math_leq, "Math");
+    ret->registerModel(SCADModels::f_math_eq, "Math");
+    ret->registerModel(SCADModels::f_math_geq, "Math");
+    ret->registerModel(SCADModels::f_math_gt, "Math");
+    ret->registerModel(SCADModels::f_math_and, "Math");
+    ret->registerModel(SCADModels::f_math_or, "Math");
+    ret->registerModel(SCADModels::f_math_not, "Math");
+    ret->registerModel(SCADModels::f_math_lookup, "Math");
+    ret->registerModel(SCADModels::f_math_search, "Math");
+    ret->registerModel(SCADModels::f_math_parent_module, "Math");
+    
+    ret->registerModel(SCADModels::f_math_is_bool, "Math");
+    ret->registerModel(SCADModels::f_math_is_string, "Math");
+    ret->registerModel(SCADModels::f_math_is_num, "Math");
+    ret->registerModel(SCADModels::f_math_is_function, "Math");
+    ret->registerModel(SCADModels::f_math_is_list, "Math");
+    ret->registerModel(SCADModels::f_math_is_undef, "Math");
+
+    ret->registerModel(SCADModels::f_math_rands, "Math");
+
+    ret->registerModel(SCADModels::f_import_dxf_dim);
+    ret->registerModel(SCADModels::f_import_dxf_cross);
     
     return ret;
 }

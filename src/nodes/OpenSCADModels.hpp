@@ -6,6 +6,7 @@
 #include <QtNodes/NodeDelegateModel>
 #include <QtNodes/NodeDelegateModelRegistry>
 #include <QtNodes/NodeData>
+#include "nodes/OpenSCADDataTypes.hpp"
 
 class BaseSCADPort {
 public:
@@ -109,36 +110,82 @@ public:
     static RegistryItemPtr f_xform_rotate_axis_angle();
     static RegistryItemPtr f_xform_rotate_quat();
     
-    // Numerics
-    static RegistryItemPtr f_math_modulus();
-    static RegistryItemPtr f_math_add();
-    static RegistryItemPtr f_math_sub();
-    static RegistryItemPtr f_math_mul();
-    static RegistryItemPtr f_math_div();
-    static RegistryItemPtr f_math_sin();
-    static RegistryItemPtr f_math_cos();
-    static RegistryItemPtr f_math_asin();
-    static RegistryItemPtr f_math_acos();
+    // Math
+#define FUNCTION_PROCESSOR_PROTOTYPE const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output
+#define FUNCTION_DECL(prefix, name)                                          \
+    static RegistryItemPtr f_##prefix##_##name();                            \
+    static void f_##prefix##_##name##_process(FUNCTION_PROCESSOR_PROTOTYPE);
 
-    // Vector3
-    static RegistryItemPtr f_vector3_dot();
-    static RegistryItemPtr f_vector3_cross();
-    static RegistryItemPtr f_vector3_scale();
-    static RegistryItemPtr f_vector3_length();
-    static RegistryItemPtr f_vector3_decompose();
-    static RegistryItemPtr f_vector3_compose();
+    FUNCTION_DECL(math, asin);
+    FUNCTION_DECL(math, sin);
+    FUNCTION_DECL(math, acos);
+    FUNCTION_DECL(math, cos);
+    FUNCTION_DECL(math, abs);
+    FUNCTION_DECL(math, atan);
+    FUNCTION_DECL(math, atan2);
+    FUNCTION_DECL(math, tan);
+    FUNCTION_DECL(math, sign);
+    FUNCTION_DECL(math, ceil);
+    FUNCTION_DECL(math, floor);
+    FUNCTION_DECL(math, round);
+    FUNCTION_DECL(math, ln);
+    FUNCTION_DECL(math, log);
+    FUNCTION_DECL(math, exp);
+    FUNCTION_DECL(math, pow);
+    FUNCTION_DECL(math, sqrt);
+    FUNCTION_DECL(math, min);
+    FUNCTION_DECL(math, max);
+    FUNCTION_DECL(math, concat);
+    FUNCTION_DECL(math, norm);
+    FUNCTION_DECL(math, len);
+    FUNCTION_DECL(math, str);
+    FUNCTION_DECL(math, chr);
+    FUNCTION_DECL(math, ord);
+    FUNCTION_DECL(math, cross);
+
+    FUNCTION_DECL(math, add);
+    FUNCTION_DECL(math, subtract);
+    FUNCTION_DECL(math, multiply);
+    FUNCTION_DECL(math, divide);
+    FUNCTION_DECL(math, modulo);
+    FUNCTION_DECL(math, exponentiate);
+    FUNCTION_DECL(math, lt);
+    FUNCTION_DECL(math, leq);
+    FUNCTION_DECL(math, eq);
+    FUNCTION_DECL(math, geq);
+    FUNCTION_DECL(math, gt);
+    FUNCTION_DECL(math, and);
+    FUNCTION_DECL(math, or);
+    FUNCTION_DECL(math, not);
+    
+    FUNCTION_DECL(math, is_bool);
+    FUNCTION_DECL(math, is_string);
+    FUNCTION_DECL(math, is_num);
+    FUNCTION_DECL(math, is_function);
+    FUNCTION_DECL(math, is_list);
+    FUNCTION_DECL(math, is_undef);
 
     // Literal Constants
-    static RegistryItemPtr f_const_true();
-    static void f_const_true_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
-    static RegistryItemPtr f_const_false();
-    static void f_const_false_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
-    static RegistryItemPtr f_const_int();
-    static void f_const_int_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
-    static RegistryItemPtr f_const_float();
-    static void f_const_float_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
-    static RegistryItemPtr f_const_string();
-    static void f_const_string_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
+    FUNCTION_DECL(const, true);
+    FUNCTION_DECL(const, false);
+    FUNCTION_DECL(const, int);
+    FUNCTION_DECL(const, float);
+    FUNCTION_DECL(const, string);
+    FUNCTION_DECL(const, undef);
+    FUNCTION_DECL(const, version);
+    FUNCTION_DECL(const, version_num);
+    FUNCTION_DECL(const, pi);
+
+    FUNCTION_DECL(math, rands);
+    FUNCTION_DECL(math, lookup);
+    FUNCTION_DECL(math, search);
+    FUNCTION_DECL(math, parent_module);
+    
+    FUNCTION_DECL(import, dxf_dim);
+    FUNCTION_DECL(import, dxf_cross);
+
+#undef FUNCTION_DECL
+#undef FUNCTION_PROCESSOR_PROTOTYPE
 
     // Outputs
     static RegistryItemPtr f_output();

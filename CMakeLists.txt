@@ -155,6 +155,7 @@ set_target_properties(OpenSCADLibInternal PROPERTIES
 add_library(svg STATIC)
 target_link_libraries(OpenSCADExe PUBLIC svg)
 target_link_libraries(OpenSCADNodes PUBLIC svg)
+target_link_libraries(OpenSCADProcessor PUBLIC svg)
 # TODO: https://github.com/openscad/openscad/issues/6369 - Update includes so we don't need this, which also prevents trivially including other parts of OpenSCAD.
 target_include_directories(svg PUBLIC
   "src"
@@ -1315,6 +1316,7 @@ set(GUI_SOURCES
   src/nodes/OpenSCADModels.cpp
   src/nodes/OpenSCADEvaluator.cpp
   src/nodes/OpenSCADSerializer.cpp
+  src/nodes/OpenSCADGraphModel.cpp
 
   src/openscad_gui.cc
   src/gui/AutoUpdater.cc

@@ -66,15 +66,19 @@ std::optional<UserModule *> LocalScope::lookup(const std::string& name) const
 void LocalScope::print(std::ostream& stream, const std::string& indent, const bool inlined) const
 {
   for (const auto& f : this->astFunctions) {
+      stream << f.second->location().filePath() << std::string(": ") << std::endl;
     f.second->print(stream, indent);
   }
   for (const auto& m : this->astModules) {
+      stream << m.second->location().filePath() << std::string(": ") << std::endl;
     m.second->print(stream, indent);
   }
   for (const auto& assignment : this->assignments) {
+      stream << assignment->location().filePath() << std::string(": ") << std::endl;
     assignment->print(stream, indent);
   }
   for (const auto& inst : this->moduleInstantiations) {
+      stream << inst->location().filePath() << std::string(": ") << std::endl;
     inst->print(stream, indent, inlined);
   }
 }

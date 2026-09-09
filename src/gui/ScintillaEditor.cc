@@ -33,7 +33,6 @@
 #include <vector>
 
 #include <QtNodes/ConnectionStyle>
-#include <QtNodes/DataFlowGraphModel>
 #include <QtNodes/DataFlowGraphicsScene>
 #include <QtNodes/GraphicsView>
 #include <QtNodes/NodeData>
@@ -41,6 +40,7 @@
 
 #include "nodes/OpenSCADModels.hpp"
 #include "nodes/OpenSCADEvaluator.hpp"
+#include "nodes/OpenSCADGraphModel.hpp"
 
 using QtNodes::ConnectionStyle;
 using QtNodes::DataFlowGraphicsScene;
@@ -153,7 +153,7 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
   setQtNodeStyle();
   qnode_registry = SCADModels::registerDataModels();
 
-  qnode_dataFlowGraphModel = std::make_shared<DataFlowGraphModel>(qnode_registry);
+  qnode_dataFlowGraphModel = std::make_shared<OpenSCADGraphModel>(qnode_registry);
   qnode_scene = new DataFlowGraphicsScene(*qnode_dataFlowGraphModel, qtab);
   qnode_view = new GraphicsView(qnode_scene);
 
@@ -163,6 +163,11 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
   qtab->addTab(qnode_view, nodeName);
 
   connect(qtab, &QTabWidget::currentChanged, [this]() {
+      // When we change from source to nodes, we need to:
+      // * Load modules and re-register/update the nodes for them.
+      // * Remove all nodes and connections and re-load them based
+      //   on the parse tree, placing them in the same places where possible.
+      
       std::string val = evaluateToSCAD(*this->qnode_dataFlowGraphModel);
       this->qsci->setText(QString::fromStdString(val));
   });

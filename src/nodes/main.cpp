@@ -5,7 +5,6 @@
 #include <QtCore/QJsonObject>
 
 #include <QtNodes/ConnectionStyle>
-#include <QtNodes/DataFlowGraphModel>
 #include <QtNodes/DataFlowGraphicsScene>
 #include <QtNodes/GraphicsView>
 #include <QtNodes/NodeData>
@@ -19,9 +18,12 @@
 
 #include <QtGui/QScreen>
 
+#include "core/Builtins.h"
+
 #include "OpenSCADModels.hpp"
 #include "OpenSCADEvaluator.hpp"
 #include "OpenSCADSerializer.hpp"
+#include "OpenSCADGraphModel.hpp"
 
 using QtNodes::ConnectionStyle;
 using QtNodes::DataFlowGraphicsScene;
@@ -57,8 +59,15 @@ int main(int argc, char *argv[])
 
     setStyle();
     std::shared_ptr<NodeDelegateModelRegistry> registry = SCADModels::registerDataModels();
-    DataFlowGraphModel dataFlowGraphModel(registry);
+    OpenSCADGraphModel dataFlowGraphModel(registry);
 
+    // Register builtins...
+    Builtins::initialize();
+
+//    const auto & builtin_modules = Builtins::instance().getModules();
+//    for (const auto mod : builtin_modules) {
+//    }
+    
     QWidget mainWidget;
 
     auto menuBar = new QMenuBar();

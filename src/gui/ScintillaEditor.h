@@ -23,7 +23,7 @@
 
 #include <QtNodes/DataFlowGraphicsScene>
 #include <QtNodes/GraphicsView>
-#include <QtNodes/DataFlowGraphModel>
+#include "nodes/OpenSCADGraphModel.hpp"
 #include <QtNodes/NodeDelegateModelRegistry>
 
 // don't need the full definition, because it confuses Qt
@@ -43,7 +43,7 @@ public:
   QTabWidget *qtab;
 
   std::shared_ptr<QtNodes::NodeDelegateModelRegistry> qnode_registry;
-  std::shared_ptr<QtNodes::DataFlowGraphModel> qnode_dataFlowGraphModel;
+  std::shared_ptr<OpenSCADGraphModel> qnode_dataFlowGraphModel;
   QtNodes::DataFlowGraphicsScene *qnode_scene;
   QtNodes::GraphicsView *qnode_view;
 
