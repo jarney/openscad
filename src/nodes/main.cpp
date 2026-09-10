@@ -79,6 +79,9 @@ int main(int argc, char *argv[])
     auto loadAction = menu->addAction("Load Scene");
     loadAction->setShortcut(QKeySequence::Open);
 
+    auto groupAction = menu->addAction("Create Group");
+    groupAction->setShortcut(QKeySequence::Close);
+
     QVBoxLayout *l = new QVBoxLayout(&mainWidget);
 
 
@@ -112,13 +115,38 @@ int main(int argc, char *argv[])
     l->setContentsMargins(0, 0, 0, 0);
     l->setSpacing(0);
 
-    QObject::connect(saveAction, &QAction::triggered, scene, [scene, &dataFlowGraphModel, &mainWidget]() {
+    QObject::connect(saveAction, &QAction::triggered, scene, [scene, &dataFlowGraphModel]() {
 	QJsonObject object = dataFlowGraphModel.save();
 	oscd_saveJson(object, "example.json");
 	evaluateToSCAD(dataFlowGraphModel);
     });
 
     QObject::connect(loadAction, &QAction::triggered, scene, &DataFlowGraphicsScene::load);
+
+    QObject::connect(groupAction, &QAction::triggered, scene, [scene, &dataFlowGraphModel]() {
+	std::vector<QtNodes::NodeGraphicsObject*> groupNodes = ((QtNodes::BasicGraphicsScene*)scene)->selectedNodes();
+
+	// We will need a few of this type.
+	// A function (input parameters, output return-value)
+	// A module (input parameters, output geometry)
+	// A scope (group of nodes with 'let' statements to hold variable context)
+	// A 'for' loop with a variable to indicate loop state and values, output geometry.
+
+	// This is effectively a "function".
+	auto arguments = std::make_unique<BaseSCADModel>("for", "Loop");
+	arguments->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "range"), "range");
+	arguments->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "index"), "index");
+	arguments->setProcessor(SCADModels::f_prim_sphere_process);
+
+	auto ret = std::make_unique<BaseSCADModel>("Return", "Return");
+	ret->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "return"), "return");
+	ret->setProcessor(SCADModels::f_prim_sphere_process);
+
+	groupNodes.push_back(scene->nodeGraphicsObject(dataFlowGraphModel.addNode(std::move(arguments))));
+	groupNodes.push_back(scene->nodeGraphicsObject(dataFlowGraphModel.addNode(std::move(ret))));
+
+	auto nodeGroup = scene->createGroup(groupNodes, QString("Some Group"));
+    });
 
     QObject::connect(scene, &DataFlowGraphicsScene::sceneLoaded, view, &GraphicsView::centerScene);
 

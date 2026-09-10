@@ -17,3 +17,13 @@
 
 * Allow ports to specify a set of types instead of a single one
   so we can accept more than one type of data for some functions.
+
+* Control flow stuff:
+  * Create 'group' nodes for 'for', 'let/scope', 'module', 'function'.
+  * Group should have a 'title/name'
+  * Module and Function groups should have a text widget allowing the name to be specified.
+  * Module and function groups should not allow connections outside of them
+    and creating them should create a corresponding function or module node.
+  * For nodes should have 'input' and 'output' nodes which are the only things allowed to
+    have connections outside the group.
+
