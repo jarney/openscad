@@ -134,7 +134,11 @@ else()
   )
 endif()
 
-add_executable(OpenSCADNodes src/nodes/main.cpp)
+set(NODE_MAIN_SOURCES
+    src/nodes/main.cpp
+    src/nodes/main_breadcrumbs.cpp)
+
+add_executable(OpenSCADNodes ${NODE_MAIN_SOURCES})
 set_target_properties(OpenSCADNodes PROPERTIES
   OUTPUT_NAME "nodes"
 )
@@ -1317,6 +1321,7 @@ set(GUI_SOURCES
   src/nodes/OpenSCADEvaluator.cpp
   src/nodes/OpenSCADSerializer.cpp
   src/nodes/OpenSCADGraphModel.cpp
+  src/nodes/JBreadcrumbs.cpp
 
   src/openscad_gui.cc
   src/gui/AutoUpdater.cc

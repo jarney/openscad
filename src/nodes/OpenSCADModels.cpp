@@ -332,6 +332,7 @@ SCADModels::f_flow_if()
     model->setProcessor(f_flow_if_process);
     return model;
 }
+
 void
 SCADModels::f_flow_if_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
@@ -346,6 +347,30 @@ SCADModels::f_flow_if_process(const BaseSCADModel & model, const PortFunctionDat
     output["Geometry"] = out;
 }
 
+SCADModels::RegistryItemPtr
+SCADModels::f_flow_for()
+{
+    auto model = std::make_unique<BaseSCADModel>("for", "Loop");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "start"), "start");
+    model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "end"), "end");
+    model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(SCADModels::f_flow_for_process);
+    return model;
+}
+void
+SCADModels::f_flow_for_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::string out = std::string();
+    out += std::string("for (i = ");
+    out += FIND(input, "start", "0");
+    out += std::string(";");
+    out += std::string("i < ");
+    out += FIND(input, "end", "10");
+    out += std::string("; i++) {");
+    out += std::string("// the sub-flow goes here...");
+    out += std::string("}\n");
+    output["Geometry"] = out;
+}
 
 
 SCADModels::RegistryItemPtr
@@ -955,7 +980,7 @@ SCADModels::registerDataModels()
     ret->registerModel(SCADModels::f_output, "Output");
 
     // Flow control
-    //ret->registerModel(SCADModels::f_flow_for);
+    ret->registerModel(SCADModels::f_flow_for);
     ret->registerModel(SCADModels::f_flow_if, "Flow Control");
     //ret->registerModel(SCADModels::f_flow_let);
     //ret->registerModel(SCADModels::f_flow_group);

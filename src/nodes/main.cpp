@@ -53,21 +53,22 @@ static void setStyle()
   )");
 }
 
-int main(int argc, char *argv[])
+int main_nodes(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
     setStyle();
     std::shared_ptr<NodeDelegateModelRegistry> registry = SCADModels::registerDataModels();
+    std::vector<OpenSCADGraphModel> models;
+
+    // TODO: We need more than one model
+    // to handle scope, if, for, ...
+//    models.push_back(OpenSCADGraphModel(registry));
     OpenSCADGraphModel dataFlowGraphModel(registry);
 
     // Register builtins...
     Builtins::initialize();
 
-//    const auto & builtin_modules = Builtins::instance().getModules();
-//    for (const auto mod : builtin_modules) {
-//    }
-    
     QWidget mainWidget;
 
     auto menuBar = new QMenuBar();
@@ -97,6 +98,8 @@ int main(int argc, char *argv[])
     auto qtab = new QTabWidget(&mainWidget);
     auto qtabLayout = new QVBoxLayout(qtab);
     l->addWidget(qtab);
+
+//    JBreadcrumbs *jw = new JBreadcrumbs();
     
     QString nodeName("Nodes");
     auto view = new GraphicsView(scene);
