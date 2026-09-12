@@ -1,8 +1,10 @@
 #include "JBreadcrumbs.hpp"
 
-JBreadcrumbs::JBreadcrumbs(QWidget *parent)
+JBreadcrumbs::JBreadcrumbs()
 {
     layout = std::make_unique<QVBoxLayout>(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
 
     scroll_area = new QScrollArea();
     scroll_area->setWidgetResizable(true);
@@ -15,6 +17,8 @@ JBreadcrumbs::JBreadcrumbs(QWidget *parent)
 
     hbox_layout = new QHBoxLayout(inside);
     hbox_layout->setAlignment(Qt::AlignLeft);
+    hbox_layout->setContentsMargins(0, 0, 0, 0);
+    hbox_layout->setSpacing(0);
 }
 
 void

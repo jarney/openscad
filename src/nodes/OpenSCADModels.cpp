@@ -1,9 +1,12 @@
 #include "OpenSCADModels.hpp"
+#include <QtWidgets/QPushButton>
 
 BaseSCADModel::BaseSCADModel(std::string name, std::string caption)
     : _name(name)
     , _caption(caption)
     , _processor(default_processor)
+    , _widgetFactory(default_widget_factory)
+    , _widget(nullptr)
 {}
 
 QString
@@ -13,6 +16,16 @@ BaseSCADModel::name() const
 QString
 BaseSCADModel::caption() const
 { return QString::fromStdString(_caption); }
+
+
+QWidget *
+BaseSCADModel::embeddedWidget()
+{
+    if (!_widget) {
+	_widget = _widgetFactory();
+    }
+    return _widget;
+}
 
 //void
 //BaseSCADModel::compute()
@@ -108,6 +121,11 @@ BaseSCADModel::setProcessor(NodeProcessor processor)
 }
 
 void
+BaseSCADModel::setWidgetFactory(WidgetFactory widgetFactory)
+{
+    _widgetFactory = widgetFactory;
+}
+void
 BaseSCADModel::process(const PortFunctionData & input, PortFunctionData & output) const
 {
     _processor(*this, input, output);
@@ -118,6 +136,12 @@ BaseSCADModel::default_processor(const BaseSCADModel & model, const PortFunction
 {
 }
 
+QWidget*
+BaseSCADModel::default_widget_factory(void)
+{
+    return nullptr;
+}
+    
 /*********************************************/
 BaseSCADPort::BaseSCADPort(QtNodes::NodeDataType type, QString caption)
     : _type(type)
@@ -350,13 +374,30 @@ SCADModels::f_flow_if_process(const BaseSCADModel & model, const PortFunctionDat
 SCADModels::RegistryItemPtr
 SCADModels::f_flow_for()
 {
+    fprintf(stderr, "For called\n");
     auto model = std::make_unique<BaseSCADModel>("for", "Loop");
     model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "start"), "start");
     model->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "end"), "end");
     model->addOutputPort(std::make_unique<BaseSCADPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(SCADModels::f_flow_for_process);
+    model->setWidgetFactory(SCADModels::f_flow_for_widget);
     return model;
 }
+
+QWidget*
+SCADModels::f_flow_for_widget()
+{
+    fprintf(stderr, "Push button for edit of for content\n");
+    QPushButton *button = new QPushButton();
+    button->setText("Edit");
+    QObject::connect(button, &QPushButton::clicked, []() {
+	fprintf(stderr, "Edit button pushed\n");
+    });
+    
+    return button;
+}
+
+
 void
 SCADModels::f_flow_for_process(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
 {

@@ -24,6 +24,7 @@
 #include "OpenSCADEvaluator.hpp"
 #include "OpenSCADSerializer.hpp"
 #include "OpenSCADGraphModel.hpp"
+#include "JBreadcrumbs.hpp"
 
 using QtNodes::ConnectionStyle;
 using QtNodes::DataFlowGraphicsScene;
@@ -53,7 +54,7 @@ static void setStyle()
   )");
 }
 
-int main_nodes(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
@@ -99,11 +100,12 @@ int main_nodes(int argc, char *argv[])
     auto qtabLayout = new QVBoxLayout(qtab);
     l->addWidget(qtab);
 
-//    JBreadcrumbs *jw = new JBreadcrumbs();
     
     QString nodeName("Nodes");
+    JBreadcrumbs *jw = new JBreadcrumbs();
     auto view = new GraphicsView(scene);
-    qtab->addTab(view, nodeName);
+    jw->addPage(view);
+    qtab->addTab(jw, nodeName);
 
     auto qsci = new QsciScintilla(qtab);
     QString sourceName("Source");

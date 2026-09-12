@@ -32,6 +32,7 @@ typedef std::map<std::string, std::string> PortFunctionData;
 class BaseSCADModel;
 
 typedef std::function<void(const BaseSCADModel & model, const PortFunctionData &, PortFunctionData & )> NodeProcessor;
+typedef std::function<QWidget*(void)> WidgetFactory;
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
@@ -49,21 +50,23 @@ public:
 
     void setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex portIndex) override;
 
-    QWidget *embeddedWidget() override { return nullptr; }
-
     QString name() const override;
     QString caption() const override;
-//    void compute() override;
+
+    QWidget *embeddedWidget() override;
+
     void addInputPort(std::unique_ptr<BaseSCADPort> inputPort, std::string inputPortName);
     void addOutputPort(std::unique_ptr<BaseSCADPort> outputPort, std::string outputPortName);
     std::string inputPortName(QtNodes::PortIndex portIndex) const;
     std::string outputPortName(QtNodes::PortIndex portIndex) const;
     
     void setProcessor(NodeProcessor processor);
+    void setWidgetFactory(WidgetFactory widgetFactory);
 
     void process(const PortFunctionData & input, PortFunctionData & output) const;
 
     static void default_processor(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
+    static QWidget *default_widget_factory(void);
 
 protected:
     std::string _name;
@@ -73,6 +76,8 @@ protected:
     std::map<QtNodes::PortIndex, std::string> _inputPortNames;
     std::map<QtNodes::PortIndex, std::string> _outputPortNames;
     NodeProcessor _processor;
+    WidgetFactory _widgetFactory;
+    QWidget *_widget;
     
 //    std::weak_ptr<DecimalData> _number1;
 //    std::weak_ptr<DecimalData> _number2;
@@ -125,6 +130,8 @@ public:
 
     // Flow control
     _OPENSCAD_NODE_DECL(flow_for);
+    static QWidget* f_flow_for_widget(void);
+    
     _OPENSCAD_NODE_DECL(flow_if);
     _OPENSCAD_NODE_DECL(flow_let);
     _OPENSCAD_NODE_DECL(flow_group);

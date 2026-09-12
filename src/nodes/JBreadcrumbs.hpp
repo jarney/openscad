@@ -5,7 +5,7 @@
 
 class JBreadcrumbs : public QWidget {
 public:
-    JBreadcrumbs(QWidget *parent);
+    JBreadcrumbs();
     ~JBreadcrumbs();
     void addPage(QWidget * crumb);
     void removePage(int index);
