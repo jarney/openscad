@@ -45,8 +45,20 @@ NodeProgram::GraphId
 NodeProgram::newGraph()
 {
     OpenSCADGraphModel *newGraphObj = new OpenSCADGraphModel(_registry);
-    graphs[maxGraphId] = newGraphObj;
-    return maxGraphId++;
+    GraphId newId = std::to_string(maxGraphId++);
+    graphs[newId] = newGraphObj;
+    return newId;
+}
+
+OpenSCADGraphModel *
+NodeProgram::newGraph(NodeProgram::GraphId aId)
+{
+    if (graphs.find(aId) != graphs.end()) {
+	return nullptr;
+    }
+    OpenSCADGraphModel *newGraphObj = new OpenSCADGraphModel(_registry);
+    graphs[aId] = newGraphObj;
+    return newGraphObj;
 }
 
 void

@@ -18,7 +18,7 @@
  */
 class NodeProgram {
 public:
-    typedef int GraphId;
+    typedef std::string GraphId;
 
     NodeProgram(std::shared_ptr<QtNodes::NodeDelegateModelRegistry> _registry);
     ~NodeProgram();
@@ -34,9 +34,18 @@ public:
 
     /**
      * This creates a new graph and returns
-     * the id of it.
+     * the id of it.  It is responsible for
+     * allocating the node ID.
      */
     GraphId newGraph();
+
+    /**
+     * This creates a new graph with the
+     * given ID.  If this returns null
+     * then the given ID already existed.
+     */
+    OpenSCADGraphModel *newGraph(GraphId id);
+    
     /**
      * This deletes the graph with the given id.
      */

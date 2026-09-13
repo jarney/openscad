@@ -1323,6 +1323,7 @@ set(GUI_SOURCES
   src/nodes/OpenSCADGraphModel.cpp
   src/nodes/JBreadcrumbs.cpp
   src/nodes/NodeProgram.cpp
+  src/nodes/NodeProgramSerializer.cpp
 
   src/openscad_gui.cc
   src/gui/AutoUpdater.cc
@@ -1609,6 +1610,7 @@ file(GLOB_RECURSE TEST_SOURCES
   "src/utils/*_test.cc"
   "src/core/*_test.cc"
   "src/io/*_test.cc"
+  "src/nodes/*_test.cpp"
 )
 file(GLOB_RECURSE GUI_TEST_SOURCES
   "src/gui/*_test.cc"
@@ -1831,7 +1833,7 @@ if(ENABLE_TESTS)
     endif()
     target_link_libraries(OpenSCADUnitTests PRIVATE Catch2::Catch2WithMain OpenSCADLibInternal svg)
     target_compile_definitions(OpenSCADUnitTests PRIVATE
-      OPENSCAD_TEST_DATA_DIR="${CMAKE_SOURCE_DIR}/tests/data")
+      OPENSCAD_TEST_DATA_DIR="${CMAKE_SOURCE_DIR}/tests/data" NODE_EDITOR_SHARED)
     include(CTest)
     include(Catch)
     catch_discover_tests(OpenSCADUnitTests ADD_TAGS_AS_LABELS)
