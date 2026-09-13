@@ -54,6 +54,15 @@ static void setStyle()
   )");
 }
 
+/*
+  void
+Receiver::somethingWasSaid(QtNodes::NodeId nodeId, std::string message)
+{
+    fprintf(stderr, "At top level, we got the message %d %s\n", nodeId, message.c_str());
+}
+*/
+    
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -67,6 +76,19 @@ int main(int argc, char *argv[])
 //    models.push_back(OpenSCADGraphModel(registry));
     OpenSCADGraphModel dataFlowGraphModel(registry);
 
+    Receiver receiver;
+    
+    QObject::connect(&dataFlowGraphModel,
+		     &DataFlowGraphModel::nodeCreated, [&dataFlowGraphModel, &receiver](QtNodes::NodeId const nodeId) {
+			 fprintf(stderr, "Node created %d\n", nodeId);
+			 BaseSCADModel *model = dataFlowGraphModel.delegateModel<BaseSCADModel>(nodeId);
+			 model->setReceiver(&receiver);
+		     });
+
+    QObject::connect(&receiver, &Receiver::somethingWasSaid, [](QtNodes::NodeId nodeId, std::string message) {
+	fprintf(stderr, "At top level, we got the message %d %s\n", nodeId, message.c_str());
+    });
+    
     // Register builtins...
     Builtins::initialize();
 
@@ -99,7 +121,6 @@ int main(int argc, char *argv[])
     auto qtab = new QTabWidget(&mainWidget);
     auto qtabLayout = new QVBoxLayout(qtab);
     l->addWidget(qtab);
-
     
     QString nodeName("Nodes");
     JBreadcrumbs *jw = new JBreadcrumbs();

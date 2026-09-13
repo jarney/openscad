@@ -6,7 +6,7 @@ OpenSCADGraphModel::OpenSCADGraphModel(std::shared_ptr<QtNodes::NodeDelegateMode
 
 OpenSCADGraphModel::~OpenSCADGraphModel()
 {}
-    
+
 bool
 OpenSCADGraphModel::dataTypeConnectionAllowed(const QtNodes::NodeDataType & outType, const QtNodes::NodeDataType & inType) const
 {

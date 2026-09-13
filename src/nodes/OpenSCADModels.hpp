@@ -29,10 +29,19 @@ private:
 
 typedef std::map<std::string, std::string> PortFunctionData;
 
+class Receiver : public QObject {
+    Q_OBJECT
+public:
+//    Receiver();
+//    ~Receiver();
+Q_SIGNALS:
+    void somethingWasSaid(QtNodes::NodeId nodeId, std::string message);
+};
+
 class BaseSCADModel;
 
 typedef std::function<void(const BaseSCADModel & model, const PortFunctionData &, PortFunctionData & )> NodeProcessor;
-typedef std::function<QWidget*(void)> WidgetFactory;
+typedef std::function<QWidget*(BaseSCADModel *)> WidgetFactory;
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
@@ -66,8 +75,13 @@ public:
     void process(const PortFunctionData & input, PortFunctionData & output) const;
 
     static void default_processor(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
-    static QWidget *default_widget_factory(void);
+    static QWidget *default_widget_factory(BaseSCADModel *model);
 
+    void setReceiver(Receiver *receiver);
+    Receiver *getReceiver() const;
+
+    void somethingWasSaid(QtNodes::NodeId nodeId, std::string message);
+    
 protected:
     std::string _name;
     std::string _caption;
@@ -78,6 +92,7 @@ protected:
     NodeProcessor _processor;
     WidgetFactory _widgetFactory;
     QWidget *_widget;
+    Receiver *_receiver;
     
 //    std::weak_ptr<DecimalData> _number1;
 //    std::weak_ptr<DecimalData> _number2;
@@ -130,7 +145,7 @@ public:
 
     // Flow control
     _OPENSCAD_NODE_DECL(flow_for);
-    static QWidget* f_flow_for_widget(void);
+    static QWidget* f_flow_for_widget(BaseSCADModel *model);
     
     _OPENSCAD_NODE_DECL(flow_if);
     _OPENSCAD_NODE_DECL(flow_let);

@@ -7,6 +7,7 @@ BaseSCADModel::BaseSCADModel(std::string name, std::string caption)
     , _processor(default_processor)
     , _widgetFactory(default_widget_factory)
     , _widget(nullptr)
+    , _receiver(nullptr)
 {}
 
 QString
@@ -22,7 +23,7 @@ QWidget *
 BaseSCADModel::embeddedWidget()
 {
     if (!_widget) {
-	_widget = _widgetFactory();
+	_widget = _widgetFactory(this);
     }
     return _widget;
 }
@@ -137,11 +138,31 @@ BaseSCADModel::default_processor(const BaseSCADModel & model, const PortFunction
 }
 
 QWidget*
-BaseSCADModel::default_widget_factory(void)
+BaseSCADModel::default_widget_factory(BaseSCADModel *)
 {
     return nullptr;
 }
-    
+
+void
+BaseSCADModel::setReceiver(Receiver *receiver)
+{
+    _receiver = receiver;
+}
+Receiver *
+BaseSCADModel::getReceiver() const
+{
+    return _receiver;
+}
+
+void
+BaseSCADModel::somethingWasSaid(QtNodes::NodeId nodeId, std::string message)
+{
+    fprintf(stderr, "called somethingWasSaid %d %s\n", nodeId, message.c_str());
+    if (_receiver) {
+	Q_EMIT _receiver->somethingWasSaid(nodeId, message);
+    }
+}
+
 /*********************************************/
 BaseSCADPort::BaseSCADPort(QtNodes::NodeDataType type, QString caption)
     : _type(type)
@@ -385,13 +406,14 @@ SCADModels::f_flow_for()
 }
 
 QWidget*
-SCADModels::f_flow_for_widget()
+SCADModels::f_flow_for_widget(BaseSCADModel *model)
 {
     fprintf(stderr, "Push button for edit of for content\n");
     QPushButton *button = new QPushButton();
     button->setText("Edit");
-    QObject::connect(button, &QPushButton::clicked, []() {
+    QObject::connect(button, &QPushButton::clicked, [model]() {
 	fprintf(stderr, "Edit button pushed\n");
+	model->somethingWasSaid(19, "Hello World");
     });
     
     return button;
