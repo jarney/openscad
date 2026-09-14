@@ -15,9 +15,14 @@
 #include <utility>
 #include <vector>
 
+class NodeDelegateFactory {
+    virtual std::string getType() const = 0;
+    virtual std::string getCategory() const = 0;
+    virtual std::unique_ptr<QtNodes::NodeDelegateModel> create() const = 0;
+};
+
 /// Class uses map for storing models (name, model)
-class NODE_EDITOR_PUBLIC NodeProgramModelRegistry
-{
+class NodeProgramModelRegistry {
 public:
     using RegistryItemPtr = std::unique_ptr<QtNodes::NodeDelegateModel>;
     using RegistryItemCreator = std::function<RegistryItemPtr()>;
@@ -38,6 +43,21 @@ public:
     NodeProgramModelRegistry &operator=(NodeProgramModelRegistry &&) = default;
 
 public:
+
+#if 0
+    // We really need to commit to this because it's a pretty big change.
+    // This allows us to separate model types from model instances
+    // so it affects the way we register all of the node types.
+    void registerModel(NodeDelegateFactory *factory) {
+        QString const name = factory->getType();
+        if (!_registeredItemCreators.count(name)) {
+            _registeredItemCreators[name] = std::move(factory);
+            _categories.insert(QString::fromStdString(factory->getCategory()));
+            _registeredModelsCategory[name] = category;
+        }	
+    }
+#endif
+
     template<typename ModelType>
     void registerModel(RegistryItemCreator creator, QString const &category = "Nodes")
     {
@@ -65,34 +85,6 @@ public:
       registerModel<ModelType>(std::forward<ModelCreator>(creator), category);
     }
 
-
-#if 0
-  template<typename ModelType>
-  void
-  registerModel(RegistryItemCreator creator,
-                QString const&      category = "Nodes")
-  {
-    registerModel<ModelType>(std::move(creator), category);
-  }
-
-
-  template <typename ModelCreator>
-  void
-  registerModel(QString const& category, ModelCreator&& creator)
-  {
-    registerModel(std::forward<ModelCreator>(creator), category);
-  }
-
-
-  void
-  registerTypeConverter(TypeConverterId const& id,
-                        TypeConverter          typeConverter)
-  {
-    _registeredTypeConverters[id] = std::move(typeConverter);
-  }
-
-#endif
-
     std::unique_ptr<QtNodes::NodeDelegateModel> create(QString const &modelName);
 
     RegisteredModelCreatorsMap const &registeredModelCreators() const;
@@ -101,22 +93,12 @@ public:
 
     CategoriesSet const &categories() const;
 
-#if 0
-  TypeConverter
-  getTypeConverter(NodeDataType const& d1,
-                   NodeDataType const& d2) const;
-#endif
-
 private:
     RegisteredModelsCategoryMap _registeredModelsCategory;
 
     CategoriesSet _categories;
 
     RegisteredModelCreatorsMap _registeredItemCreators;
-
-#if 0
-  RegisteredTypeConvertersMap _registeredTypeConverters;
-#endif
 
 private:
     // If the registered ModelType class has the static member method
