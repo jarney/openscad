@@ -1,3 +1,5 @@
+#pragma once
+
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QScrollArea>

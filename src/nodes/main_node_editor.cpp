@@ -17,6 +17,7 @@
 #include <QtWidgets/QTabWidget>
 
 #include <QtGui/QScreen>
+#include <fstream>
 
 #include "core/Builtins.h"
 
@@ -25,6 +26,8 @@
 #include "OpenSCADSerializer.hpp"
 #include "OpenSCADGraphModel.hpp"
 #include "JBreadcrumbs.hpp"
+#include "NodeProgram.hpp"
+#include "NodeProgramSerializer.hpp"
 
 using QtNodes::ConnectionStyle;
 using QtNodes::DataFlowGraphicsScene;
@@ -61,19 +64,63 @@ Receiver::somethingWasSaid(QtNodes::NodeId nodeId, std::string message)
     fprintf(stderr, "At top level, we got the message %d %s\n", nodeId, message.c_str());
 }
 */
-    
 
-int main_old(int argc, char *argv[])
+class JNodeProgramEditor : public QWidget {
+public:
+    JNodeProgramEditor(NodeProgram & program);
+    ~JNodeProgramEditor();
+
+private:
+    NodeProgram &_program;
+    std::unique_ptr<QVBoxLayout> layout;
+    JBreadcrumbs *_jbreadcrumbs;
+};
+
+JNodeProgramEditor::JNodeProgramEditor(NodeProgram & program)
+    : _program(program)
+{
+    layout = std::make_unique<QVBoxLayout>(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+
+    _jbreadcrumbs = new JBreadcrumbs();
+    layout->addWidget(_jbreadcrumbs);
+    
+    std::vector<NodeProgram::GraphId> graphs = program.getGraphs();
+    if (graphs.size() > 0) {
+	OpenSCADGraphModel *graph = program.getGraph(graphs.at(0));
+	auto scene = new DataFlowGraphicsScene(*graph);
+	auto view = new GraphicsView(scene);
+	view->centerScene();
+	_jbreadcrumbs->addPage(view);
+    }
+
+}
+
+JNodeProgramEditor::~JNodeProgramEditor()
+{}
+
+
+
+int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
     setStyle();
     std::shared_ptr<NodeDelegateModelRegistry> registry = SCADModels::registerDataModels();
-    std::vector<OpenSCADGraphModel> models;
 
+    NodeProgram program(registry);
+    
+    if (QFileInfo::exists("example.json")) {
+	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
+	std::ifstream exampleInputFile("example.json");
+	serializer.read(program, exampleInputFile);
+    }
+    
     // TODO: We need more than one model
     // to handle scope, if, for, ...
 //    models.push_back(OpenSCADGraphModel(registry));
+#if 0
     OpenSCADGraphModel dataFlowGraphModel(registry);
 
     Receiver receiver;
@@ -88,6 +135,7 @@ int main_old(int argc, char *argv[])
     QObject::connect(&receiver, &Receiver::somethingWasSaid, [](QtNodes::NodeId nodeId, std::string message) {
 	fprintf(stderr, "At top level, we got the message %d %s\n", nodeId, message.c_str());
     });
+#endif
     
     // Register builtins...
     Builtins::initialize();
@@ -108,45 +156,57 @@ int main_old(int argc, char *argv[])
 
     QVBoxLayout *l = new QVBoxLayout(&mainWidget);
 
-
+    fprintf(stderr, "did main layout\n");
+#if 0
     if (QFileInfo::exists("example.json")) {
 	QJsonObject object = oscd_loadJson("example.json");
 	dataFlowGraphModel.load(object);
     }
-
+#endif
     
     l->addWidget(menuBar);
-    auto scene = new DataFlowGraphicsScene(dataFlowGraphModel, &mainWidget);
 
     auto qtab = new QTabWidget(&mainWidget);
     auto qtabLayout = new QVBoxLayout(qtab);
     l->addWidget(qtab);
     
     QString nodeName("Nodes");
+    fprintf(stderr, "Constructing editor\n");
+    JNodeProgramEditor *jw = new JNodeProgramEditor(program);
+    fprintf(stderr, "Created editor widget\n");
+#if 0
     JBreadcrumbs *jw = new JBreadcrumbs();
+    auto scene = new DataFlowGraphicsScene(dataFlowGraphModel, &mainWidget);
     auto view = new GraphicsView(scene);
     jw->addPage(view);
+#endif
     qtab->addTab(jw, nodeName);
+    fprintf(stderr, "Added tab\n");
 
     auto qsci = new QsciScintilla(qtab);
     QString sourceName("Source");
     qtab->addTab(qsci, sourceName);
 
+#if 0
     QObject::connect(qtab, &QTabWidget::currentChanged, [&dataFlowGraphModel, &qsci]() {
 	std::string val = evaluateToSCAD(dataFlowGraphModel);
 	qsci->setText(QString::fromStdString(val));
     });
+#endif
     
     //l->addWidget(view);
     l->setContentsMargins(0, 0, 0, 0);
     l->setSpacing(0);
 
+#if 0
     QObject::connect(saveAction, &QAction::triggered, scene, [scene, &dataFlowGraphModel]() {
 	QJsonObject object = dataFlowGraphModel.save();
 	oscd_saveJson(object, "example.json");
 	evaluateToSCAD(dataFlowGraphModel);
     });
+#endif
 
+#if 0
     QObject::connect(loadAction, &QAction::triggered, scene, &DataFlowGraphicsScene::load);
 
     QObject::connect(groupAction, &QAction::triggered, scene, [scene, &dataFlowGraphModel]() {
@@ -173,7 +233,6 @@ int main_old(int argc, char *argv[])
 
 	auto nodeGroup = scene->createGroup(groupNodes, QString("Some Group"));
     });
-
     QObject::connect(scene, &DataFlowGraphicsScene::sceneLoaded, view, &GraphicsView::centerScene);
 
     QObject::connect(scene, &DataFlowGraphicsScene::modified, &mainWidget, [&mainWidget]() {
@@ -184,7 +243,9 @@ int main_old(int argc, char *argv[])
         auto loadGroupAction = menu->addAction("Load Group...");
         QObject::connect(loadGroupAction, &QAction::triggered, [scene] { scene->loadGroupFile(); });
     }
-
+#endif
+    fprintf(stderr, "Going to run the window\n");
+    
     mainWidget.setWindowTitle("[*]Data Flow: simplest calculator");
     mainWidget.resize(800, 600);
     // Center window.

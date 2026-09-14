@@ -1,3 +1,5 @@
+#pragma once
+
 #include "OpenSCADGraphModel.hpp"
 #include <QtNodes/NodeDelegateModelRegistry>
 #include <optional>

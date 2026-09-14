@@ -136,7 +136,9 @@ endif()
 
 set(NODE_MAIN_SOURCES
     src/nodes/main.cpp
-    src/nodes/main_breadcrumbs.cpp)
+    src/nodes/main_breadcrumbs.cpp
+    src/nodes/main_node_editor.cpp
+    )
 
 add_executable(OpenSCADNodes ${NODE_MAIN_SOURCES})
 set_target_properties(OpenSCADNodes PROPERTIES
