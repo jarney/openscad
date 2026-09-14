@@ -1324,6 +1324,7 @@ set(GUI_SOURCES
   src/nodes/OpenSCADSerializer.cpp
   src/nodes/OpenSCADGraphModel.cpp
   src/nodes/JBreadcrumbs.cpp
+  src/nodes/JNodeProgramEditor.cpp
   src/nodes/NodeProgram.cpp
   src/nodes/NodeProgramSerializer.cpp
 

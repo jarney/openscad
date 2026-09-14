@@ -39,6 +39,7 @@ Q_SIGNALS:
 };
 
 class BaseSCADModel;
+class JNodeProgramEditor;
 
 typedef std::function<void(const BaseSCADModel & model, const PortFunctionData &, PortFunctionData & )> NodeProcessor;
 typedef std::function<QWidget*(BaseSCADModel *)> WidgetFactory;
@@ -77,11 +78,11 @@ public:
     static void default_processor(const BaseSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
     static QWidget *default_widget_factory(BaseSCADModel *model);
 
-    void setReceiver(Receiver *receiver);
-    Receiver *getReceiver() const;
-
-    void somethingWasSaid(QtNodes::NodeId nodeId, std::string message);
+    void setEditor(JNodeProgramEditor *receiver);
+    JNodeProgramEditor *getEditor() const;
     
+    void editGraph();
+
 protected:
     std::string _name;
     std::string _caption;
@@ -92,11 +93,7 @@ protected:
     NodeProcessor _processor;
     WidgetFactory _widgetFactory;
     QWidget *_widget;
-    Receiver *_receiver;
-    
-//    std::weak_ptr<DecimalData> _number1;
-//    std::weak_ptr<DecimalData> _number2;
-//    std::shared_ptr<DecimalData> _result;
+    JNodeProgramEditor *_editor;
 };
 
 class SCADModels {

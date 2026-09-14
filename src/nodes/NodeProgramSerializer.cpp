@@ -37,6 +37,7 @@ NodeProgramSerializerJSON::write(const NodeProgram &program, std::ostream & outp
 void
 NodeProgramSerializerJSON::read(NodeProgram & program, std::istream & input_stream) const
 {
+    program.clear();
     std::string json_string(std::istreambuf_iterator<char>(input_stream), {});
     QJsonDocument document = QJsonDocument().fromJson(QByteArray::fromStdString(json_string));
     QJsonObject document_object = document.object();

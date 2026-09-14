@@ -1,5 +1,6 @@
 #include "OpenSCADModels.hpp"
 #include <QtWidgets/QPushButton>
+#include "JNodeProgramEditor.hpp"
 
 BaseSCADModel::BaseSCADModel(std::string name, std::string caption)
     : _name(name)
@@ -7,7 +8,7 @@ BaseSCADModel::BaseSCADModel(std::string name, std::string caption)
     , _processor(default_processor)
     , _widgetFactory(default_widget_factory)
     , _widget(nullptr)
-    , _receiver(nullptr)
+    , _editor(nullptr)
 {}
 
 QString
@@ -27,10 +28,6 @@ BaseSCADModel::embeddedWidget()
     }
     return _widget;
 }
-
-//void
-//BaseSCADModel::compute()
-//{}
 
 unsigned int BaseSCADModel::nPorts(QtNodes::PortType portType) const
 {
@@ -144,22 +141,22 @@ BaseSCADModel::default_widget_factory(BaseSCADModel *)
 }
 
 void
-BaseSCADModel::setReceiver(Receiver *receiver)
+BaseSCADModel::setEditor(JNodeProgramEditor *editor)
 {
-    _receiver = receiver;
+    _editor = editor;
 }
-Receiver *
-BaseSCADModel::getReceiver() const
+
+JNodeProgramEditor *
+BaseSCADModel::getEditor() const
 {
-    return _receiver;
+    return _editor;
 }
 
 void
-BaseSCADModel::somethingWasSaid(QtNodes::NodeId nodeId, std::string message)
+BaseSCADModel::editGraph()
 {
-    fprintf(stderr, "called somethingWasSaid %d %s\n", nodeId, message.c_str());
-    if (_receiver) {
-	Q_EMIT _receiver->somethingWasSaid(nodeId, message);
+    if (_editor) {
+	_editor->editGraph("second-flow");
     }
 }
 
@@ -413,7 +410,7 @@ SCADModels::f_flow_for_widget(BaseSCADModel *model)
     button->setText("Edit");
     QObject::connect(button, &QPushButton::clicked, [model]() {
 	fprintf(stderr, "Edit button pushed\n");
-	model->somethingWasSaid(19, "Hello World");
+	model->editGraph();
     });
     
     return button;

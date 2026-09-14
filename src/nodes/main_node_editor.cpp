@@ -26,6 +26,7 @@
 #include "OpenSCADSerializer.hpp"
 #include "OpenSCADGraphModel.hpp"
 #include "JBreadcrumbs.hpp"
+#include "JNodeProgramEditor.hpp"
 #include "NodeProgram.hpp"
 #include "NodeProgramSerializer.hpp"
 
@@ -57,58 +58,13 @@ static void setStyle()
   )");
 }
 
-/*
-  void
-Receiver::somethingWasSaid(QtNodes::NodeId nodeId, std::string message)
-{
-    fprintf(stderr, "At top level, we got the message %d %s\n", nodeId, message.c_str());
-}
-*/
-
-class JNodeProgramEditor : public QWidget {
-public:
-    JNodeProgramEditor(NodeProgram & program);
-    ~JNodeProgramEditor();
-
-private:
-    NodeProgram &_program;
-    std::unique_ptr<QVBoxLayout> layout;
-    JBreadcrumbs *_jbreadcrumbs;
-};
-
-JNodeProgramEditor::JNodeProgramEditor(NodeProgram & program)
-    : _program(program)
-{
-    layout = std::make_unique<QVBoxLayout>(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
-
-    _jbreadcrumbs = new JBreadcrumbs();
-    layout->addWidget(_jbreadcrumbs);
-    
-    std::vector<NodeProgram::GraphId> graphs = program.getGraphs();
-    if (graphs.size() > 0) {
-	OpenSCADGraphModel *graph = program.getGraph(graphs.at(0));
-	auto scene = new DataFlowGraphicsScene(*graph);
-	auto view = new GraphicsView(scene);
-	view->centerScene();
-	_jbreadcrumbs->addPage(view);
-    }
-
-}
-
-JNodeProgramEditor::~JNodeProgramEditor()
-{}
-
-
-
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
     setStyle();
     std::shared_ptr<NodeDelegateModelRegistry> registry = SCADModels::registerDataModels();
-
+    
     NodeProgram program(registry);
     
     if (QFileInfo::exists("example.json")) {
@@ -116,10 +72,7 @@ int main(int argc, char *argv[])
 	std::ifstream exampleInputFile("example.json");
 	serializer.read(program, exampleInputFile);
     }
-    
-    // TODO: We need more than one model
-    // to handle scope, if, for, ...
-//    models.push_back(OpenSCADGraphModel(registry));
+
 #if 0
     OpenSCADGraphModel dataFlowGraphModel(registry);
 
@@ -155,60 +108,47 @@ int main(int argc, char *argv[])
     groupAction->setShortcut(QKeySequence::Close);
 
     QVBoxLayout *l = new QVBoxLayout(&mainWidget);
-
-    fprintf(stderr, "did main layout\n");
-#if 0
-    if (QFileInfo::exists("example.json")) {
-	QJsonObject object = oscd_loadJson("example.json");
-	dataFlowGraphModel.load(object);
-    }
-#endif
-    
+    l->setContentsMargins(0, 0, 0, 0);
+    l->setSpacing(0);
     l->addWidget(menuBar);
 
     auto qtab = new QTabWidget(&mainWidget);
     auto qtabLayout = new QVBoxLayout(qtab);
     l->addWidget(qtab);
     
-    QString nodeName("Nodes");
-    fprintf(stderr, "Constructing editor\n");
     JNodeProgramEditor *jw = new JNodeProgramEditor(program);
-    fprintf(stderr, "Created editor widget\n");
-#if 0
-    JBreadcrumbs *jw = new JBreadcrumbs();
-    auto scene = new DataFlowGraphicsScene(dataFlowGraphModel, &mainWidget);
-    auto view = new GraphicsView(scene);
-    jw->addPage(view);
-#endif
-    qtab->addTab(jw, nodeName);
-    fprintf(stderr, "Added tab\n");
+    qtab->addTab(jw, "Nodes");
 
     auto qsci = new QsciScintilla(qtab);
-    QString sourceName("Source");
-    qtab->addTab(qsci, sourceName);
+    qtab->addTab(qsci, "Source");
 
-#if 0
-    QObject::connect(qtab, &QTabWidget::currentChanged, [&dataFlowGraphModel, &qsci]() {
-	std::string val = evaluateToSCAD(dataFlowGraphModel);
-	qsci->setText(QString::fromStdString(val));
+    QObject::connect(qtab, &QTabWidget::currentChanged, [&program, &qsci]() {
+	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
+	std::ostringstream output;
+	serializer.write(program, output);
+	qsci->setText(QString::fromStdString(output.str()));
     });
-#endif
-    
-    //l->addWidget(view);
-    l->setContentsMargins(0, 0, 0, 0);
-    l->setSpacing(0);
 
-#if 0
-    QObject::connect(saveAction, &QAction::triggered, scene, [scene, &dataFlowGraphModel]() {
-	QJsonObject object = dataFlowGraphModel.save();
-	oscd_saveJson(object, "example.json");
-	evaluateToSCAD(dataFlowGraphModel);
+
+    QObject::connect(saveAction, &QAction::triggered, [&program]() {
+	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
+	std::ofstream output("example.json");
+	serializer.write(program, output);
     });
-#endif
+
+    // This is a hot mess, but fortunately we should not really
+    // need to do this in the final product.
+    QObject::connect(loadAction, &QAction::triggered, [qtab, &program]() {
+	qtab->removeTab(0);
+	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
+	std::ifstream input("example.json");
+	serializer.read(program, input);
+	JNodeProgramEditor *jw = new JNodeProgramEditor(program);
+	qtab->insertTab(0, jw, "Nodes-");
+	qtab->setTabVisible(0, true);
+    });
 
 #if 0
-    QObject::connect(loadAction, &QAction::triggered, scene, &DataFlowGraphicsScene::load);
-
     QObject::connect(groupAction, &QAction::triggered, scene, [scene, &dataFlowGraphModel]() {
 	std::vector<QtNodes::NodeGraphicsObject*> groupNodes = ((QtNodes::BasicGraphicsScene*)scene)->selectedNodes();
 

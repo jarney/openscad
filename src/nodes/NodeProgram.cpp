@@ -67,4 +67,12 @@ NodeProgram::deleteGraph(NodeProgram::GraphId aId)
     delete graphs[aId];
     graphs.erase(aId);
 }
+void
+NodeProgram::clear()
+{
+    for (const auto & it : graphs) {
+	delete it.second;
+    }
+    graphs.clear();
+}
 

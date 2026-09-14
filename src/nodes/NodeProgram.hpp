@@ -53,6 +53,11 @@ public:
      */
     void deleteGraph(GraphId aId);
 
+    /**
+     * Erases all graphs contained here.
+     */
+    void clear();
+    
 private:
     std::shared_ptr<QtNodes::NodeDelegateModelRegistry> _registry;
     int maxGraphId;

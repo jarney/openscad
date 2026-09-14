@@ -82,7 +82,7 @@ int main_old(int argc, char *argv[])
 		     &DataFlowGraphModel::nodeCreated, [&dataFlowGraphModel, &receiver](QtNodes::NodeId const nodeId) {
 			 fprintf(stderr, "Node created %d\n", nodeId);
 			 BaseSCADModel *model = dataFlowGraphModel.delegateModel<BaseSCADModel>(nodeId);
-			 model->setReceiver(&receiver);
+//			 model->setReceiver(&receiver);
 		     });
 
     QObject::connect(&receiver, &Receiver::somethingWasSaid, [](QtNodes::NodeId nodeId, std::string message) {
