@@ -33,20 +33,17 @@
 #include <vector>
 
 #include <QtNodes/ConnectionStyle>
-#include <QtNodes/DataFlowGraphicsScene>
+#include "nodes/NodeProgramGraphicsScene.hpp"
 #include <QtNodes/GraphicsView>
 #include <QtNodes/NodeData>
-#include <QtNodes/NodeDelegateModelRegistry>
+#include "nodes/NodeProgramModelRegistry.hpp"
 
 #include "nodes/OpenSCADModels.hpp"
 #include "nodes/OpenSCADEvaluator.hpp"
-#include "nodes/OpenSCADGraphModel.hpp"
+#include "nodes/NodeProgramGraphModel.hpp"
 
 using QtNodes::ConnectionStyle;
-using QtNodes::DataFlowGraphicsScene;
-using QtNodes::DataFlowGraphModel;
 using QtNodes::GraphicsView;
-using QtNodes::NodeDelegateModelRegistry;
 
 #include "core/Settings.h"
 #include "gui/Preferences.h"
@@ -153,8 +150,8 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
   setQtNodeStyle();
   qnode_registry = SCADModels::registerDataModels();
 
-  qnode_dataFlowGraphModel = std::make_shared<OpenSCADGraphModel>(qnode_registry);
-  qnode_scene = new DataFlowGraphicsScene(*qnode_dataFlowGraphModel, qtab);
+  qnode_dataFlowGraphModel = std::make_shared<NodeProgramGraphModel>(qnode_registry);
+  qnode_scene = new NodeProgramGraphicsScene(*qnode_dataFlowGraphModel, qtab);
   qnode_view = new GraphicsView(qnode_scene);
 
   QString sourceName("Source");

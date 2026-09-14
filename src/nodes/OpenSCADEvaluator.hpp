@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtNodes/DataFlowGraphModel>
+#include "nodes/NodeProgramGraphModel.hpp"
 #include "nodes/OpenSCADDataTypes.hpp"
 
-std::string evaluateToSCAD(const QtNodes::DataFlowGraphModel & model);
+std::string evaluateToSCAD(const NodeProgramGraphModel & model);

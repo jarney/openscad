@@ -1,8 +1,8 @@
 #include "JNodeProgramEditor.hpp"
 #include "OpenSCADModels.hpp"
 
-#include <QtNodes/DataFlowGraphicsScene>
-#include <QtNodes/DataFlowGraphModel>
+#include "NodeProgramGraphicsScene.hpp"
+#include "NodeProgramGraphModel.hpp"
 #include <QtNodes/GraphicsView>
 
 JNodeProgramEditor::JNodeProgramEditor(NodeProgram & program)
@@ -33,7 +33,7 @@ void
 JNodeProgramEditor::prepareProgram()
 {
     for (const auto & graphId : _program.getGraphs()) {
-	const OpenSCADGraphModel *graph = _program.getGraph(graphId);
+	const NodeProgramGraphModel *graph = _program.getGraph(graphId);
 	for (const auto & nodeId : graph->allNodeIds()) {
 	    BaseSCADModel *node = graph->delegateModel<BaseSCADModel>(nodeId);
 	    node->setEditor(this);
@@ -41,9 +41,9 @@ JNodeProgramEditor::prepareProgram()
 
 	QObject::connect(
 	    graph,
-	    &QtNodes::DataFlowGraphModel::nodeCreated,
+	    &NodeProgramGraphModel::nodeCreated,
 	    [graphId, this](QtNodes::NodeId const nodeId) {
-		const OpenSCADGraphModel *graph = this->_program.getGraph(graphId);
+		const NodeProgramGraphModel *graph = this->_program.getGraph(graphId);
 		BaseSCADModel *node = graph->delegateModel<BaseSCADModel>(nodeId);
 		node->setEditor(this);
 	    }
@@ -59,11 +59,11 @@ JNodeProgramEditor::~JNodeProgramEditor()
 void
 JNodeProgramEditor::editGraph(std::string editGraph)
 {
-    OpenSCADGraphModel *graph = _program.getGraph(editGraph);
+    NodeProgramGraphModel *graph = _program.getGraph(editGraph);
     if (graph == nullptr) {
 	return;
     }
-    auto scene = new QtNodes::DataFlowGraphicsScene(*graph);
+    auto scene = new NodeProgramGraphicsScene(*graph);
     auto view = new QtNodes::GraphicsView(scene);
     view->centerScene();
     _jbreadcrumbs->addPage(view);

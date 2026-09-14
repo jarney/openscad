@@ -5,10 +5,8 @@
 #include <QtCore/QJsonObject>
 
 #include <QtNodes/ConnectionStyle>
-#include <QtNodes/DataFlowGraphicsScene>
 #include <QtNodes/GraphicsView>
 #include <QtNodes/NodeData>
-#include <QtNodes/NodeDelegateModelRegistry>
 
 #include <QtGui/QScreen>
 #include <QtWidgets/QApplication>
@@ -23,14 +21,15 @@
 #include "OpenSCADModels.hpp"
 #include "OpenSCADEvaluator.hpp"
 #include "OpenSCADSerializer.hpp"
-#include "OpenSCADGraphModel.hpp"
+#include "NodeProgramGraphModel.hpp"
+#include "NodeProgramModelRegistry.hpp"
+#include "NodeProgramGraphicsScene.hpp"
 #include "JBreadcrumbs.hpp"
 
+#include "nodes/NodeModelPort.hpp"
+
 using QtNodes::ConnectionStyle;
-using QtNodes::DataFlowGraphicsScene;
-using QtNodes::DataFlowGraphModel;
 using QtNodes::GraphicsView;
-using QtNodes::NodeDelegateModelRegistry;
 
 static void setStyle()
 {
@@ -54,41 +53,25 @@ static void setStyle()
   )");
 }
 
-/*
-  void
-Receiver::somethingWasSaid(QtNodes::NodeId nodeId, std::string message)
-{
-    fprintf(stderr, "At top level, we got the message %d %s\n", nodeId, message.c_str());
-}
-*/
-    
 
 int main_old(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
     setStyle();
-    std::shared_ptr<NodeDelegateModelRegistry> registry = SCADModels::registerDataModels();
-    std::vector<OpenSCADGraphModel> models;
+    std::shared_ptr<NodeProgramModelRegistry> registry = SCADModels::registerDataModels();
 
     // TODO: We need more than one model
     // to handle scope, if, for, ...
-//    models.push_back(OpenSCADGraphModel(registry));
-    OpenSCADGraphModel dataFlowGraphModel(registry);
+//    models.push_back(NodeProgramGraphModel(registry));
+    NodeProgramGraphModel dataFlowGraphModel(registry);
 
-    Receiver receiver;
-    
     QObject::connect(&dataFlowGraphModel,
-		     &DataFlowGraphModel::nodeCreated, [&dataFlowGraphModel, &receiver](QtNodes::NodeId const nodeId) {
+		     &NodeProgramGraphModel::nodeCreated, [&dataFlowGraphModel](QtNodes::NodeId const nodeId) {
 			 fprintf(stderr, "Node created %d\n", nodeId);
 			 BaseSCADModel *model = dataFlowGraphModel.delegateModel<BaseSCADModel>(nodeId);
-//			 model->setReceiver(&receiver);
 		     });
 
-    QObject::connect(&receiver, &Receiver::somethingWasSaid, [](QtNodes::NodeId nodeId, std::string message) {
-	fprintf(stderr, "At top level, we got the message %d %s\n", nodeId, message.c_str());
-    });
-    
     // Register builtins...
     Builtins::initialize();
 
@@ -116,7 +99,7 @@ int main_old(int argc, char *argv[])
 
     
     l->addWidget(menuBar);
-    auto scene = new DataFlowGraphicsScene(dataFlowGraphModel, &mainWidget);
+    auto scene = new NodeProgramGraphicsScene(dataFlowGraphModel, &mainWidget);
 
     auto qtab = new QTabWidget(&mainWidget);
     auto qtabLayout = new QVBoxLayout(qtab);
@@ -147,7 +130,7 @@ int main_old(int argc, char *argv[])
 	evaluateToSCAD(dataFlowGraphModel);
     });
 
-    QObject::connect(loadAction, &QAction::triggered, scene, &DataFlowGraphicsScene::load);
+    QObject::connect(loadAction, &QAction::triggered, scene, &NodeProgramGraphicsScene::load);
 
     QObject::connect(groupAction, &QAction::triggered, scene, [scene, &dataFlowGraphModel]() {
 	std::vector<QtNodes::NodeGraphicsObject*> groupNodes = ((QtNodes::BasicGraphicsScene*)scene)->selectedNodes();
@@ -160,12 +143,12 @@ int main_old(int argc, char *argv[])
 
 	// This is effectively a "function".
 	auto arguments = std::make_unique<BaseSCADModel>("for", "Loop");
-	arguments->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "range"), "range");
-	arguments->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "index"), "index");
+	arguments->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "range"), "range");
+	arguments->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "index"), "index");
 	arguments->setProcessor(SCADModels::f_prim_sphere_process);
 
 	auto ret = std::make_unique<BaseSCADModel>("Return", "Return");
-	ret->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "return"), "return");
+	ret->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "return"), "return");
 	ret->setProcessor(SCADModels::f_prim_sphere_process);
 
 	groupNodes.push_back(scene->nodeGraphicsObject(dataFlowGraphModel.addNode(std::move(arguments))));
@@ -174,9 +157,9 @@ int main_old(int argc, char *argv[])
 	auto nodeGroup = scene->createGroup(groupNodes, QString("Some Group"));
     });
 
-    QObject::connect(scene, &DataFlowGraphicsScene::sceneLoaded, view, &GraphicsView::centerScene);
+    QObject::connect(scene, &NodeProgramGraphicsScene::sceneLoaded, view, &GraphicsView::centerScene);
 
-    QObject::connect(scene, &DataFlowGraphicsScene::modified, &mainWidget, [&mainWidget]() {
+    QObject::connect(scene, &NodeProgramGraphicsScene::modified, &mainWidget, [&mainWidget]() {
         mainWidget.setWindowModified(true);
     });
 

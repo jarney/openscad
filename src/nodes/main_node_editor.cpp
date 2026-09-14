@@ -5,10 +5,8 @@
 #include <QtCore/QJsonObject>
 
 #include <QtNodes/ConnectionStyle>
-#include <QtNodes/DataFlowGraphicsScene>
 #include <QtNodes/GraphicsView>
 #include <QtNodes/NodeData>
-#include <QtNodes/NodeDelegateModelRegistry>
 
 #include <QtGui/QScreen>
 #include <QtWidgets/QApplication>
@@ -24,17 +22,16 @@
 #include "OpenSCADModels.hpp"
 #include "OpenSCADEvaluator.hpp"
 #include "OpenSCADSerializer.hpp"
-#include "OpenSCADGraphModel.hpp"
+#include "NodeProgramGraphModel.hpp"
 #include "JBreadcrumbs.hpp"
 #include "JNodeProgramEditor.hpp"
 #include "NodeProgram.hpp"
 #include "NodeProgramSerializer.hpp"
+#include "NodeProgramModelRegistry.hpp"
+#include "NodeProgramGraphicsScene.hpp"
 
 using QtNodes::ConnectionStyle;
-using QtNodes::DataFlowGraphicsScene;
-using QtNodes::DataFlowGraphModel;
 using QtNodes::GraphicsView;
-using QtNodes::NodeDelegateModelRegistry;
 
 static void setStyle()
 {
@@ -63,7 +60,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     setStyle();
-    std::shared_ptr<NodeDelegateModelRegistry> registry = SCADModels::registerDataModels();
+    std::shared_ptr<NodeProgramModelRegistry> registry = SCADModels::registerDataModels();
     
     NodeProgram program(registry);
     
@@ -73,23 +70,6 @@ int main(int argc, char *argv[])
 	serializer.read(program, exampleInputFile);
     }
 
-#if 0
-    OpenSCADGraphModel dataFlowGraphModel(registry);
-
-    Receiver receiver;
-    
-    QObject::connect(&dataFlowGraphModel,
-		     &DataFlowGraphModel::nodeCreated, [&dataFlowGraphModel, &receiver](QtNodes::NodeId const nodeId) {
-			 fprintf(stderr, "Node created %d\n", nodeId);
-			 BaseSCADModel *model = dataFlowGraphModel.delegateModel<BaseSCADModel>(nodeId);
-			 model->setReceiver(&receiver);
-		     });
-
-    QObject::connect(&receiver, &Receiver::somethingWasSaid, [](QtNodes::NodeId nodeId, std::string message) {
-	fprintf(stderr, "At top level, we got the message %d %s\n", nodeId, message.c_str());
-    });
-#endif
-    
     // Register builtins...
     Builtins::initialize();
 
@@ -173,9 +153,9 @@ int main(int argc, char *argv[])
 
 	auto nodeGroup = scene->createGroup(groupNodes, QString("Some Group"));
     });
-    QObject::connect(scene, &DataFlowGraphicsScene::sceneLoaded, view, &GraphicsView::centerScene);
+    QObject::connect(scene, &NodeProgramGraphicsScene::sceneLoaded, view, &GraphicsView::centerScene);
 
-    QObject::connect(scene, &DataFlowGraphicsScene::modified, &mainWidget, [&mainWidget]() {
+    QObject::connect(scene, &NodeProgramGraphicsScene::modified, &mainWidget, [&mainWidget]() {
         mainWidget.setWindowModified(true);
     });
 

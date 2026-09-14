@@ -1,6 +1,6 @@
 #include "NodeProgram.hpp"
 
-NodeProgram::NodeProgram(std::shared_ptr<QtNodes::NodeDelegateModelRegistry> registry)
+NodeProgram::NodeProgram(std::shared_ptr<NodeProgramModelRegistry> registry)
     : _registry(registry)
 {}
 NodeProgram::~NodeProgram()
@@ -10,7 +10,7 @@ NodeProgram::~NodeProgram()
     }
 }
 
-OpenSCADGraphModel *
+NodeProgramGraphModel *
 NodeProgram::getGraph(GraphId aId)
 {
     auto it = graphs.find(aId);
@@ -20,7 +20,7 @@ NodeProgram::getGraph(GraphId aId)
     return it->second;
 }
 
-const OpenSCADGraphModel *
+const NodeProgramGraphModel *
 NodeProgram::getGraph(GraphId aId) const
 {
     auto it = graphs.find(aId);
@@ -44,19 +44,19 @@ NodeProgram::getGraphs() const
 NodeProgram::GraphId
 NodeProgram::newGraph()
 {
-    OpenSCADGraphModel *newGraphObj = new OpenSCADGraphModel(_registry);
+    NodeProgramGraphModel *newGraphObj = new NodeProgramGraphModel(_registry);
     GraphId newId = std::to_string(maxGraphId++);
     graphs[newId] = newGraphObj;
     return newId;
 }
 
-OpenSCADGraphModel *
+NodeProgramGraphModel *
 NodeProgram::newGraph(NodeProgram::GraphId aId)
 {
     if (graphs.find(aId) != graphs.end()) {
 	return nullptr;
     }
-    OpenSCADGraphModel *newGraphObj = new OpenSCADGraphModel(_registry);
+    NodeProgramGraphModel *newGraphObj = new NodeProgramGraphModel(_registry);
     graphs[aId] = newGraphObj;
     return newGraphObj;
 }

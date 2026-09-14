@@ -4,16 +4,23 @@
 #include "core/Builtins.h"
 
 #include <QtCore/QFileInfo>
-#include <QtNodes/NodeDelegateModelRegistry>
+#include "nodes/NodeProgramModelRegistry.hpp"
 
 #include "OpenSCADModels.hpp"
 #include "OpenSCADEvaluator.hpp"
 #include "OpenSCADSerializer.hpp"
-#include "OpenSCADGraphModel.hpp"
+#include "NodeProgramGraphModel.hpp"
+#include "NodeModelType.hpp"
 
-void dumpRegistry(std::shared_ptr<QtNodes::NodeDelegateModelRegistry> registry);
+void dumpRegistry(std::shared_ptr<NodeProgramModelRegistry> registry);
 void dumpBuiltins(void);
-void dumpNotImplemented(std::shared_ptr<QtNodes::NodeDelegateModelRegistry> registry);
+void dumpNotImplemented(std::shared_ptr<NodeProgramModelRegistry> registry);
+
+NodeModelType::NodeModelType(std::string name, std::string caption)
+    : _name(name), _caption(caption)
+{}
+
+static NodeModelType NMT("foo", "bar");
 
 int main(int argc, char *argv[])
 {
@@ -29,7 +36,7 @@ int main(int argc, char *argv[])
 	return 2;
     }
 
-    std::shared_ptr<QtNodes::NodeDelegateModelRegistry> registry = SCADModels::registerDataModels();
+    std::shared_ptr<NodeProgramModelRegistry> registry = SCADModels::registerDataModels();
 
     // Register builtins...
     Builtins::initialize();
@@ -40,7 +47,7 @@ int main(int argc, char *argv[])
 
     return 0;
 #if 0
-    OpenSCADGraphModel dataFlowGraphModel(registry);
+    NodeProgramGraphModel dataFlowGraphModel(registry);
 
     QJsonObject object = oscd_loadJson(argv[1]);
     dataFlowGraphModel.load(object);
@@ -57,9 +64,9 @@ void dumpBuiltins(void)
     }
 }
 
-void dumpNotImplemented(std::shared_ptr<QtNodes::NodeDelegateModelRegistry> registry)
+void dumpNotImplemented(std::shared_ptr<NodeProgramModelRegistry> registry)
 {
-    const QtNodes::NodeDelegateModelRegistry::RegisteredModelsCategoryMap & registered
+    const NodeProgramModelRegistry::RegisteredModelsCategoryMap & registered
 	= registry->registeredModelsCategoryAssociation();
 
     for (const auto & builtin_it : Builtins::instance().getModules()) {
@@ -86,7 +93,7 @@ void dumpNotImplemented(std::shared_ptr<QtNodes::NodeDelegateModelRegistry> regi
     }
 }
 
-void dumpRegistry(std::shared_ptr<QtNodes::NodeDelegateModelRegistry> registry)
+void dumpRegistry(std::shared_ptr<NodeProgramModelRegistry> registry)
 {
     for (const auto & it : registry->registeredModelsCategoryAssociation()) {
 	fprintf(stderr, "%s : %s\n",

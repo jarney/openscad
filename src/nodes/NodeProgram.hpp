@@ -1,7 +1,7 @@
 #pragma once
 
-#include "OpenSCADGraphModel.hpp"
-#include <QtNodes/NodeDelegateModelRegistry>
+#include "NodeProgramGraphModel.hpp"
+#include "NodeProgramModelRegistry.hpp"
 #include <optional>
 
 /**
@@ -22,12 +22,12 @@ class NodeProgram {
 public:
     typedef std::string GraphId;
 
-    NodeProgram(std::shared_ptr<QtNodes::NodeDelegateModelRegistry> _registry);
+    NodeProgram(std::shared_ptr<NodeProgramModelRegistry> _registry);
     ~NodeProgram();
     
-    OpenSCADGraphModel *getGraph(GraphId aId);
+    NodeProgramGraphModel *getGraph(GraphId aId);
 
-    const OpenSCADGraphModel *getGraph(GraphId aId) const;
+    const NodeProgramGraphModel *getGraph(GraphId aId) const;
     /**
      * This method returns a vector of node IDs
      * for each of the graphs in this program.
@@ -46,7 +46,7 @@ public:
      * given ID.  If this returns null
      * then the given ID already existed.
      */
-    OpenSCADGraphModel *newGraph(GraphId id);
+    NodeProgramGraphModel *newGraph(GraphId id);
     
     /**
      * This deletes the graph with the given id.
@@ -59,7 +59,7 @@ public:
     void clear();
     
 private:
-    std::shared_ptr<QtNodes::NodeDelegateModelRegistry> _registry;
+    std::shared_ptr<NodeProgramModelRegistry> _registry;
     int maxGraphId;
-    std::map<GraphId, OpenSCADGraphModel*> graphs;
+    std::map<GraphId, NodeProgramGraphModel*> graphs;
 };

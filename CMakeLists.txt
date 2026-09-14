@@ -1322,11 +1322,15 @@ set(GUI_SOURCES
   src/nodes/OpenSCADModels.cpp
   src/nodes/OpenSCADEvaluator.cpp
   src/nodes/OpenSCADSerializer.cpp
-  src/nodes/OpenSCADGraphModel.cpp
   src/nodes/JBreadcrumbs.cpp
   src/nodes/JNodeProgramEditor.cpp
   src/nodes/NodeProgram.cpp
   src/nodes/NodeProgramSerializer.cpp
+  src/nodes/NodeModelPort.cpp
+  src/nodes/NodeModelType.cpp
+  src/nodes/NodeProgramGraphModel.cpp
+  src/nodes/NodeProgramModelRegistry.cpp
+  src/nodes/NodeProgramGraphicsScene.cpp
 
   src/openscad_gui.cc
   src/gui/AutoUpdater.cc

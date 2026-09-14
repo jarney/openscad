@@ -6,7 +6,7 @@
 
 static void
 findOutputNodes(
-    const QtNodes::DataFlowGraphModel & model,
+    const NodeProgramGraphModel & model,
     std::vector<QtNodes::NodeId> & outputNodes
     )
 {
@@ -31,7 +31,7 @@ findOutputNodes(
     }
 }
 
-static std::vector<QtNodes::ConnectionId> inputConnections(const QtNodes::DataFlowGraphModel & model, QtNodes::NodeId nodeId)
+static std::vector<QtNodes::ConnectionId> inputConnections(const NodeProgramGraphModel & model, QtNodes::NodeId nodeId)
 {
     auto connections = model.allConnectionIds(nodeId);
     std::vector<QtNodes::ConnectionId> input_connections;
@@ -56,7 +56,7 @@ static std::vector<QtNodes::NodeId> connectedNodes(const std::vector<QtNodes::Co
 // We make the assumption here that the graph is cycle-free.
 // If there are cycles, this will blow up.
 static void processNode(
-    const QtNodes::DataFlowGraphModel & model,
+    const NodeProgramGraphModel & model,
     std::set<QtNodes::NodeId> & processed_nodes,    // Set of nodes that has already been processed.
     std::map<QtNodes::NodeId, PortFunctionData> & all_node_data,
     QtNodes::NodeId nodeId,                       // Node to process.
@@ -100,7 +100,7 @@ static void processNode(
 }
 
 
-std::string evaluateToSCAD(const QtNodes::DataFlowGraphModel & model)
+std::string evaluateToSCAD(const NodeProgramGraphModel & model)
 {
 //    virtual std::unordered_set<NodeId> allNodeIds() const = 0;
     std::vector<QtNodes::NodeId> outputNodes;

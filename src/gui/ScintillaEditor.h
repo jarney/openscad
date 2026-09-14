@@ -21,10 +21,10 @@
 #include "gui/EditorColorMap.h"
 #include "gui/ScadApi.h"
 
-#include <QtNodes/DataFlowGraphicsScene>
+#include "nodes/NodeProgramGraphicsScene.hpp"
 #include <QtNodes/GraphicsView>
-#include "nodes/OpenSCADGraphModel.hpp"
-#include <QtNodes/NodeDelegateModelRegistry>
+#include "nodes/NodeProgramGraphModel.hpp"
+#include "nodes/NodeProgramModelRegistry.hpp"
 
 // don't need the full definition, because it confuses Qt
 class ScadLexer;
@@ -42,9 +42,9 @@ public:
 
   QTabWidget *qtab;
 
-  std::shared_ptr<QtNodes::NodeDelegateModelRegistry> qnode_registry;
-  std::shared_ptr<OpenSCADGraphModel> qnode_dataFlowGraphModel;
-  QtNodes::DataFlowGraphicsScene *qnode_scene;
+  std::shared_ptr<NodeProgramModelRegistry> qnode_registry;
+  std::shared_ptr<NodeProgramGraphModel> qnode_dataFlowGraphModel;
+  NodeProgramGraphicsScene *qnode_scene;
   QtNodes::GraphicsView *qnode_view;
 
   QString toPlainText() override;

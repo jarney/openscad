@@ -4,68 +4,16 @@
 #include <QtWidgets/QLabel>
 
 #include <QtNodes/NodeDelegateModel>
-#include <QtNodes/NodeDelegateModelRegistry>
 #include <QtNodes/NodeData>
 #include "nodes/OpenSCADDataTypes.hpp"
-
-class BaseSCADPort {
-public:
-    BaseSCADPort(QtNodes::NodeDataType type, QString portCaption);
-    BaseSCADPort(QtNodes::NodeDataType type);
-    virtual ~BaseSCADPort();
-
-    QtNodes::NodeDataType nodeDataType() const;
-    QWidget *portWidget();
-    void setData(std::shared_ptr<QtNodes::NodeData> data);
-    std::shared_ptr<QtNodes::NodeData> getData(void) const;
-    
-    QString portCaption() const;
-    bool portCaptionVisible() const;
-private:
-    QString _caption;
-    QtNodes::NodeDataType _type;
-    std::shared_ptr<QtNodes::NodeData> _data;
-};
-
-typedef std::map<std::string, std::string> PortFunctionData;
-
-class Receiver : public QObject {
-    Q_OBJECT
-public:
-//    Receiver();
-//    ~Receiver();
-Q_SIGNALS:
-    void somethingWasSaid(QtNodes::NodeId nodeId, std::string message);
-};
+#include "nodes/NodeModelType.hpp"
+#include "nodes/NodeProgramModelRegistry.hpp"
 
 class BaseSCADModel;
 class JNodeProgramEditor;
 
 typedef std::function<void(const BaseSCADModel & model, const PortFunctionData &, PortFunctionData & )> NodeProcessor;
 typedef std::function<QWidget*(BaseSCADModel *)> WidgetFactory;
-
-class NodeModelType {
-public:
-    NodeModelType(std::string name, std::string caption);
-    std::string name() const;
-    std::string caption() const;
-    
-    void addInputPort(std::unique_ptr<BaseSCADPort> inputPort, std::string inputPortName);
-    void addOutputPort(std::unique_ptr<BaseSCADPort> outputPort, std::string outputPortName);
-
-    void setProcessor(NodeProcessor processor);
-    void setWidgetFactory(WidgetFactory widgetFactory);
-
-private:
-    std::string _name;
-    std::string _caption;
-    std::vector<std::unique_ptr<BaseSCADPort>> _inputPorts;
-    std::vector<std::unique_ptr<BaseSCADPort>> _outputPorts;
-    std::map<QtNodes::PortIndex, std::string> _inputPortNames;
-    std::map<QtNodes::PortIndex, std::string> _outputPortNames;
-    NodeProcessor _processor;
-    WidgetFactory _widgetFactory;
-};
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
@@ -88,8 +36,8 @@ public:
 
     QWidget *embeddedWidget() override;
 
-    void addInputPort(std::unique_ptr<BaseSCADPort> inputPort, std::string inputPortName);
-    void addOutputPort(std::unique_ptr<BaseSCADPort> outputPort, std::string outputPortName);
+    void addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName);
+    void addOutputPort(std::unique_ptr<NodeModelPort> outputPort, std::string outputPortName);
     std::string inputPortName(QtNodes::PortIndex portIndex) const;
     std::string outputPortName(QtNodes::PortIndex portIndex) const;
     
@@ -112,8 +60,8 @@ protected:
     // to a node-type class.
     std::string _name;
     std::string _caption;
-    std::vector<std::unique_ptr<BaseSCADPort>> _inputPorts;
-    std::vector<std::unique_ptr<BaseSCADPort>> _outputPorts;
+    std::vector<std::unique_ptr<NodeModelPort>> _inputPorts;
+    std::vector<std::unique_ptr<NodeModelPort>> _outputPorts;
     std::map<QtNodes::PortIndex, std::string> _inputPortNames;
     std::map<QtNodes::PortIndex, std::string> _outputPortNames;
     NodeProcessor _processor;
@@ -133,9 +81,9 @@ protected:
 
 class SCADModels {
 public:
-    using RegistryItemPtr = QtNodes::NodeDelegateModelRegistry::RegistryItemPtr;
+    using RegistryItemPtr = NodeProgramModelRegistry::RegistryItemPtr;
 
-    static std::shared_ptr<QtNodes::NodeDelegateModelRegistry> registerDataModels();
+    static std::shared_ptr<NodeProgramModelRegistry> registerDataModels();
     std::string f_default_process(const PortFunctionData & input, PortFunctionData & output);
     
     // Math
