@@ -2,6 +2,7 @@
 #include "OpenSCADModels.hpp"
 
 #include <QtNodes/DataFlowGraphicsScene>
+#include <QtNodes/DataFlowGraphModel>
 #include <QtNodes/GraphicsView>
 
 JNodeProgramEditor::JNodeProgramEditor(NodeProgram & program)
@@ -37,6 +38,16 @@ JNodeProgramEditor::prepareProgram()
 	    BaseSCADModel *node = graph->delegateModel<BaseSCADModel>(nodeId);
 	    node->setEditor(this);
 	}
+
+	QObject::connect(
+	    graph,
+	    &QtNodes::DataFlowGraphModel::nodeCreated,
+	    [graphId, this](QtNodes::NodeId const nodeId) {
+		const OpenSCADGraphModel *graph = this->_program.getGraph(graphId);
+		BaseSCADModel *node = graph->delegateModel<BaseSCADModel>(nodeId);
+		node->setEditor(this);
+	    }
+	);
     }
 }
 

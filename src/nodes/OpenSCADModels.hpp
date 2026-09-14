@@ -44,6 +44,29 @@ class JNodeProgramEditor;
 typedef std::function<void(const BaseSCADModel & model, const PortFunctionData &, PortFunctionData & )> NodeProcessor;
 typedef std::function<QWidget*(BaseSCADModel *)> WidgetFactory;
 
+class NodeModelType {
+public:
+    NodeModelType(std::string name, std::string caption);
+    std::string name() const;
+    std::string caption() const;
+    
+    void addInputPort(std::unique_ptr<BaseSCADPort> inputPort, std::string inputPortName);
+    void addOutputPort(std::unique_ptr<BaseSCADPort> outputPort, std::string outputPortName);
+
+    void setProcessor(NodeProcessor processor);
+    void setWidgetFactory(WidgetFactory widgetFactory);
+
+private:
+    std::string _name;
+    std::string _caption;
+    std::vector<std::unique_ptr<BaseSCADPort>> _inputPorts;
+    std::vector<std::unique_ptr<BaseSCADPort>> _outputPorts;
+    std::map<QtNodes::PortIndex, std::string> _inputPortNames;
+    std::map<QtNodes::PortIndex, std::string> _outputPortNames;
+    NodeProcessor _processor;
+    WidgetFactory _widgetFactory;
+};
+
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
 class BaseSCADModel : public QtNodes::NodeDelegateModel {
@@ -84,6 +107,9 @@ public:
     void editGraph();
 
 protected:
+    // Data purely about the abstract node
+    // that is the same for each instance.  Factor this out
+    // to a node-type class.
     std::string _name;
     std::string _caption;
     std::vector<std::unique_ptr<BaseSCADPort>> _inputPorts;
@@ -91,6 +117,15 @@ protected:
     std::map<QtNodes::PortIndex, std::string> _inputPortNames;
     std::map<QtNodes::PortIndex, std::string> _outputPortNames;
     NodeProcessor _processor;
+
+    // This is instance-level data about
+    // a specific node stored as name-value pairs.
+    std::map<std::string, std::string> _nvp;
+    
+    // Data that's related to how the node appears and
+    // behaves in the editor.  This should be factored out
+    // into a separate class to track 'appearance' and 'behavior' of
+    // different node types.
     WidgetFactory _widgetFactory;
     QWidget *_widget;
     JNodeProgramEditor *_editor;
