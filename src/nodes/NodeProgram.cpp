@@ -44,7 +44,7 @@ NodeProgram::getGraphs() const
 NodeProgram::GraphId
 NodeProgram::newGraph()
 {
-    NodeProgramGraphModel *newGraphObj = new NodeProgramGraphModel(_registry);
+    NodeProgramGraphModel *newGraphObj = new NodeProgramGraphModel(_registry, *this);
     GraphId newId = std::to_string(maxGraphId++);
     graphs[newId] = newGraphObj;
     return newId;
@@ -56,7 +56,7 @@ NodeProgram::newGraph(NodeProgram::GraphId aId)
     if (graphs.find(aId) != graphs.end()) {
 	return nullptr;
     }
-    NodeProgramGraphModel *newGraphObj = new NodeProgramGraphModel(_registry);
+    NodeProgramGraphModel *newGraphObj = new NodeProgramGraphModel(_registry, *this);
     graphs[aId] = newGraphObj;
     return newGraphObj;
 }

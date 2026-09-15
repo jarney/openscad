@@ -4,7 +4,6 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 
-#include <QtNodes/ConnectionStyle>
 #include <QtNodes/GraphicsView>
 #include <QtNodes/NodeData>
 
@@ -29,36 +28,12 @@
 #include "NodeProgramModelRegistry.hpp"
 #include "NodeProgramGraphicsScene.hpp"
 
-using QtNodes::ConnectionStyle;
 using QtNodes::GraphicsView;
-
-static void setStyle()
-{
-    ConnectionStyle::setConnectionStyle(
-        R"(
-  {
-    "ConnectionStyle": {
-      "ConstructionColor": "gray",
-      "NormalColor": "black",
-      "SelectedColor": "gray",
-      "SelectedHaloColor": "deepskyblue",
-      "HoveredColor": "deepskyblue",
-
-      "LineWidth": 3.0,
-      "ConstructionLineWidth": 2.0,
-      "PointDiameter": 10.0,
-
-      "UseDataDefinedColors": true
-    }
-  }
-  )");
-}
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    setStyle();
     std::shared_ptr<NodeProgramModelRegistry> registry = OpenSCADBuiltins::registerDataModels();
     
     NodeProgram program(registry);
@@ -72,6 +47,7 @@ int main(int argc, char *argv[])
 
     // Register builtins...
     Builtins::initialize();
+    JNodeProgramEditor::initializeStyles();
 
     QWidget mainWidget;
 
@@ -95,7 +71,7 @@ int main(int argc, char *argv[])
     auto qtab = new QTabWidget(&mainWidget);
     auto qtabLayout = new QVBoxLayout(qtab);
     l->addWidget(qtab);
-    
+
     JNodeProgramEditor *jw = new JNodeProgramEditor(program);
     qtab->addTab(jw, "Nodes");
 

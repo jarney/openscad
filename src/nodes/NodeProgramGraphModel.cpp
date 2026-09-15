@@ -8,9 +8,10 @@
 #include <stack>
 #include <stdexcept>
 
-NodeProgramGraphModel::NodeProgramGraphModel(std::shared_ptr<NodeProgramModelRegistry> registry)
+NodeProgramGraphModel::NodeProgramGraphModel(std::shared_ptr<NodeProgramModelRegistry> registry, NodeProgram & parent)
     : _registry(std::move(registry))
     , _nextNodeId{0}
+    , _parent(parent)
 {}
 
 std::unordered_set<QtNodes::NodeId> NodeProgramGraphModel::allNodeIds() const
@@ -198,6 +199,12 @@ bool NodeProgramGraphModel::connectionPossible(QtNodes::ConnectionId const conne
     return basicChecks && (loopsEnabled() || !hasLoops());
 }
 
+
+NodeProgram &
+NodeProgramGraphModel::getParent(void) const
+{
+    return _parent;
+}
 void NodeProgramGraphModel::addConnection(QtNodes::ConnectionId const connectionId)
 {
     _connectivity.insert(connectionId);

@@ -32,18 +32,11 @@
 #include <string>
 #include <vector>
 
-#include <QtNodes/ConnectionStyle>
-#include "nodes/NodeProgramGraphicsScene.hpp"
-#include <QtNodes/GraphicsView>
-#include <QtNodes/NodeData>
 #include "nodes/NodeProgramModelRegistry.hpp"
-
 #include "nodes/OpenSCADBuiltins.hpp"
 #include "nodes/OpenSCADEvaluator.hpp"
-#include "nodes/NodeProgramGraphModel.hpp"
-
-using QtNodes::ConnectionStyle;
-using QtNodes::GraphicsView;
+#include "nodes/NodeProgram.hpp"
+#include "nodes/JNodeProgramEditor.hpp"
 
 #include "core/Settings.h"
 #include "gui/Preferences.h"
@@ -115,28 +108,6 @@ QsciScintilla::WhitespaceVisibility SettingsConverter::toShowWhitespaces(const s
   }
 }
 
-static void setQtNodeStyle(void)
-{
-    ConnectionStyle::setConnectionStyle(
-        R"(
-  {
-    "ConnectionStyle": {
-      "ConstructionColor": "gray",
-      "NormalColor": "black",
-      "SelectedColor": "gray",
-      "SelectedHaloColor": "deepskyblue",
-      "HoveredColor": "deepskyblue",
-
-      "LineWidth": 3.0,
-      "ConstructionLineWidth": 2.0,
-      "PointDiameter": 10.0,
-
-      "UseDataDefinedColors": true
-    }
-  }
-  )");
-}
-
 ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
 {
   api = nullptr;
@@ -147,17 +118,17 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
   scintillaLayout = new QVBoxLayout(this);
   qsci = new QsciScintilla(qtab);
 
-  setQtNodeStyle();
+  JNodeProgramEditor::initializeStyles();
   qnode_registry = OpenSCADBuiltins::registerDataModels();
 
-  qnode_dataFlowGraphModel = std::make_shared<NodeProgramGraphModel>(qnode_registry);
-  qnode_scene = new NodeProgramGraphicsScene(*qnode_dataFlowGraphModel, qtab);
-  qnode_view = new GraphicsView(qnode_scene);
+  qnode_program = std::make_shared<NodeProgram>(qnode_registry);
+  
+  JNodeProgramEditor *jw = new JNodeProgramEditor(*qnode_program);
 
   QString sourceName("Source");
   QString nodeName("Nodes");
   qtab->addTab(qsci, sourceName);
-  qtab->addTab(qnode_view, nodeName);
+  qtab->addTab(jw, nodeName);
 
   connect(qtab, &QTabWidget::currentChanged, [this]() {
       // When we change from source to nodes, we need to:
@@ -165,8 +136,8 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
       // * Remove all nodes and connections and re-load them based
       //   on the parse tree, placing them in the same places where possible.
       
-      std::string val = evaluateToSCAD(*this->qnode_dataFlowGraphModel);
-      this->qsci->setText(QString::fromStdString(val));
+//      std::string val = evaluateToSCAD(*this->qnode_dataFlowGraphModel);
+//      this->qsci->setText(QString::fromStdString(val));
   });
 
   contentsRendered = false;

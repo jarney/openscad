@@ -8,6 +8,8 @@ public:
     JNodeProgramEditor(NodeProgram & program);
     ~JNodeProgramEditor();
     void editGraph(std::string editGraph);
+
+    static void initializeStyles();
 private:
     /**
      * This connects the program to the editor

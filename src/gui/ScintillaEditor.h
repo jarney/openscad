@@ -21,9 +21,9 @@
 #include "gui/EditorColorMap.h"
 #include "gui/ScadApi.h"
 
-#include "nodes/NodeProgramGraphicsScene.hpp"
 #include <QtNodes/GraphicsView>
-#include "nodes/NodeProgramGraphModel.hpp"
+#include "nodes/NodeProgramGraphicsScene.hpp"
+#include "nodes/NodeProgram.hpp"
 #include "nodes/NodeProgramModelRegistry.hpp"
 
 // don't need the full definition, because it confuses Qt
@@ -43,9 +43,7 @@ public:
   QTabWidget *qtab;
 
   std::shared_ptr<NodeProgramModelRegistry> qnode_registry;
-  std::shared_ptr<NodeProgramGraphModel> qnode_dataFlowGraphModel;
-  NodeProgramGraphicsScene *qnode_scene;
-  QtNodes::GraphicsView *qnode_view;
+  std::shared_ptr<NodeProgram> qnode_program;
 
   QString toPlainText() override;
   void initMargin();

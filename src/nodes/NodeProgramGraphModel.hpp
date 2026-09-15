@@ -14,6 +14,8 @@
 #include <unordered_map>
 #include <QString>
 
+class NodeProgram;
+
 class NODE_EDITOR_PUBLIC NodeProgramGraphModel
     : public QtNodes::AbstractGraphModel
     , public QtNodes::Serializable
@@ -28,7 +30,7 @@ public:
     };
 
 public:
-    NodeProgramGraphModel(std::shared_ptr<NodeProgramModelRegistry> registry);
+    NodeProgramGraphModel(std::shared_ptr<NodeProgramModelRegistry> registry, NodeProgram & parent);
 
     std::shared_ptr<NodeProgramModelRegistry> dataModelRegistry() { return _registry; }
 
@@ -110,6 +112,8 @@ public:
     /// Loops do not make any sense in uni-direction data propagation
     bool loopsEnabled() const override { return false; }
 
+    NodeProgram & getParent(void) const;
+    
 Q_SIGNALS:
     void inPortDataWasSet(QtNodes::NodeId const, QtNodes::PortType const, QtNodes::PortIndex const);
 
@@ -149,6 +153,8 @@ private:
 
     std::unordered_map<QtNodes::NodeId, QString> _labels;
     std::unordered_map<QtNodes::NodeId, bool> _labelsVisible;
+
+    NodeProgram & _parent;
 };
 
 
