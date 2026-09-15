@@ -10,38 +10,70 @@
 #include "nodes/NodeProgramModelRegistry.hpp"
 #include "nodes/OpenSCADBuiltinModel.hpp"
 
+/**
+ * This is a static class that contains all of the OpenSCAD builtins.
+ * This is organized the same way as the famous "OpenSCAD Cheat Sheet"
+ * so that it is easy to navigate.  Most of the actual implementations
+ * of these methods are divided into files according to section
+ * in the "Cheat Sheet" in order to keep the implementations
+ * organized and easy to find.
+ *
+ * Many of the implementations are done through pre-processor
+ * macros because there is very little variation between them, but
+ * the constructs need to be fully generic in order to accommodate
+ * user modules and functions with a lot of flexibility.  We
+ * try to keep the scope of these pre-processor macros short
+ * and prefixed so as to minimize the risk of pre-processor
+ * namespace collisions.
+ */
 class OpenSCADBuiltins {
 public:
     using RegistryItemPtr = std::unique_ptr<NodeModelType>;
     static std::shared_ptr<NodeProgramModelRegistry> registerDataModels();
 
-    // Math
-#define _OPENSCAD_NODE_PROCESSOR_PROTOTYPE const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output
+    /**
+     * Declaration macro to ensure all builtins are registered
+     * through the same mechanism.
+     */
 #define _OPENSCAD_NODE_DECL(name)                                    \
     static std::unique_ptr<NodeModelType> f_##name();				\
-    static void f_##name##_process(_OPENSCAD_NODE_PROCESSOR_PROTOTYPE);
-
-    // 3d Primitives
-    _OPENSCAD_NODE_DECL(prim_sphere);
-    _OPENSCAD_NODE_DECL(prim_cube);
-    _OPENSCAD_NODE_DECL(prim_cylinder);
-    _OPENSCAD_NODE_DECL(prim_polyhedron);
-    _OPENSCAD_NODE_DECL(prim_linear_extrude);
-    _OPENSCAD_NODE_DECL(prim_rotate_extrude);
-    _OPENSCAD_NODE_DECL(prim_fill);
+    static void f_##name##_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output);
 
     // 2d primitives
-    _OPENSCAD_NODE_DECL(prim_circle);
-    _OPENSCAD_NODE_DECL(prim_polygon);
-    _OPENSCAD_NODE_DECL(prim_surface);
-    _OPENSCAD_NODE_DECL(prim_square);
+    _OPENSCAD_NODE_DECL(2d_circle);
+    _OPENSCAD_NODE_DECL(2d_square);
+    _OPENSCAD_NODE_DECL(2d_polygon);
+    _OPENSCAD_NODE_DECL(2d_text);
+    _OPENSCAD_NODE_DECL(2d_projection);
     
+    // 3d Primitives
+    _OPENSCAD_NODE_DECL(3d_sphere);
+    _OPENSCAD_NODE_DECL(3d_cube);
+    _OPENSCAD_NODE_DECL(3d_cylinder);
+    _OPENSCAD_NODE_DECL(3d_polyhedron);
+    _OPENSCAD_NODE_DECL(3d_import);
+    _OPENSCAD_NODE_DECL(3d_linear_extrude);
+    _OPENSCAD_NODE_DECL(3d_rotate_extrude);
+    _OPENSCAD_NODE_DECL(3d_surface);
+    _OPENSCAD_NODE_DECL(import_dxf_dim);
+    _OPENSCAD_NODE_DECL(import_dxf_cross);
+
     // Boolean operations
     _OPENSCAD_NODE_DECL(op_union);
     _OPENSCAD_NODE_DECL(op_difference);
     _OPENSCAD_NODE_DECL(op_intersection);
-    _OPENSCAD_NODE_DECL(op_hull);
-    _OPENSCAD_NODE_DECL(op_minkowski);
+
+    // Transformations
+    _OPENSCAD_NODE_DECL(xform_translate);
+    _OPENSCAD_NODE_DECL(xform_offset);
+    _OPENSCAD_NODE_DECL(xform_scale);
+    _OPENSCAD_NODE_DECL(xform_rotate);
+    _OPENSCAD_NODE_DECL(xform_mirror);
+    _OPENSCAD_NODE_DECL(xform_resize);
+    _OPENSCAD_NODE_DECL(xform_multmatrix);
+    _OPENSCAD_NODE_DECL(xform_hull);
+    _OPENSCAD_NODE_DECL(xform_fill);
+    _OPENSCAD_NODE_DECL(xform_minkowski);
 
     // Special module operations
     _OPENSCAD_NODE_DECL(mod_children);
@@ -60,15 +92,6 @@ public:
     _OPENSCAD_NODE_DECL(flow_let);
     _OPENSCAD_NODE_DECL(flow_group);
 
-    // Transformations
-    _OPENSCAD_NODE_DECL(xform_translate);
-    _OPENSCAD_NODE_DECL(xform_offset);
-    _OPENSCAD_NODE_DECL(xform_scale);
-    _OPENSCAD_NODE_DECL(xform_rotate);
-    _OPENSCAD_NODE_DECL(xform_mirror);
-    _OPENSCAD_NODE_DECL(xform_resize);
-    _OPENSCAD_NODE_DECL(xform_multmatrix);
-    
     _OPENSCAD_NODE_DECL(math_asin);
     _OPENSCAD_NODE_DECL(math_sin);
     _OPENSCAD_NODE_DECL(math_acos);
@@ -134,13 +157,33 @@ public:
     _OPENSCAD_NODE_DECL(math_search);
     _OPENSCAD_NODE_DECL(math_parent_module);
     
-    _OPENSCAD_NODE_DECL(import_dxf_dim);
-    _OPENSCAD_NODE_DECL(import_dxf_cross);
-
     // Outputs
     _OPENSCAD_NODE_DECL(output);
     
 #undef _OPENSCAD_NODE_DECL
-#undef _OPENSCAD_NODE_PROCESSOR_PROTOTYPE
+private:
+    static std::string joinArguments(std::vector<std::string> list);
 
+    /**
+     * This adds the argument to the list
+     * and if it is not present in the input
+     * or the model, the default value is used.
+     */
+    static void conditionalArg(
+	std::vector<std::string> & args,
+	const PortFunctionData & input,
+	const OpenSCADBuiltinModel & model,
+	std::string key,
+	std::string default_value
+    );
+    /**
+     * This adds the argument to the list if and only if
+     * the value is present.
+     */
+    static void conditionalArg(
+	std::vector<std::string> & args,
+	const PortFunctionData & input,
+	const OpenSCADBuiltinModel & model,
+	std::string key
+    );
 };

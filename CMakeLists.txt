@@ -1322,6 +1322,7 @@ set(GUI_SOURCES
   src/nodes/OpenSCADBuiltinModel.cpp
   src/nodes/OpenSCADBuiltinFactory.cpp
   src/nodes/OpenSCADBuiltins.cpp
+  src/nodes/OpenSCADBuiltins2D.cpp
   src/nodes/OpenSCADBuiltins3D.cpp
   src/nodes/OpenSCADBuiltinsOperators.cpp
   src/nodes/OpenSCADBuiltinsTransforms.cpp

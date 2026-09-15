@@ -4,135 +4,185 @@
 #include "nodes/JNodeProgramEditor.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
+#define _OPENSCAD_NODE_REGISTER(name) ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_##name()))
+
 std::shared_ptr<NodeProgramModelRegistry>
 OpenSCADBuiltins::registerDataModels()
 {
     auto ret = std::make_shared<NodeProgramModelRegistry>();
 
-    // 3d primitives
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_sphere()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_cube()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_cylinder()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_polyhedron()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_text()));
-
-    // 2d primitives
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_circle()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_polygon()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_surface()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_square()));
-
-    // 2d -> 3d
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_rotate_extrude()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_linear_extrude()));
+    // 2D
+    _OPENSCAD_NODE_REGISTER(2d_circle);
+    _OPENSCAD_NODE_REGISTER(2d_square);
+    _OPENSCAD_NODE_REGISTER(2d_polygon);
+    _OPENSCAD_NODE_REGISTER(2d_text);
+    _OPENSCAD_NODE_REGISTER(2d_projection);
     
-    
-    // CSG operations
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_op_union()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_op_difference()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_op_intersection()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_op_hull()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_op_fill()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_op_minkowski()));
+    // 3D
+    _OPENSCAD_NODE_REGISTER(3d_sphere);
+    _OPENSCAD_NODE_REGISTER(3d_cube);
+    _OPENSCAD_NODE_REGISTER(3d_cylinder);
+    _OPENSCAD_NODE_REGISTER(3d_polyhedron);
+    _OPENSCAD_NODE_REGISTER(3d_import);
+    _OPENSCAD_NODE_REGISTER(3d_linear_extrude);
+    _OPENSCAD_NODE_REGISTER(3d_rotate_extrude);
+    _OPENSCAD_NODE_REGISTER(3d_surface);
 
+    // Boolean Operations
+    _OPENSCAD_NODE_REGISTER(op_union);
+    _OPENSCAD_NODE_REGISTER(op_difference);
+    _OPENSCAD_NODE_REGISTER(op_intersection);
+
+    // Transformations
+    _OPENSCAD_NODE_REGISTER(xform_translate);
+    //_OPENSCAD_NODE_REGISTER(xform_offset);
+    _OPENSCAD_NODE_REGISTER(xform_scale);
+    //_OPENSCAD_NODE_REGISTER(xform_rotate);
+    _OPENSCAD_NODE_REGISTER(xform_mirror);
+    _OPENSCAD_NODE_REGISTER(xform_resize);
+    //_OPENSCAD_NODE_REGISTER(xform_multmatrix);
+    _OPENSCAD_NODE_REGISTER(xform_hull);
+    _OPENSCAD_NODE_REGISTER(xform_fill);
+    _OPENSCAD_NODE_REGISTER(xform_minkowski);
+    
     // Aeshetics
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_util_color()));
+    _OPENSCAD_NODE_REGISTER(util_color);
 
     // Constants
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_true()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_false()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_int()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_float()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_string()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_undef()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_pi()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_version()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_version_num()));
+    _OPENSCAD_NODE_REGISTER(const_true);
+    _OPENSCAD_NODE_REGISTER(const_false);
+    _OPENSCAD_NODE_REGISTER(const_int);
+    _OPENSCAD_NODE_REGISTER(const_float);
+    _OPENSCAD_NODE_REGISTER(const_string);
+    _OPENSCAD_NODE_REGISTER(const_undef);
+    _OPENSCAD_NODE_REGISTER(const_pi);
+    _OPENSCAD_NODE_REGISTER(const_version);
+    _OPENSCAD_NODE_REGISTER(const_version_num);
 
     // Output node, result of operations
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_output()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_echo()));
+    _OPENSCAD_NODE_REGISTER(output);
+    //_OPENSCAD_NODE_REGISTER(echo);
 
     // Flow control
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_for()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_if()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_let()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_group()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_assert()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_children()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_module()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_function()));
+    _OPENSCAD_NODE_REGISTER(flow_for);
+    _OPENSCAD_NODE_REGISTER(flow_if);
+    //_OPENSCAD_NODE_REGISTER(flow_let);
+    //_OPENSCAD_NODE_REGISTER(flow_group);
+    //_OPENSCAD_NODE_REGISTER(flow_assert);
+    //_OPENSCAD_NODE_REGISTER(flow_children);
+    //_OPENSCAD_NODE_REGISTER(flow_module);
+    //_OPENSCAD_NODE_REGISTER(flow_function);
 
     
-    // Transformations
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_translate()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_offset()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_scale()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_rotate()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_mirror()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_resize()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_multmatrix()));
-    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_projection()));
-
     // Math functions:
     
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_asin()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_sin()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_acos()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_abs()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_atan()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_atan2()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_cos()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_tan()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_sign()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_ceil()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_floor()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_round()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_ln()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_len()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_log()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_exp()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_sqrt()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_concat()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_min()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_pow()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_max()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_norm()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_str()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_chr()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_ord()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_cross()));
+    _OPENSCAD_NODE_REGISTER(math_asin);
+    _OPENSCAD_NODE_REGISTER(math_sin);
+    _OPENSCAD_NODE_REGISTER(math_acos);
+    _OPENSCAD_NODE_REGISTER(math_abs);
+    _OPENSCAD_NODE_REGISTER(math_atan);
+    _OPENSCAD_NODE_REGISTER(math_atan2);
+    _OPENSCAD_NODE_REGISTER(math_cos);
+    _OPENSCAD_NODE_REGISTER(math_tan);
+    _OPENSCAD_NODE_REGISTER(math_sign);
+    _OPENSCAD_NODE_REGISTER(math_ceil);
+    _OPENSCAD_NODE_REGISTER(math_floor);
+    _OPENSCAD_NODE_REGISTER(math_round);
+    _OPENSCAD_NODE_REGISTER(math_ln);
+    _OPENSCAD_NODE_REGISTER(math_len);
+    _OPENSCAD_NODE_REGISTER(math_log);
+    _OPENSCAD_NODE_REGISTER(math_exp);
+    _OPENSCAD_NODE_REGISTER(math_sqrt);
+    _OPENSCAD_NODE_REGISTER(math_concat);
+    _OPENSCAD_NODE_REGISTER(math_min);
+    _OPENSCAD_NODE_REGISTER(math_pow);
+    _OPENSCAD_NODE_REGISTER(math_max);
+    _OPENSCAD_NODE_REGISTER(math_norm);
+    _OPENSCAD_NODE_REGISTER(math_str);
+    _OPENSCAD_NODE_REGISTER(math_chr);
+    _OPENSCAD_NODE_REGISTER(math_ord);
+    _OPENSCAD_NODE_REGISTER(math_cross);
 
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_add()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_subtract()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_multiply()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_divide()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_modulo()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_exponentiate()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_lt()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_leq()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_eq()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_geq()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_gt()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_and()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_or()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_not()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_lookup()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_search()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_parent_module()));
+    _OPENSCAD_NODE_REGISTER(math_add);
+    _OPENSCAD_NODE_REGISTER(math_subtract);
+    _OPENSCAD_NODE_REGISTER(math_multiply);
+    _OPENSCAD_NODE_REGISTER(math_divide);
+    _OPENSCAD_NODE_REGISTER(math_modulo);
+    _OPENSCAD_NODE_REGISTER(math_exponentiate);
+    _OPENSCAD_NODE_REGISTER(math_lt);
+    _OPENSCAD_NODE_REGISTER(math_leq);
+    _OPENSCAD_NODE_REGISTER(math_eq);
+    _OPENSCAD_NODE_REGISTER(math_geq);
+    _OPENSCAD_NODE_REGISTER(math_gt);
+    _OPENSCAD_NODE_REGISTER(math_and);
+    _OPENSCAD_NODE_REGISTER(math_or);
+    _OPENSCAD_NODE_REGISTER(math_not);
+    _OPENSCAD_NODE_REGISTER(math_lookup);
+    _OPENSCAD_NODE_REGISTER(math_search);
+    _OPENSCAD_NODE_REGISTER(math_parent_module);
     
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_bool()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_string()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_num()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_function()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_list()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_undef()));
+    _OPENSCAD_NODE_REGISTER(math_is_bool);
+    _OPENSCAD_NODE_REGISTER(math_is_string);
+    _OPENSCAD_NODE_REGISTER(math_is_num);
+    _OPENSCAD_NODE_REGISTER(math_is_function);
+    _OPENSCAD_NODE_REGISTER(math_is_list);
+    _OPENSCAD_NODE_REGISTER(math_is_undef);
 
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_rands()));
+    _OPENSCAD_NODE_REGISTER(math_rands);
 
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_import_dxf_dim()));
-    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_import_dxf_cross()));
+    _OPENSCAD_NODE_REGISTER(import_dxf_dim);
+    _OPENSCAD_NODE_REGISTER(import_dxf_cross);
     
     return ret;
 }
 
+std::string
+OpenSCADBuiltins::joinArguments(std::vector<std::string> list)
+{
+    std::string out;
+    bool first = true;
+
+    for (const std::string & s : list) {
+	if (!first) {
+	    out += std::string(",");
+	    first = false;
+	}
+	out += s;
+    }
+    return out;
+}
+
+void
+OpenSCADBuiltins::conditionalArg(
+    std::vector<std::string> & args,
+    const PortFunctionData & input,
+    const OpenSCADBuiltinModel & model,
+    std::string key,
+    std::string default_value)
+{
+    if (input.hasValue(key)) {
+	args.push_back(key + std::string("=") + input.getValue(key, ""));
+    }
+    else if (model.hasValue(key)) {
+	args.push_back(key + std::string("=") + model.getValue(key, ""));
+    }
+    else {
+	args.push_back(key + std::string("=") + default_value);
+    }
+}
+
+void
+OpenSCADBuiltins::conditionalArg(
+    std::vector<std::string> & args,
+    const PortFunctionData & input,
+    const OpenSCADBuiltinModel & model,
+    std::string key
+    )
+{
+    if (input.hasValue(key)) {
+	args.push_back(key + std::string("=") + input.getValue(key, ""));
+    }
+    else if (model.hasValue(key)) {
+	args.push_back(key + std::string("=") + model.getValue(key, ""));
+    }
+}

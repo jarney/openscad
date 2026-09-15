@@ -124,3 +124,30 @@ OpenSCADBuiltinModel::editGraph()
     }
 }
 
+bool
+OpenSCADBuiltinModel::hasValue(std::string key) const
+{
+    const auto it = _modelData.find(key);
+    if (it == _modelData.end()) {
+	return false;
+    }
+    return true;
+    
+}
+
+std::string
+OpenSCADBuiltinModel::getValue(std::string key, std::string default_value) const
+{
+    const auto it = _modelData.find(key);
+    if (it == _modelData.end()) {
+	return default_value;
+    }
+    return it->second;    
+}
+
+void
+OpenSCADBuiltinModel::setValue(std::string key, std::string value)
+{
+    _modelData[key] = value;
+}
+

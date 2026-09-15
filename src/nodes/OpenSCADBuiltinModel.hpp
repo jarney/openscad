@@ -37,6 +37,10 @@ public:
 
     void setEditor(JNodeProgramEditor *receiver);
     JNodeProgramEditor *getEditor() const;
+
+    bool hasValue(std::string key) const;
+    std::string getValue(std::string key, std::string default_value) const;
+    void setValue(std::string key, std::string value);
     
     void editGraph();
 
@@ -47,5 +51,6 @@ protected:
     const NodeModelType & _modelType;
     QWidget *_widget;
     JNodeProgramEditor *_editor;
+    std::map<std::string, std::string> _modelData;
 };
 

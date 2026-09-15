@@ -2,11 +2,15 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-// Boolean operations
+#define _OPENSCAD_NODE_CATEGORY "Boolean Operations"
+
+////////////////////////////////////////
+// Union
+////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_op_union()
 {
-    auto model = std::make_unique<NodeModelType>("union", "Union", "Operations");
+    auto model = std::make_unique<NodeModelType>("union", "Union", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "b"), "b");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -26,10 +30,13 @@ OpenSCADBuiltins::f_op_union_process(const OpenSCADBuiltinModel & model, const P
         std::string("});"));
 }
 
+////////////////////////////////////////
+// Difference
+////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_op_difference()
 {
-    auto model = std::make_unique<NodeModelType>("difference", "Difference", "Operations");
+    auto model = std::make_unique<NodeModelType>("difference", "Difference", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "b"), "b");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -49,10 +56,13 @@ OpenSCADBuiltins::f_op_difference_process(const OpenSCADBuiltinModel & model, co
         std::string("});"));
 }
 
+////////////////////////////////////////
+// Intersection
+////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_op_intersection()
 {
-    auto model = std::make_unique<NodeModelType>("intersection", "Intersection", "Operations");
+    auto model = std::make_unique<NodeModelType>("intersection", "Intersection", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "b"), "b");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -62,7 +72,6 @@ OpenSCADBuiltins::f_op_intersection()
 void
 OpenSCADBuiltins::f_op_intersection_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    fprintf(stderr, "Processing intersection\n");
     output.setValue("Geometry", std::string("intersection() {\n") +
 	std::string("    {\n") + 
         input.getValue("a", "{}") +
