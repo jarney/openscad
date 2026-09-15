@@ -45,7 +45,7 @@ JNodeProgramEditor::prepareProgram()
 	    &NodeProgramGraphModel::nodeCreated,
 	    [graphId, this](QtNodes::NodeId const nodeId) {
 		const NodeProgramGraphModel *graph = this->_program.getGraph(graphId);
-		BaseSCADModel *node = graph->delegateModel<BaseSCADModel>(nodeId);
+		NewSCADModel *node = graph->delegateModel<NewSCADModel>(nodeId);
 		node->setEditor(this);
 	    }
 	);

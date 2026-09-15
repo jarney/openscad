@@ -78,12 +78,12 @@ static void processNode(
     for (auto pred : connected_nodes) {
 	processNode(model, processed_nodes, all_node_data, pred, depth+1);
     }
-    BaseSCADModel *nodeData = model.delegateModel<BaseSCADModel>(nodeId);
+    NewSCADModel *nodeData = model.delegateModel<NewSCADModel>(nodeId);
 
     PortFunctionData input_data;
     fprintf(stderr, "Processing input connections %ld\n", input_connections.size());
     for (auto & connection : input_connections) {
-	BaseSCADModel *upstreamNode = model.delegateModel<BaseSCADModel>(connection.outNodeId);
+	NewSCADModel *upstreamNode = model.delegateModel<NewSCADModel>(connection.outNodeId);
 	std::string outputPortName = upstreamNode->outputPortName(connection.outPortIndex);
 	
 	std::string inputPortName = nodeData->inputPortName(connection.inPortIndex);
