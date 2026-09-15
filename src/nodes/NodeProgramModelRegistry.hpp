@@ -15,11 +15,13 @@
 #include <utility>
 #include <vector>
 
+class NodeProgramGraphModel;
+
 class NodeDelegateFactory {
 public:
     virtual std::string getName() const = 0;
     virtual std::string getCategory() const = 0;
-    virtual std::unique_ptr<QtNodes::NodeDelegateModel> create() const = 0;
+    virtual std::unique_ptr<QtNodes::NodeDelegateModel> create(NodeProgramGraphModel & graph) const = 0;
 };
 
 /// Class uses map for storing models (name, model)
@@ -47,7 +49,7 @@ public:
 
     void registerModel(std::unique_ptr<NodeDelegateFactory> factory);
     
-    std::unique_ptr<QtNodes::NodeDelegateModel> create(QString const &modelName);
+    std::unique_ptr<QtNodes::NodeDelegateModel> create(QString const &modelName, NodeProgramGraphModel & graph);
 
     RegisteredModelCreatorsMap const &registeredModelCreators() const;
 

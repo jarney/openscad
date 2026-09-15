@@ -200,7 +200,6 @@ OpenSCADBuiltins::f_flow_if_process(const OpenSCADBuiltinModel & model, const Po
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_flow_for()
 {
-    fprintf(stderr, "For called\n");
     auto model = std::make_unique<NodeModelType>("for", "Loop", "Flow Control");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "start"), "start");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "end"), "end");

@@ -60,7 +60,7 @@ bool NodeProgramGraphModel::connectionExists(QtNodes::ConnectionId const connect
 
 QtNodes::NodeId NodeProgramGraphModel::addNode(QString const nodeType)
 {
-    std::unique_ptr<QtNodes::NodeDelegateModel> model = _registry->create(nodeType);
+    std::unique_ptr<QtNodes::NodeDelegateModel> model = _registry->create(nodeType, *this);
 
     if (model) {
 	return addNode(std::move(model));
@@ -626,7 +626,7 @@ void NodeProgramGraphModel::loadNode(QJsonObject const &nodeJson)
 
     QString delegateModelName = internalDataJson["model-name"].toString();
 
-    std::unique_ptr<QtNodes::NodeDelegateModel> model = _registry->create(delegateModelName);
+    std::unique_ptr<QtNodes::NodeDelegateModel> model = _registry->create(delegateModelName, *this);
 
     if (model) {
         connect(model.get(),

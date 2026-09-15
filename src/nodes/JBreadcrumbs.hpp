@@ -11,6 +11,7 @@ public:
     ~JBreadcrumbs();
     void addPage(QWidget * crumb);
     void removePage(int index);
+    QWidget *getPage();
 
 private:
     std::unique_ptr<QVBoxLayout> layout;

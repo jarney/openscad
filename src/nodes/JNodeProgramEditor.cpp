@@ -58,6 +58,11 @@ JNodeProgramEditor::~JNodeProgramEditor()
 {}
 
 
+// So what if, actually, we encode the graph inside the 'for' node
+// and do it recursively instead of making the graphs as peers?
+// For module-call, we would still link to an external module statement,
+// but the module statement itself would contain another flow, so that
+// actually feels pretty natural.  Loading a module node defines the flow...
 void
 JNodeProgramEditor::editGraph(std::string editGraph)
 {
@@ -70,6 +75,23 @@ JNodeProgramEditor::editGraph(std::string editGraph)
     view->centerScene();
     _jbreadcrumbs->addPage(view);
 }
+
+std::vector<QtNodes::NodeGraphicsObject*>
+JNodeProgramEditor::selectedNodes()
+{
+    QtNodes::GraphicsView *view = (QtNodes::GraphicsView *)_jbreadcrumbs->getPage();
+    QtNodes::BasicGraphicsScene *scene = view->getNodeScene();
+    return scene->selectedNodes();
+}
+
+void
+JNodeProgramEditor::createGroup(std::vector<QtNodes::NodeGraphicsObject*> & groupNodes, QString name)
+{
+    QtNodes::GraphicsView *view = (QtNodes::GraphicsView *)_jbreadcrumbs->getPage();
+    QtNodes::BasicGraphicsScene *scene = view->getNodeScene();
+    scene->createGroup(groupNodes, name);
+}
+
 
 void
 JNodeProgramEditor::initializeStyles()

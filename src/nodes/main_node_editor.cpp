@@ -104,10 +104,9 @@ int main(int argc, char *argv[])
 	qtab->setTabVisible(0, true);
     });
 
+    QObject::connect(groupAction, &QAction::triggered, [jw]() {
+	std::vector<QtNodes::NodeGraphicsObject*> groupNodes = jw->selectedNodes();
 #if 0
-    QObject::connect(groupAction, &QAction::triggered, scene, [scene, &dataFlowGraphModel]() {
-	std::vector<QtNodes::NodeGraphicsObject*> groupNodes = ((QtNodes::BasicGraphicsScene*)scene)->selectedNodes();
-
 	// We will need a few of this type.
 	// A function (input parameters, output return-value)
 	// A module (input parameters, output geometry)
@@ -126,9 +125,10 @@ int main(int argc, char *argv[])
 
 	groupNodes.push_back(scene->nodeGraphicsObject(dataFlowGraphModel.addNode(std::move(arguments))));
 	groupNodes.push_back(scene->nodeGraphicsObject(dataFlowGraphModel.addNode(std::move(ret))));
-
-	auto nodeGroup = scene->createGroup(groupNodes, QString("Some Group"));
+#endif
+	jw->createGroup(groupNodes, QString("Some Group"));
     });
+#if 0
     QObject::connect(scene, &NodeProgramGraphicsScene::sceneLoaded, view, &GraphicsView::centerScene);
 
     QObject::connect(scene, &NodeProgramGraphicsScene::modified, &mainWidget, [&mainWidget]() {

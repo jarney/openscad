@@ -3,12 +3,19 @@
 #include "JBreadcrumbs.hpp"
 #include "NodeProgram.hpp"
 
+namespace QtNodes {
+    class NodeGraphicsObject;
+}
+
 class JNodeProgramEditor : public QWidget {
 public:
     JNodeProgramEditor(NodeProgram & program);
     ~JNodeProgramEditor();
     void editGraph(std::string editGraph);
 
+    std::vector<QtNodes::NodeGraphicsObject*> selectedNodes();
+    void createGroup(std::vector<QtNodes::NodeGraphicsObject*> & groupNodes, QString name);
+    
     static void initializeStyles();
 private:
     /**

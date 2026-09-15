@@ -1,11 +1,11 @@
 #include "NodeProgramModelRegistry.hpp"
 
-std::unique_ptr<QtNodes::NodeDelegateModel> NodeProgramModelRegistry::create(QString const &modelName)
+std::unique_ptr<QtNodes::NodeDelegateModel> NodeProgramModelRegistry::create(QString const &modelName, NodeProgramGraphModel & graph)
 {
     auto it = _registeredItemCreators.find(modelName);
 
     if (it != _registeredItemCreators.end()) {
-        return it->second->create();
+        return it->second->create(graph);
     }
 
     return nullptr;

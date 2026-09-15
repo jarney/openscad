@@ -21,6 +21,12 @@ JBreadcrumbs::JBreadcrumbs()
     hbox_layout->setSpacing(0);
 }
 
+QWidget *
+JBreadcrumbs::getPage()
+{
+    return pages.at(0);
+}
+
 void
 JBreadcrumbs::addPage(QWidget *page)
 {
