@@ -35,6 +35,8 @@ public:
     
     void process(const PortFunctionData & input, PortFunctionData & output) const;
 
+    virtual bool resizable() const override;
+    
     void setEditor(JNodeProgramEditor *receiver);
     JNodeProgramEditor *getEditor() const;
 

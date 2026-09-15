@@ -15,6 +15,8 @@ public:
     std::string getName() const;
     std::string getCaption() const;
     std::string getCategory() const;
+    bool getResizable() const;
+    void setResizable(bool resizable);
     
     void addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName);
     void addOutputPort(std::unique_ptr<NodeModelPort> outputPort, std::string outputPortName);
@@ -40,6 +42,7 @@ private:
     std::string _name;
     std::string _caption;
     std::string _category;
+    bool _resizable;
     std::vector<std::unique_ptr<NodeModelPort>> _inputPorts;
     std::vector<std::unique_ptr<NodeModelPort>> _outputPorts;
     std::map<int, std::string> _inputPortNames;

@@ -4,6 +4,7 @@ NodeModelType::NodeModelType(std::string name, std::string caption, std::string 
     : _name(name)
     , _caption(caption)
     , _category(category)
+    , _resizable(false)
     , _processor(default_processor)
     , _widgetFactory(default_widget_factory)
 {}
@@ -19,6 +20,14 @@ NodeModelType::getCaption() const
 std::string
 NodeModelType::getCategory() const
 { return _category; }
+
+bool
+NodeModelType::getResizable() const
+{ return _resizable; }
+
+void
+NodeModelType::setResizable(bool resizable)
+{ _resizable = resizable; }
 
 void
 NodeModelType::addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName)

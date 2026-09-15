@@ -66,6 +66,7 @@ OpenSCADBuiltins::registerDataModels()
     // Flow control
     _OPENSCAD_NODE_REGISTER(flow_for);
     _OPENSCAD_NODE_REGISTER(flow_if);
+    _OPENSCAD_NODE_REGISTER(flow_comment);
     //_OPENSCAD_NODE_REGISTER(flow_let);
     //_OPENSCAD_NODE_REGISTER(flow_group);
     //_OPENSCAD_NODE_REGISTER(flow_assert);

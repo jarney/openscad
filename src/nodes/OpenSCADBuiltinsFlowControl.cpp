@@ -3,6 +3,8 @@
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QPlainTextEdit>
+#include <Qsci/qsciscintilla.h>
 
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_flow_if()
@@ -85,5 +87,24 @@ OpenSCADBuiltins::f_output_process(const OpenSCADBuiltinModel & model, const Por
 {
     std::string s = input.getValue("out", "//No Geometry Output\n");
     output.setValue("out", s);
+}
+
+
+
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_flow_comment()
+{
+    auto model = std::make_unique<NodeModelType>("comment", "Comment", "Flow Control");
+    model->setResizable(true);
+    model->setWidgetFactory(OpenSCADBuiltins::f_flow_comment_widget);
+    return model;
+}
+QWidget*
+OpenSCADBuiltins::f_flow_comment_widget(OpenSCADBuiltinModel *model)
+{
+//    QsciScintilla *comment = new QsciScintilla();
+    QPlainTextEdit *comment = new QPlainTextEdit();
+    comment->setPlainText("Place Comment Here...");
+    return comment;
 }
 

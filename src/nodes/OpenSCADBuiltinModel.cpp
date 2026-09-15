@@ -104,6 +104,12 @@ OpenSCADBuiltinModel::process(const PortFunctionData & input, PortFunctionData &
     _modelType.getProcessor()(*this, input, output);
 }
 
+bool
+OpenSCADBuiltinModel::resizable() const
+{
+    return _modelType.getResizable();
+}
+
 void
 OpenSCADBuiltinModel::setEditor(JNodeProgramEditor *editor)
 {
