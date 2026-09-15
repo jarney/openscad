@@ -5,12 +5,12 @@
 
 typedef std::map<std::string, std::string> PortFunctionData;
 
-class NewSCADModel;
+class OpenSCADBuiltinModel;
 
 class NodeModelType {
 public:
-    typedef std::function<void(const NewSCADModel & model, const PortFunctionData &, PortFunctionData & )> NodeProcessor;
-    typedef std::function<QWidget*(NewSCADModel *)> WidgetFactory;
+    typedef std::function<void(const OpenSCADBuiltinModel & model, const PortFunctionData &, PortFunctionData & )> NodeProcessor;
+    typedef std::function<QWidget*(OpenSCADBuiltinModel *)> WidgetFactory;
     
     NodeModelType(std::string name, std::string caption, std::string category);
     std::string getName() const;
@@ -33,8 +33,8 @@ public:
     void setWidgetFactory(WidgetFactory widgetFactory);
     WidgetFactory getWidgetFactory() const;
 
-    static void default_processor(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
-    static QWidget *default_widget_factory(NewSCADModel *model);
+    static void default_processor(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output);
+    static QWidget *default_widget_factory(OpenSCADBuiltinModel *model);
 
     void dump();
 private:

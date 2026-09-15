@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <QString>
 #include <QtNodes/Definitions>
-#include "OpenSCADModels.hpp"
-#include "OpenSCADEvaluator.hpp"
+
+#include "nodes/OpenSCADBuiltinModel.hpp"
+#include "nodes/OpenSCADEvaluator.hpp"
 
 static void
 findOutputNodes(
@@ -78,12 +79,12 @@ static void processNode(
     for (auto pred : connected_nodes) {
 	processNode(model, processed_nodes, all_node_data, pred, depth+1);
     }
-    NewSCADModel *nodeData = model.delegateModel<NewSCADModel>(nodeId);
+    OpenSCADBuiltinModel *nodeData = model.delegateModel<OpenSCADBuiltinModel>(nodeId);
 
     PortFunctionData input_data;
     fprintf(stderr, "Processing input connections %ld\n", input_connections.size());
     for (auto & connection : input_connections) {
-	NewSCADModel *upstreamNode = model.delegateModel<NewSCADModel>(connection.outNodeId);
+	OpenSCADBuiltinModel *upstreamNode = model.delegateModel<OpenSCADBuiltinModel>(connection.outNodeId);
 	std::string outputPortName = upstreamNode->outputPortName(connection.outPortIndex);
 	
 	std::string inputPortName = nodeData->inputPortName(connection.inPortIndex);

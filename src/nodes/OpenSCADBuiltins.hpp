@@ -8,73 +8,15 @@
 #include "nodes/OpenSCADDataTypes.hpp"
 #include "nodes/NodeModelType.hpp"
 #include "nodes/NodeProgramModelRegistry.hpp"
+#include "nodes/OpenSCADBuiltinModel.hpp"
 
-class JNodeProgramEditor;
-
-/// The model dictates the number of inputs and outputs for the Node.
-/// In this example it has no logic.
-class NewSCADModel : public QtNodes::NodeDelegateModel {
-public:
-    NewSCADModel(const NodeModelType & modelType);
-
-    unsigned int nPorts(QtNodes::PortType portType) const override;
-
-    QtNodes::NodeDataType dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
-    QString portCaption(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
-    bool portCaptionVisible(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
-
-    std::shared_ptr<QtNodes::NodeData> outData(QtNodes::PortIndex port) override;
-
-    void setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex portIndex) override;
-
-    QString name() const override;
-    QString caption() const override;
-
-    QWidget *embeddedWidget() override;
-
-    void addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName);
-    void addOutputPort(std::unique_ptr<NodeModelPort> outputPort, std::string outputPortName);
-    std::string inputPortName(QtNodes::PortIndex portIndex) const;
-    std::string outputPortName(QtNodes::PortIndex portIndex) const;
-    
-    void process(const PortFunctionData & input, PortFunctionData & output) const;
-
-    void setEditor(JNodeProgramEditor *receiver);
-    JNodeProgramEditor *getEditor() const;
-    
-    void editGraph();
-
-protected:
-    // Data purely about the abstract node
-    // that is the same for each instance.  Factor this out
-    // to a node-type class.
-    const NodeModelType & _modelType;
-    QWidget *_widget;
-    JNodeProgramEditor *_editor;
-};
-
-
-class OpenSCADNodeFactory : public NodeDelegateFactory {
-public:
-    OpenSCADNodeFactory(
-	std::unique_ptr<NodeModelType> type
-    );
-    std::string getName() const override;
-    std::string getCategory() const override;
-    std::unique_ptr<QtNodes::NodeDelegateModel> create() const;
-private:
-    std::unique_ptr<NodeModelType> _type;
-};
-
-class SCADModels {
+class OpenSCADBuiltins {
 public:
     using RegistryItemPtr = std::unique_ptr<NodeModelType>;
-
     static std::shared_ptr<NodeProgramModelRegistry> registerDataModels();
-    std::string f_default_process(const PortFunctionData & input, PortFunctionData & output);
-    
+
     // Math
-#define _OPENSCAD_NODE_PROCESSOR_PROTOTYPE const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output
+#define _OPENSCAD_NODE_PROCESSOR_PROTOTYPE const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output
 #define _OPENSCAD_NODE_DECL(name)                                    \
     static std::unique_ptr<NodeModelType> f_##name();				\
     static void f_##name##_process(_OPENSCAD_NODE_PROCESSOR_PROTOTYPE);
@@ -112,7 +54,7 @@ public:
 
     // Flow control
     _OPENSCAD_NODE_DECL(flow_for);
-    static QWidget* f_flow_for_widget(NewSCADModel *model);
+    static QWidget* f_flow_for_widget(OpenSCADBuiltinModel *model);
     
     _OPENSCAD_NODE_DECL(flow_if);
     _OPENSCAD_NODE_DECL(flow_let);

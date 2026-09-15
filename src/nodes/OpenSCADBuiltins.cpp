@@ -1,6 +1,10 @@
-#include "OpenSCADModels.hpp"
+#include "nodes/OpenSCADBuiltins.hpp"
+#include "nodes/OpenSCADBuiltinFactory.hpp"
+
 #include <QtWidgets/QPushButton>
-#include "JNodeProgramEditor.hpp"
+
+#include "nodes/JNodeProgramEditor.hpp"
+
 
 /*********************************************/
 
@@ -24,8 +28,8 @@ static bool KEY_EXISTS(const PortFunctionData & input, std::string key)
 }
 
 // Primitives
-SCADModels::RegistryItemPtr
-SCADModels::f_prim_sphere()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_prim_sphere()
 {
     auto model = std::make_unique<NodeModelType>("sphere", "Sphere", "Primitives");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
@@ -36,7 +40,7 @@ SCADModels::f_prim_sphere()
 }
 
 void
-SCADModels::f_prim_sphere_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_prim_sphere_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     out += std::string("sphere(");
@@ -51,8 +55,8 @@ SCADModels::f_prim_sphere_process(const NewSCADModel & model, const PortFunction
     
 }
 
-SCADModels::RegistryItemPtr
-SCADModels::f_util_color()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_util_color()
 {
     auto model = std::make_unique<NodeModelType>("color", "Color", "Utilities");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "c"), "color");
@@ -64,7 +68,7 @@ SCADModels::f_util_color()
 }
 
 void
-SCADModels::f_util_color_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_util_color_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     out += std::string("color(");
@@ -81,8 +85,8 @@ SCADModels::f_util_color_process(const NewSCADModel & model, const PortFunctionD
 }
 
 
-SCADModels::RegistryItemPtr
-SCADModels::f_xform_translate()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_xform_translate()
 {
     auto model = std::make_unique<NodeModelType>("translate", "Translate", "Transformations");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "vector"), "vector");
@@ -92,7 +96,7 @@ SCADModels::f_xform_translate()
     return model;
 }
 void
-SCADModels::f_xform_translate_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_xform_translate_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     out += std::string("translate(");
@@ -102,8 +106,8 @@ SCADModels::f_xform_translate_process(const NewSCADModel & model, const PortFunc
     out += std::string("}\n");
     output["Geometry"] = out;
 }
-SCADModels::RegistryItemPtr
-SCADModels::f_xform_mirror()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_xform_mirror()
 {
     auto model = std::make_unique<NodeModelType>("mirror", "Mirror", "Transformations");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "vector"), "vector");
@@ -113,7 +117,7 @@ SCADModels::f_xform_mirror()
     return model;
 }
 void
-SCADModels::f_xform_mirror_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_xform_mirror_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     out += std::string("mirror(");
@@ -123,8 +127,8 @@ SCADModels::f_xform_mirror_process(const NewSCADModel & model, const PortFunctio
     out += std::string("}\n");
     output["Geometry"] = out;
 }
-SCADModels::RegistryItemPtr
-SCADModels::f_xform_scale()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_xform_scale()
 {
     auto model = std::make_unique<NodeModelType>("scale", "Scale", "Transformations");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "vector"), "vector");
@@ -134,7 +138,7 @@ SCADModels::f_xform_scale()
     return model;
 }
 void
-SCADModels::f_xform_scale_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_xform_scale_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     out += std::string("scale(");
@@ -145,8 +149,8 @@ SCADModels::f_xform_scale_process(const NewSCADModel & model, const PortFunction
     output["Geometry"] = out;
 }
 
-SCADModels::RegistryItemPtr
-SCADModels::f_xform_resize()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_xform_resize()
 {
     auto model = std::make_unique<NodeModelType>("resize", "Resize", "Transformations");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "vector"), "vector");
@@ -156,7 +160,7 @@ SCADModels::f_xform_resize()
     return model;
 }
 void
-SCADModels::f_xform_resize_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_xform_resize_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     out += std::string("resize(");
@@ -167,8 +171,8 @@ SCADModels::f_xform_resize_process(const NewSCADModel & model, const PortFunctio
     output["Geometry"] = out;
 }
 
-SCADModels::RegistryItemPtr
-SCADModels::f_flow_if()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_flow_if()
 {
     auto model = std::make_unique<NodeModelType>("if", "If", "Flow Control");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "condition"), "condition");
@@ -180,7 +184,7 @@ SCADModels::f_flow_if()
 }
 
 void
-SCADModels::f_flow_if_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_flow_if_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     out += std::string("if(");
@@ -193,21 +197,21 @@ SCADModels::f_flow_if_process(const NewSCADModel & model, const PortFunctionData
     output["Geometry"] = out;
 }
 
-SCADModels::RegistryItemPtr
-SCADModels::f_flow_for()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_flow_for()
 {
     fprintf(stderr, "For called\n");
     auto model = std::make_unique<NodeModelType>("for", "Loop", "Flow Control");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "start"), "start");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "end"), "end");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(SCADModels::f_flow_for_process);
-    model->setWidgetFactory(SCADModels::f_flow_for_widget);
+    model->setProcessor(OpenSCADBuiltins::f_flow_for_process);
+    model->setWidgetFactory(OpenSCADBuiltins::f_flow_for_widget);
     return model;
 }
 
 QWidget*
-SCADModels::f_flow_for_widget(NewSCADModel *model)
+OpenSCADBuiltins::f_flow_for_widget(OpenSCADBuiltinModel *model)
 {
     fprintf(stderr, "Push button for edit of for content\n");
     QPushButton *button = new QPushButton();
@@ -222,7 +226,7 @@ SCADModels::f_flow_for_widget(NewSCADModel *model)
 
 
 void
-SCADModels::f_flow_for_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_flow_for_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     out += std::string("for (i = ");
@@ -237,8 +241,8 @@ SCADModels::f_flow_for_process(const NewSCADModel & model, const PortFunctionDat
 }
 
 
-SCADModels::RegistryItemPtr
-SCADModels::f_prim_cube()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_prim_cube()
 {
     auto model = std::make_unique<NodeModelType>("cube", "Cube", "Primitives");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "x"), "x");
@@ -250,7 +254,7 @@ SCADModels::f_prim_cube()
 }
 
 void
-SCADModels::f_prim_cube_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_prim_cube_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["Geometry"] = std::string("        cube([") +
 	FIND(input, "x", "15.0") + std::string(", ") +
@@ -259,8 +263,8 @@ SCADModels::f_prim_cube_process(const NewSCADModel & model, const PortFunctionDa
 	std::string("]);\n");
 }
 
-SCADModels::RegistryItemPtr
-SCADModels::f_prim_cylinder()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_prim_cylinder()
 {
     auto model = std::make_unique<NodeModelType>("cylinder", "Cylinder", "Primitives");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
@@ -270,7 +274,7 @@ SCADModels::f_prim_cylinder()
     return model;
 }
 void
-SCADModels::f_prim_cylinder_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_prim_cylinder_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["Geometry"] = std::string("cylinder(") +
 	FIND(input, "r", "15") + std::string(", ") +
@@ -279,8 +283,8 @@ SCADModels::f_prim_cylinder_process(const NewSCADModel & model, const PortFuncti
 }
 
 // Boolean operations
-SCADModels::RegistryItemPtr
-SCADModels::f_op_union()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_op_union()
 {
     auto model = std::make_unique<NodeModelType>("union", "Union", "Operations");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
@@ -290,7 +294,7 @@ SCADModels::f_op_union()
     return model;
 }
 void
-SCADModels::f_op_union_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_op_union_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["Geometry"] = std::string("union() {\n") +
 	std::string("    {\n") + 
@@ -302,8 +306,8 @@ SCADModels::f_op_union_process(const NewSCADModel & model, const PortFunctionDat
 	std::string("};");
 }
 
-SCADModels::RegistryItemPtr
-SCADModels::f_op_hull()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_op_hull()
 {
     auto model = std::make_unique<NodeModelType>("hull", "Convex Hull", "Operations");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
@@ -313,7 +317,7 @@ SCADModels::f_op_hull()
     return model;
 }
 void
-SCADModels::f_op_hull_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_op_hull_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["Geometry"] = std::string("hull() {\n") +
 	std::string("    {\n") + 
@@ -325,8 +329,8 @@ SCADModels::f_op_hull_process(const NewSCADModel & model, const PortFunctionData
 	std::string("};");
 }
 
-SCADModels::RegistryItemPtr
-SCADModels::f_op_minkowski()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_op_minkowski()
 {
     auto model = std::make_unique<NodeModelType>("minkowski", "Minkowski", "Operations");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
@@ -336,7 +340,7 @@ SCADModels::f_op_minkowski()
     return model;
 }
 void
-SCADModels::f_op_minkowski_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_op_minkowski_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["Geometry"] = std::string("minkowski() {\n") +
 	std::string("    {\n") + 
@@ -348,8 +352,8 @@ SCADModels::f_op_minkowski_process(const NewSCADModel & model, const PortFunctio
 	std::string("};");
 }
 
-SCADModels::RegistryItemPtr
-SCADModels::f_op_difference()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_op_difference()
 {
     auto model = std::make_unique<NodeModelType>("difference", "Difference", "Operations");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
@@ -359,7 +363,7 @@ SCADModels::f_op_difference()
     return model;
 }
 void
-SCADModels::f_op_difference_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_op_difference_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["Geometry"] = std::string("difference() {\n") +
 	std::string("    {\n") + 
@@ -372,8 +376,8 @@ SCADModels::f_op_difference_process(const NewSCADModel & model, const PortFuncti
 }
 
 
-SCADModels::RegistryItemPtr
-SCADModels::f_op_intersection()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_op_intersection()
 {
     auto model = std::make_unique<NodeModelType>("intersection", "Intersection", "Operations");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
@@ -383,7 +387,7 @@ SCADModels::f_op_intersection()
     return model;
 }
 void
-SCADModels::f_op_intersection_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_op_intersection_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     fprintf(stderr, "Processing intersection\n");
     output["Geometry"] = std::string("intersection() {\n") +
@@ -397,8 +401,8 @@ SCADModels::f_op_intersection_process(const NewSCADModel & model, const PortFunc
 }
 
 
-SCADModels::RegistryItemPtr
-SCADModels::f_math_rands()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_math_rands()
 {
     auto model = std::make_unique<NodeModelType>("rands", "Random Vector", "Math");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "min"), "max");
@@ -410,7 +414,7 @@ SCADModels::f_math_rands()
     return model;
 }
 void
-SCADModels::f_math_rands_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_math_rands_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     auto args = std::string();
 
@@ -426,8 +430,8 @@ SCADModels::f_math_rands_process(const NewSCADModel & model, const PortFunctionD
     output["Geometry"] = std::string("rands(") + args + std::string(")");
 }
 
-SCADModels::RegistryItemPtr
-SCADModels::f_import_dxf_dim()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_import_dxf_dim()
 {
     auto model = std::make_unique<NodeModelType>("dxf_dim", "Read DXF Dimension", "Import");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
@@ -440,7 +444,7 @@ SCADModels::f_import_dxf_dim()
     return model;
 }
 void
-SCADModels::f_import_dxf_dim_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_import_dxf_dim_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["out"] = std::string("dxf_dim(") +
 	std::string("file=") + FIND(input, "file", "0") + "," +
@@ -452,8 +456,8 @@ SCADModels::f_import_dxf_dim_process(const NewSCADModel & model, const PortFunct
 
 }
 
-SCADModels::RegistryItemPtr
-SCADModels::f_import_dxf_cross()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_import_dxf_cross()
 {
     auto model = std::make_unique<NodeModelType>("dxf_cross", "Read DXF Origin", "Import");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
@@ -466,7 +470,7 @@ SCADModels::f_import_dxf_cross()
 }
 
 void
-SCADModels::f_import_dxf_cross_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_import_dxf_cross_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["out"] = std::string("dxf_cross(") +
 	std::string("file=") + FIND(input, "file", "0") + "," +
@@ -477,8 +481,8 @@ SCADModels::f_import_dxf_cross_process(const NewSCADModel & model, const PortFun
 }
 
 // Boolean Constants
-SCADModels::RegistryItemPtr
-SCADModels::f_const_true()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_const_true()
 {
     auto model = std::make_unique<NodeModelType>("const_true", "True", "Constants");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -486,14 +490,14 @@ SCADModels::f_const_true()
     return model;
 }
 void
-SCADModels::f_const_true_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_const_true_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["value"] = std::string("true");
 }
 
 
-SCADModels::RegistryItemPtr
-SCADModels::f_const_false()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_const_false()
 {
     auto model = std::make_unique<NodeModelType>("const_false", "False", "Constants");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -501,14 +505,14 @@ SCADModels::f_const_false()
     return model;
 }
 void
-SCADModels::f_const_false_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_const_false_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["value"] = std::string("false");
 }
 
 // Other Constants
-SCADModels::RegistryItemPtr
-SCADModels::f_const_int()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_const_int()
 {
     auto model = std::make_unique<NodeModelType>("const_int", "Integer", "Constants");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -516,14 +520,14 @@ SCADModels::f_const_int()
     return model;
 }
 void
-SCADModels::f_const_int_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_const_int_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["value"] = std::string("15");
 }
 
 
-SCADModels::RegistryItemPtr
-SCADModels::f_const_float()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_const_float()
 {
     auto model = std::make_unique<NodeModelType>("const_float", "Float", "Constants");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -531,14 +535,14 @@ SCADModels::f_const_float()
     return model;
 }
 void
-SCADModels::f_const_float_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_const_float_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["value"] = std::string("15.0");
 }
 
 
-SCADModels::RegistryItemPtr
-SCADModels::f_const_string()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_const_string()
 {
     auto model = std::make_unique<NodeModelType>("const_string", "String", "Constants");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -546,12 +550,12 @@ SCADModels::f_const_string()
     return model;
 }
 void
-SCADModels::f_const_string_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_const_string_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["value"] = std::string("\"constant string\"");
 }
-SCADModels::RegistryItemPtr
-SCADModels::f_const_undef()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_const_undef()
 {
     auto model = std::make_unique<NodeModelType>("const_undef", "Undefined", "Constants");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -559,12 +563,12 @@ SCADModels::f_const_undef()
     return model;
 }
 void
-SCADModels::f_const_undef_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_const_undef_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["value"] = std::string("undef");
 }
-SCADModels::RegistryItemPtr
-SCADModels::f_const_pi()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_const_pi()
 {
     auto model = std::make_unique<NodeModelType>("PI", "PI", "Constants");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -572,12 +576,12 @@ SCADModels::f_const_pi()
     return model;
 }
 void
-SCADModels::f_const_pi_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_const_pi_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["value"] = std::string("PI");
 }
-SCADModels::RegistryItemPtr
-SCADModels::f_const_version()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_const_version()
 {
     auto model = std::make_unique<NodeModelType>("version", "Version", "Constants");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -585,12 +589,12 @@ SCADModels::f_const_version()
     return model;
 }
 void
-SCADModels::f_const_version_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_const_version_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["value"] = std::string("version()");
 }
-SCADModels::RegistryItemPtr
-SCADModels::f_const_version_num()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_const_version_num()
 {
     auto model = std::make_unique<NodeModelType>("version_num", "Version Number", "Constants");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -598,13 +602,13 @@ SCADModels::f_const_version_num()
     return model;
 }
 void
-SCADModels::f_const_version_num_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_const_version_num_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output["value"] = std::string("version_num()");
 }
 
-SCADModels::RegistryItemPtr
-SCADModels::f_output()
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_output()
 {
     auto model = std::make_unique<NodeModelType>("output", "Output", "Output");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY), "out");
@@ -612,7 +616,7 @@ SCADModels::f_output()
     return model;
 }
 void
-SCADModels::f_output_process(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_output_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string s = FIND(input, "out", "//No Geometry Output\n");
     fprintf(stderr, "Output geometry %s\n", s.c_str());
@@ -623,8 +627,8 @@ SCADModels::f_output_process(const NewSCADModel & model, const PortFunctionData 
 }
 
 #define UNARY_FUNCTION_BODY(prefix, name, description, input, atype, output, outtype, body) \
-SCADModels::RegistryItemPtr                                                     \
-SCADModels::f_##prefix##_##name() {                                             \
+OpenSCADBuiltins::RegistryItemPtr                                                     \
+OpenSCADBuiltins::f_##prefix##_##name() {                                             \
     auto model = std::make_unique<NodeModelType>(#name, description, "Math");   \
     model->addInputPort(std::make_unique<NodeModelPort>(atype), input);         \
     model->addOutputPort(std::make_unique<NodeModelPort>(outtype), output);     \
@@ -632,8 +636,8 @@ SCADModels::f_##prefix##_##name() {                                             
     return model;                                                               \
 }                                                                               \
 void									        \
-SCADModels::f_##prefix##_##name##_process(                                      \
-    const NewSCADModel & model,                                                 \
+OpenSCADBuiltins::f_##prefix##_##name##_process(                                      \
+    const OpenSCADBuiltinModel & model,                                                 \
     const PortFunctionData & _input,                                            \
     PortFunctionData & _output                                                  \
     )						                                \
@@ -642,8 +646,8 @@ SCADModels::f_##prefix##_##name##_process(                                      
 }
 
 #define BINARY_FUNCTION_BODY(prefix, name, description, a, atype, b, btype, output, outtype, body) \
-SCADModels::RegistryItemPtr                                                     \
-SCADModels::f_##prefix##_##name() {                                             \
+OpenSCADBuiltins::RegistryItemPtr                                                     \
+OpenSCADBuiltins::f_##prefix##_##name() {                                             \
     auto model = std::make_unique<NodeModelType>(#name, description, "Math");   \
     model->addInputPort(std::make_unique<NodeModelPort>(atype), a);             \
     model->addInputPort(std::make_unique<NodeModelPort>(btype), b);             \
@@ -652,8 +656,8 @@ SCADModels::f_##prefix##_##name() {                                             
     return model;                                                               \
 }                                                                               \
 void									        \
-SCADModels::f_##prefix##_##name##_process(                                      \
-    const NewSCADModel & model,                                                 \
+OpenSCADBuiltins::f_##prefix##_##name##_process(                                      \
+    const OpenSCADBuiltinModel & model,                                                 \
     const PortFunctionData & _input,                                            \
     PortFunctionData & _output                                                  \
     )						                                \
@@ -813,254 +817,110 @@ UNARY_FUNCTION_BODY(math, parent_module, "Parent Module Name", "index", DATA_VAR
     )
 
 std::shared_ptr<NodeProgramModelRegistry>
-SCADModels::registerDataModels()
+OpenSCADBuiltins::registerDataModels()
 {
     auto ret = std::make_shared<NodeProgramModelRegistry>();
     
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_prim_sphere()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_sphere()));
     
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_prim_sphere()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_prim_cube()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_prim_cylinder()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_sphere()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_cube()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_prim_cylinder()));
     
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_op_union()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_op_difference()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_op_intersection()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_op_hull()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_op_minkowski()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_op_union()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_op_difference()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_op_intersection()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_op_hull()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_op_minkowski()));
 
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_util_color()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_util_color()));
     
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_const_true()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_const_false()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_const_int()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_const_float()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_const_string()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_const_undef()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_const_pi()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_const_version()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_const_version_num()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_true()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_false()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_int()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_float()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_string()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_undef()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_pi()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_version()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_const_version_num()));
 
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_output()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_output()));
 
     // Flow control
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_flow_for()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_flow_if()));
-    //ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_flow_let);
-    //ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_flow_group);
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_for()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_if()));
+    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_let);
+    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_flow_group);
 
     // Transformations
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_xform_translate()));
-    //ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_xform_offset()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_xform_scale()));
-    //ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_xform_rotate()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_xform_mirror()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_xform_resize()));
-    //ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_xform_multmatrix()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_translate()));
+    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_offset()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_scale()));
+    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_rotate()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_mirror()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_resize()));
+    //ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_xform_multmatrix()));
 
     // Math functions:
     
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_asin()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_sin()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_acos()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_abs()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_atan()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_atan2()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_cos()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_tan()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_sign()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_ceil()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_floor()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_round()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_ln()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_len()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_log()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_exp()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_sqrt()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_concat()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_min()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_pow()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_max()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_norm()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_str()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_chr()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_ord()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_cross()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_asin()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_sin()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_acos()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_abs()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_atan()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_atan2()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_cos()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_tan()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_sign()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_ceil()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_floor()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_round()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_ln()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_len()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_log()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_exp()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_sqrt()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_concat()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_min()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_pow()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_max()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_norm()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_str()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_chr()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_ord()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_cross()));
 
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_add()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_subtract()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_multiply()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_divide()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_modulo()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_exponentiate()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_lt()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_leq()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_eq()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_geq()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_gt()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_and()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_or()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_not()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_lookup()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_search()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_parent_module()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_add()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_subtract()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_multiply()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_divide()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_modulo()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_exponentiate()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_lt()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_leq()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_eq()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_geq()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_gt()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_and()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_or()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_not()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_lookup()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_search()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_parent_module()));
     
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_is_bool()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_is_string()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_is_num()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_is_function()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_is_list()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_is_undef()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_bool()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_string()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_num()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_function()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_list()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_is_undef()));
 
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_math_rands()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_math_rands()));
 
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_import_dxf_dim()));
-    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_import_dxf_cross()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_import_dxf_dim()));
+    ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_import_dxf_cross()));
     
     return ret;
-}
-
-OpenSCADNodeFactory::OpenSCADNodeFactory(
-    std::unique_ptr<NodeModelType> type
-    )
-    : _type(std::move(type))
-{}
-
-std::string
-OpenSCADNodeFactory::getName() const
-{
-    return _type->getName();
-}
-
-std::string
-OpenSCADNodeFactory::getCategory() const
-{
-    return _type->getCategory();
-}
-
-std::unique_ptr<QtNodes::NodeDelegateModel>
-OpenSCADNodeFactory::create(void) const
-{
-    return std::make_unique<NewSCADModel>(*_type);
-}
-
-NewSCADModel::NewSCADModel(const NodeModelType & modelType)
-    : _modelType(modelType)
-    , _widget(nullptr)
-    , _editor(nullptr)
-{}
-
-QString
-NewSCADModel::name() const
-{ return QString::fromStdString(_modelType.getName()); }
-
-QString
-NewSCADModel::caption() const
-{ return QString::fromStdString(_modelType.getCaption()); }
-
-
-QWidget *
-NewSCADModel::embeddedWidget()
-{
-    if (!_widget) {
-	_widget = _modelType.getWidgetFactory()(this);
-    }
-    return _widget;
-}
-
-unsigned int NewSCADModel::nPorts(QtNodes::PortType portType) const
-{
-    if (portType == QtNodes::PortType::In) {
-	return _modelType.getInputPortCount();
-    }
-    else {
-	return _modelType.getOutputPortCount();
-    }
-}
-
-QtNodes::NodeDataType
-NewSCADModel::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
-{
-    if (portType == QtNodes::PortType::In) {
-	return _modelType.getInputPort(portIndex).nodeDataType();
-    }
-    else {
-	return _modelType.getOutputPort(portIndex).nodeDataType();
-    }
-}
-
-QString
-NewSCADModel::portCaption(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
-{
-    if (portType == QtNodes::PortType::In) {
-	return _modelType.getInputPort(portIndex).portCaption();
-    }
-    else {
-	return _modelType.getOutputPort(portIndex).portCaption();
-    }
-}
-
-bool
-NewSCADModel::portCaptionVisible(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
-{
-    if (portType == QtNodes::PortType::In) {
-	return _modelType.getInputPort(portIndex).portCaptionVisible();
-    }
-    else {
-	return _modelType.getOutputPort(portIndex).portCaptionVisible();
-    }
-}
-
-std::shared_ptr<QtNodes::NodeData> NewSCADModel::outData(QtNodes::PortIndex portIndex)
-{
-    /* Do nothing, we don't let the UI perform the evaluation */
-    return nullptr;
-}
-
-void NewSCADModel::setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex portIndex)
-{
-    if (!data) {
-        Q_EMIT dataInvalidated(0);
-    }
-
-    /* Do nothing, we don't let the UI perform the evaluation */
-}
-
-
-std::string
-NewSCADModel::inputPortName(QtNodes::PortIndex portIndex) const
-{
-    return _modelType.getInputPortName(portIndex);
-}
-std::string
-NewSCADModel::outputPortName(QtNodes::PortIndex portIndex) const
-{
-    return _modelType.getOutputPortName(portIndex);
-}
-
-void
-NewSCADModel::process(const PortFunctionData & input, PortFunctionData & output) const
-{
-    _modelType.getProcessor()(*this, input, output);
-}
-
-void
-NewSCADModel::setEditor(JNodeProgramEditor *editor)
-{
-    _editor = editor;
-}
-
-JNodeProgramEditor *
-NewSCADModel::getEditor() const
-{
-    return _editor;
-}
-
-void
-NewSCADModel::editGraph()
-{
-    if (_editor) {
-	_editor->editGraph("second-flow");
-    }
 }
 

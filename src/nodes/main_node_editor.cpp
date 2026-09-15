@@ -19,7 +19,7 @@
 
 #include "core/Builtins.h"
 
-#include "OpenSCADModels.hpp"
+#include "OpenSCADBuiltins.hpp"
 #include "OpenSCADEvaluator.hpp"
 #include "NodeProgramGraphModel.hpp"
 #include "JBreadcrumbs.hpp"
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     setStyle();
-    std::shared_ptr<NodeProgramModelRegistry> registry = SCADModels::registerDataModels();
+    std::shared_ptr<NodeProgramModelRegistry> registry = OpenSCADBuiltins::registerDataModels();
     
     NodeProgram program(registry);
     
@@ -142,11 +142,11 @@ int main(int argc, char *argv[])
 	auto arguments = std::make_unique<BaseSCADModel>("for", "Loop");
 	arguments->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "range"), "range");
 	arguments->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "index"), "index");
-	arguments->setProcessor(SCADModels::f_prim_sphere_process);
+	arguments->setProcessor(OpenSCADBuiltins::f_prim_sphere_process);
 
 	auto ret = std::make_unique<BaseSCADModel>("Return", "Return");
 	ret->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "return"), "return");
-	ret->setProcessor(SCADModels::f_prim_sphere_process);
+	ret->setProcessor(OpenSCADBuiltins::f_prim_sphere_process);
 
 	groupNodes.push_back(scene->nodeGraphicsObject(dataFlowGraphModel.addNode(std::move(arguments))));
 	groupNodes.push_back(scene->nodeGraphicsObject(dataFlowGraphModel.addNode(std::move(ret))));

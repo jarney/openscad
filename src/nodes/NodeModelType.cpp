@@ -94,12 +94,12 @@ NodeModelType::getWidgetFactory() const
 
 
 void
-NodeModelType::default_processor(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+NodeModelType::default_processor(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
 }
 
 QWidget*
-NodeModelType::default_widget_factory(NewSCADModel *)
+NodeModelType::default_widget_factory(OpenSCADBuiltinModel *)
 {
     return nullptr;
 }

@@ -1,5 +1,5 @@
 #include "JNodeProgramEditor.hpp"
-#include "OpenSCADModels.hpp"
+#include "nodes/OpenSCADBuiltinModel.hpp"
 
 #include "NodeProgramGraphicsScene.hpp"
 #include "NodeProgramGraphModel.hpp"
@@ -36,7 +36,7 @@ JNodeProgramEditor::prepareProgram()
     for (const auto & graphId : _program.getGraphs()) {
 	const NodeProgramGraphModel *graph = _program.getGraph(graphId);
 	for (const auto & nodeId : graph->allNodeIds()) {
-	    NewSCADModel *node = graph->delegateModel<NewSCADModel>(nodeId);
+	    OpenSCADBuiltinModel *node = graph->delegateModel<OpenSCADBuiltinModel>(nodeId);
 	    node->setEditor(this);
 	}
 
@@ -45,7 +45,7 @@ JNodeProgramEditor::prepareProgram()
 	    &NodeProgramGraphModel::nodeCreated,
 	    [graphId, this](QtNodes::NodeId const nodeId) {
 		const NodeProgramGraphModel *graph = this->_program.getGraph(graphId);
-		NewSCADModel *node = graph->delegateModel<NewSCADModel>(nodeId);
+		OpenSCADBuiltinModel *node = graph->delegateModel<OpenSCADBuiltinModel>(nodeId);
 		node->setEditor(this);
 	    }
 	);

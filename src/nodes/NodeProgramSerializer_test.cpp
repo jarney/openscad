@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include "NodeProgramSerializer.hpp"
-#include "OpenSCADModels.hpp"
+#include "OpenSCADBuiltins.hpp"
 
 static std::string get_test_path(const std::string& name)
 {
@@ -15,7 +15,7 @@ TEST_CASE("NodeProgramSerializer", "[nodes][NodeProgramSerializer]")
     {
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
 
-	NodeProgram loadedProgram(SCADModels::registerDataModels());
+	NodeProgram loadedProgram(OpenSCADBuiltins::registerDataModels());
 	fprintf(stderr, "Going to write an example from a file %s\n",
 		get_test_path(std::string("example.json")).c_str()
 	    );

@@ -1318,8 +1318,10 @@ set(INPUT_DRIVER_SOURCES
 set(GUI_SOURCES
   ${GUI_SOURCES}
 
-  src/nodes/OpenSCADModels.cpp
   src/nodes/OpenSCADEvaluator.cpp
+  src/nodes/OpenSCADBuiltinModel.cpp
+  src/nodes/OpenSCADBuiltinFactory.cpp
+  src/nodes/OpenSCADBuiltins.cpp
   src/nodes/JBreadcrumbs.cpp
   src/nodes/JNodeProgramEditor.cpp
   src/nodes/NodeProgram.cpp

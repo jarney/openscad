@@ -6,7 +6,7 @@
 #include <QtCore/QFileInfo>
 #include "nodes/NodeProgramModelRegistry.hpp"
 
-#include "OpenSCADModels.hpp"
+#include "OpenSCADBuiltins.hpp"
 #include "OpenSCADEvaluator.hpp"
 #include "NodeProgramGraphModel.hpp"
 #include "NodeModelType.hpp"
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	return 2;
     }
 
-    std::shared_ptr<NodeProgramModelRegistry> registry = SCADModels::registerDataModels();
+    std::shared_ptr<NodeProgramModelRegistry> registry = OpenSCADBuiltins::registerDataModels();
 
     // Register builtins...
     Builtins::initialize();

@@ -38,7 +38,7 @@
 #include <QtNodes/NodeData>
 #include "nodes/NodeProgramModelRegistry.hpp"
 
-#include "nodes/OpenSCADModels.hpp"
+#include "nodes/OpenSCADBuiltins.hpp"
 #include "nodes/OpenSCADEvaluator.hpp"
 #include "nodes/NodeProgramGraphModel.hpp"
 
@@ -148,7 +148,7 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
   qsci = new QsciScintilla(qtab);
 
   setQtNodeStyle();
-  qnode_registry = SCADModels::registerDataModels();
+  qnode_registry = OpenSCADBuiltins::registerDataModels();
 
   qnode_dataFlowGraphModel = std::make_shared<NodeProgramGraphModel>(qnode_registry);
   qnode_scene = new NodeProgramGraphicsScene(*qnode_dataFlowGraphModel, qtab);
