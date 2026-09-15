@@ -37,14 +37,20 @@ NodeProgramSerializerJSON::write(const NodeProgram &program, std::ostream & outp
 void
 NodeProgramSerializerJSON::read(NodeProgram & program, std::istream & input_stream) const
 {
-    program.clear();
     std::string json_string(std::istreambuf_iterator<char>(input_stream), {});
-    QJsonDocument document = QJsonDocument().fromJson(QByteArray::fromStdString(json_string));
+    QJsonParseError errors;
+    QJsonDocument document = QJsonDocument().fromJson(QByteArray::fromStdString(json_string), &errors);
+    if (errors.error != QJsonParseError::NoError) {
+	fprintf(stderr, "Parse error: %s\n", errors.errorString().toStdString().c_str());
+	return;
+    }
+    
     QJsonObject document_object = document.object();
-
+    program.clear();
     // For each key in the json object...
     for (const auto key : document_object.keys()) {
 	QJsonObject object = document_object[key].toObject();
+	fprintf(stderr, "Reading object with key %s\n", key.toStdString().c_str());
 	
 	// The new ID may not match the old one????
 	// This could be a problem for referencing graphs to one another.

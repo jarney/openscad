@@ -21,7 +21,6 @@
 
 #include "OpenSCADModels.hpp"
 #include "OpenSCADEvaluator.hpp"
-#include "OpenSCADSerializer.hpp"
 #include "NodeProgramGraphModel.hpp"
 #include "JBreadcrumbs.hpp"
 #include "JNodeProgramEditor.hpp"
@@ -64,10 +63,11 @@ int main(int argc, char *argv[])
     
     NodeProgram program(registry);
     
-    if (QFileInfo::exists("example.json")) {
+    if (QFileInfo::exists("../example.json")) {
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
-	std::ifstream exampleInputFile("example.json");
+	std::ifstream exampleInputFile("../example.json");
 	serializer.read(program, exampleInputFile);
+	fprintf(stderr, "Finished reading\n");
     }
 
     // Register builtins...
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(saveAction, &QAction::triggered, [&program]() {
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
-	std::ofstream output("example.json");
+	std::ofstream output("../example.json");
 	serializer.write(program, output);
     });
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
     QObject::connect(loadAction, &QAction::triggered, [qtab, &program]() {
 	qtab->removeTab(0);
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
-	std::ifstream input("example.json");
+	std::ifstream input("../example.json");
 	serializer.read(program, input);
 	JNodeProgramEditor *jw = new JNodeProgramEditor(program);
 	qtab->insertTab(0, jw, "Nodes-");

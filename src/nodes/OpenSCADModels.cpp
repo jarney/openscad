@@ -74,7 +74,7 @@ BaseSCADModel::portCaptionVisible(QtNodes::PortType portType, QtNodes::PortIndex
 
 std::shared_ptr<QtNodes::NodeData> BaseSCADModel::outData(QtNodes::PortIndex portIndex)
 {
-    return _outputPorts.at(portIndex)->getData();
+    return nullptr;
 }
 
 void BaseSCADModel::setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex portIndex)
@@ -82,8 +82,7 @@ void BaseSCADModel::setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::
     if (!data) {
         Q_EMIT dataInvalidated(0);
     }
-
-    _inputPorts.at(portIndex)->setData(data);
+    /* Do nothing, we don't let the UI perform the evaluation. */
 }
 
 
@@ -180,6 +179,33 @@ static bool KEY_EXISTS(const PortFunctionData & input, std::string key)
 	return false;
     }
     return true;
+    
+}
+
+std::unique_ptr<NodeModelType>
+SCADModels::f_prim_sphere_type(void)
+{
+    auto model = std::make_unique<NodeModelType>("sphere", "Sphere", "Primitives");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "d"), "d");
+    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_prim_sphere_process_type);
+    return model;
+}
+
+void
+SCADModels::f_prim_sphere_process_type(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::string out = std::string();
+    out += std::string("sphere(");
+    if (KEY_EXISTS(input, "r")) {
+	out += std::string("r=") + FIND(input, "r", "15.0");
+    }
+    else if (KEY_EXISTS(input, "d")) {
+	out += std::string("d=") + FIND(input, "d", "30.0");
+    }
+    out += std::string(");\n");
+    output["Geometry"] = out;
     
 }
 
@@ -971,14 +997,14 @@ UNARY_FUNCTION_BODY(math, parent_module, "Parent Module Name", "index", DATA_VAR
     (std::string("parent_module(") + FIND(_input, "needle", "0") + std::string(")"))
     )
 
-//    ret->registerModel(SCADModels::f_math_rands, "Math");
-
-
 std::shared_ptr<NodeProgramModelRegistry>
 SCADModels::registerDataModels()
 {
     auto ret = std::make_shared<NodeProgramModelRegistry>();
     
+    ret->registerModel(std::make_unique<OpenSCADNodeFactory>(f_prim_sphere_type()));
+    
+#if 0
     ret->registerModel(SCADModels::f_prim_sphere, "Primitives");
     ret->registerModel(SCADModels::f_prim_cube, "Primitives");
     ret->registerModel(SCADModels::f_prim_cylinder, "Primitives");
@@ -1076,6 +1102,151 @@ SCADModels::registerDataModels()
 
     ret->registerModel(SCADModels::f_import_dxf_dim);
     ret->registerModel(SCADModels::f_import_dxf_cross);
-    
+#endif    
     return ret;
 }
+
+OpenSCADNodeFactory::OpenSCADNodeFactory(
+    std::unique_ptr<NodeModelType> type
+    )
+    : _type(std::move(type))
+{}
+
+std::string
+OpenSCADNodeFactory::getName() const
+{
+    return _type->getName();
+}
+
+std::string
+OpenSCADNodeFactory::getCategory() const
+{
+    return _type->getCategory();
+}
+
+std::unique_ptr<QtNodes::NodeDelegateModel>
+OpenSCADNodeFactory::create(void) const
+{
+    return std::make_unique<NewSCADModel>(*_type);
+}
+
+NewSCADModel::NewSCADModel(const NodeModelType & modelType)
+    : _modelType(modelType)
+    , _widget(nullptr)
+    , _editor(nullptr)
+{}
+
+QString
+NewSCADModel::name() const
+{ return QString::fromStdString(_modelType.getName()); }
+
+QString
+NewSCADModel::caption() const
+{ return QString::fromStdString(_modelType.getCaption()); }
+
+
+QWidget *
+NewSCADModel::embeddedWidget()
+{
+    if (!_widget) {
+	_widget = _modelType.getWidgetFactory()(this);
+    }
+    return _widget;
+}
+
+unsigned int NewSCADModel::nPorts(QtNodes::PortType portType) const
+{
+    if (portType == QtNodes::PortType::In) {
+	return _modelType.getInputPortCount();
+    }
+    else {
+	return _modelType.getOutputPortCount();
+    }
+}
+
+QtNodes::NodeDataType
+NewSCADModel::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+{
+    if (portType == QtNodes::PortType::In) {
+	return _modelType.getInputPort(portIndex).nodeDataType();
+    }
+    else {
+	return _modelType.getOutputPort(portIndex).nodeDataType();
+    }
+}
+
+QString
+NewSCADModel::portCaption(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+{
+    if (portType == QtNodes::PortType::In) {
+	return _modelType.getInputPort(portIndex).portCaption();
+    }
+    else {
+	return _modelType.getOutputPort(portIndex).portCaption();
+    }
+}
+
+bool
+NewSCADModel::portCaptionVisible(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+{
+    if (portType == QtNodes::PortType::In) {
+	return _modelType.getInputPort(portIndex).portCaptionVisible();
+    }
+    else {
+	return _modelType.getOutputPort(portIndex).portCaptionVisible();
+    }
+}
+
+std::shared_ptr<QtNodes::NodeData> NewSCADModel::outData(QtNodes::PortIndex portIndex)
+{
+    /* Do nothing, we don't let the UI perform the evaluation */
+    return nullptr;
+}
+
+void NewSCADModel::setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex portIndex)
+{
+    if (!data) {
+        Q_EMIT dataInvalidated(0);
+    }
+
+    /* Do nothing, we don't let the UI perform the evaluation */
+}
+
+
+std::string
+NewSCADModel::inputPortName(QtNodes::PortIndex portIndex) const
+{
+    return _modelType.getInputPortName(portIndex);
+}
+std::string
+NewSCADModel::outputPortName(QtNodes::PortIndex portIndex) const
+{
+    return _modelType.getOutputPortName(portIndex);
+}
+
+void
+NewSCADModel::process(const PortFunctionData & input, PortFunctionData & output) const
+{
+    _modelType.getProcessor()(*this, input, output);
+}
+
+void
+NewSCADModel::setEditor(JNodeProgramEditor *editor)
+{
+    _editor = editor;
+}
+
+JNodeProgramEditor *
+NewSCADModel::getEditor() const
+{
+    return _editor;
+}
+
+void
+NewSCADModel::editGraph()
+{
+    if (_editor) {
+	_editor->editGraph("second-flow");
+    }
+}
+

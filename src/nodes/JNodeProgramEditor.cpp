@@ -23,6 +23,7 @@ JNodeProgramEditor::JNodeProgramEditor(NodeProgram & program)
     // If the program is non-trivial, we should
     // edit the 'main' graph.
     std::vector<NodeProgram::GraphId> graphs = _program.getGraphs();
+    fprintf(stderr, "Size of graphs is %ld\n", graphs.size());
     if (graphs.size() > 0) {
 	editGraph(graphs.at(0));
     }
@@ -35,7 +36,7 @@ JNodeProgramEditor::prepareProgram()
     for (const auto & graphId : _program.getGraphs()) {
 	const NodeProgramGraphModel *graph = _program.getGraph(graphId);
 	for (const auto & nodeId : graph->allNodeIds()) {
-	    BaseSCADModel *node = graph->delegateModel<BaseSCADModel>(nodeId);
+	    NewSCADModel *node = graph->delegateModel<NewSCADModel>(nodeId);
 	    node->setEditor(this);
 	}
 

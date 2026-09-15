@@ -8,19 +8,12 @@
 
 #include "OpenSCADModels.hpp"
 #include "OpenSCADEvaluator.hpp"
-#include "OpenSCADSerializer.hpp"
 #include "NodeProgramGraphModel.hpp"
 #include "NodeModelType.hpp"
 
 void dumpRegistry(std::shared_ptr<NodeProgramModelRegistry> registry);
 void dumpBuiltins(void);
 void dumpNotImplemented(std::shared_ptr<NodeProgramModelRegistry> registry);
-
-NodeModelType::NodeModelType(std::string name, std::string caption)
-    : _name(name), _caption(caption)
-{}
-
-static NodeModelType NMT("foo", "bar");
 
 int main(int argc, char *argv[])
 {

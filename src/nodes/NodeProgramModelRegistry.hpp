@@ -16,7 +16,8 @@
 #include <vector>
 
 class NodeDelegateFactory {
-    virtual std::string getType() const = 0;
+public:
+    virtual std::string getName() const = 0;
     virtual std::string getCategory() const = 0;
     virtual std::unique_ptr<QtNodes::NodeDelegateModel> create() const = 0;
 };
@@ -25,7 +26,7 @@ class NodeDelegateFactory {
 class NodeProgramModelRegistry {
 public:
     using RegistryItemPtr = std::unique_ptr<QtNodes::NodeDelegateModel>;
-    using RegistryItemCreator = std::function<RegistryItemPtr()>;
+    using RegistryItemCreator = std::unique_ptr<NodeDelegateFactory>;
     using RegisteredModelCreatorsMap = std::unordered_map<QString, RegistryItemCreator>;
     using RegisteredModelsCategoryMap = std::unordered_map<QString, QString>;
     using CategoriesSet = std::set<QString>;
@@ -44,47 +45,8 @@ public:
 
 public:
 
-#if 0
-    // We really need to commit to this because it's a pretty big change.
-    // This allows us to separate model types from model instances
-    // so it affects the way we register all of the node types.
-    void registerModel(NodeDelegateFactory *factory) {
-        QString const name = factory->getType();
-        if (!_registeredItemCreators.count(name)) {
-            _registeredItemCreators[name] = std::move(factory);
-            _categories.insert(QString::fromStdString(factory->getCategory()));
-            _registeredModelsCategory[name] = category;
-        }	
-    }
-#endif
-
-    template<typename ModelType>
-    void registerModel(RegistryItemCreator creator, QString const &category = "Nodes")
-    {
-        QString const name = computeName<ModelType>(HasStaticMethodName<ModelType>{}, creator);
-        if (!_registeredItemCreators.count(name)) {
-            _registeredItemCreators[name] = std::move(creator);
-            _categories.insert(category);
-            _registeredModelsCategory[name] = category;
-        }
-    }
-
-    template<typename ModelType>
-    void registerModel(QString const &category = "Nodes")
-    {
-        RegistryItemCreator creator = []() { return std::make_unique<ModelType>(); };
-        registerModel<ModelType>(std::move(creator), category);
-    }
-
-
-    template <typename ModelCreator>
-    void
-    registerModel(ModelCreator&& creator, QString const& category = "Nodes")
-    {
-      using ModelType = compute_model_type_t<decltype(creator())>;
-      registerModel<ModelType>(std::forward<ModelCreator>(creator), category);
-    }
-
+    void registerModel(std::unique_ptr<NodeDelegateFactory> factory);
+    
     std::unique_ptr<QtNodes::NodeDelegateModel> create(QString const &modelName);
 
     RegisteredModelCreatorsMap const &registeredModelCreators() const;
@@ -94,57 +56,7 @@ public:
     CategoriesSet const &categories() const;
 
 private:
-    RegisteredModelsCategoryMap _registeredModelsCategory;
-
     CategoriesSet _categories;
-
+    RegisteredModelsCategoryMap _registeredModelsCategory;
     RegisteredModelCreatorsMap _registeredItemCreators;
-
-private:
-    // If the registered ModelType class has the static member method
-    // `static QString Name();`, use it. Otherwise use the non-static
-    // method: `virtual QString name() const;`
-    template<typename T, typename = void>
-    struct HasStaticMethodName : std::false_type
-    {};
-
-    template<typename T>
-    struct HasStaticMethodName<
-        T,
-        typename std::enable_if<std::is_same<decltype(T::Name()), QString>::value>::type>
-        : std::true_type
-    {};
-
-    template<typename ModelType>
-    static QString computeName(std::true_type, RegistryItemCreator const &)
-    {
-        return ModelType::Name();
-    }
-
-    template<typename ModelType>
-    static QString computeName(std::false_type, RegistryItemCreator const &creator)
-    {
-        return creator()->name();
-    }
-
-    template<typename T>
-    struct UnwrapUniquePtr
-    {
-        // Assert always fires, but the compiler doesn't know this:
-        static_assert(!std::is_same<T, T>::value,
-                      "The ModelCreator must return a std::unique_ptr<T>, where T "
-                      "inherits from NodeDelegateModel");
-    };
-
-    template<typename T>
-    struct UnwrapUniquePtr<std::unique_ptr<T>>
-    {
-        static_assert(std::is_base_of<QtNodes::NodeDelegateModel, T>::value,
-                      "The ModelCreator must return a std::unique_ptr<T>, where T "
-                      "inherits from NodeDelegateModel");
-        using type = T;
-    };
-
-    template<typename CreatorResult>
-    using compute_model_type_t = typename UnwrapUniquePtr<CreatorResult>::type;
 };

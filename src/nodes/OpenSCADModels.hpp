@@ -79,6 +79,61 @@ protected:
     JNodeProgramEditor *_editor;
 };
 
+/// The model dictates the number of inputs and outputs for the Node.
+/// In this example it has no logic.
+class NewSCADModel : public QtNodes::NodeDelegateModel {
+public:
+    NewSCADModel(const NodeModelType & modelType);
+
+    unsigned int nPorts(QtNodes::PortType portType) const override;
+
+    QtNodes::NodeDataType dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
+    QString portCaption(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
+    bool portCaptionVisible(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
+
+    std::shared_ptr<QtNodes::NodeData> outData(QtNodes::PortIndex port) override;
+
+    void setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex portIndex) override;
+
+    QString name() const override;
+    QString caption() const override;
+
+    QWidget *embeddedWidget() override;
+
+    void addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName);
+    void addOutputPort(std::unique_ptr<NodeModelPort> outputPort, std::string outputPortName);
+    std::string inputPortName(QtNodes::PortIndex portIndex) const;
+    std::string outputPortName(QtNodes::PortIndex portIndex) const;
+    
+    void process(const PortFunctionData & input, PortFunctionData & output) const;
+
+    void setEditor(JNodeProgramEditor *receiver);
+    JNodeProgramEditor *getEditor() const;
+    
+    void editGraph();
+
+protected:
+    // Data purely about the abstract node
+    // that is the same for each instance.  Factor this out
+    // to a node-type class.
+    const NodeModelType & _modelType;
+    QWidget *_widget;
+    JNodeProgramEditor *_editor;
+};
+
+
+class OpenSCADNodeFactory : public NodeDelegateFactory {
+public:
+    OpenSCADNodeFactory(
+	std::unique_ptr<NodeModelType> type
+    );
+    std::string getName() const override;
+    std::string getCategory() const override;
+    std::unique_ptr<QtNodes::NodeDelegateModel> create() const;
+private:
+    std::unique_ptr<NodeModelType> _type;
+};
+
 class SCADModels {
 public:
     using RegistryItemPtr = NodeProgramModelRegistry::RegistryItemPtr;
@@ -92,6 +147,10 @@ public:
     static RegistryItemPtr f_##name();                               \
     static void f_##name##_process(_OPENSCAD_NODE_PROCESSOR_PROTOTYPE);
 
+
+    static std::unique_ptr<NodeModelType> f_prim_sphere_type();
+    static void f_prim_sphere_process_type(const NewSCADModel & model, const PortFunctionData & input, PortFunctionData & output);
+    
     // 3d Primitives
     _OPENSCAD_NODE_DECL(prim_sphere);
     _OPENSCAD_NODE_DECL(prim_cube);

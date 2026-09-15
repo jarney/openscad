@@ -135,7 +135,6 @@ else()
 endif()
 
 set(NODE_MAIN_SOURCES
-    src/nodes/main.cpp
     src/nodes/main_breadcrumbs.cpp
     src/nodes/main_node_editor.cpp
     )
@@ -1321,7 +1320,6 @@ set(GUI_SOURCES
 
   src/nodes/OpenSCADModels.cpp
   src/nodes/OpenSCADEvaluator.cpp
-  src/nodes/OpenSCADSerializer.cpp
   src/nodes/JBreadcrumbs.cpp
   src/nodes/JNodeProgramEditor.cpp
   src/nodes/NodeProgram.cpp

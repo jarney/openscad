@@ -5,7 +5,7 @@ std::unique_ptr<QtNodes::NodeDelegateModel> NodeProgramModelRegistry::create(QSt
     auto it = _registeredItemCreators.find(modelName);
 
     if (it != _registeredItemCreators.end()) {
-        return it->second();
+        return it->second->create();
     }
 
     return nullptr;
@@ -26,4 +26,16 @@ NodeProgramModelRegistry::registeredModelsCategoryAssociation() const
 NodeProgramModelRegistry::CategoriesSet const &NodeProgramModelRegistry::categories() const
 {
     return _categories;
+}
+
+void
+NodeProgramModelRegistry::registerModel(std::unique_ptr<NodeDelegateFactory> factory)
+{
+    QString const name = QString::fromStdString(factory->getName());
+    if (!_registeredItemCreators.count(name)) {
+	QString category = QString::fromStdString(factory->getCategory());
+	_registeredItemCreators[name] = std::move(factory);
+	_categories.insert(category);
+	_registeredModelsCategory[name] = category;
+    }	
 }

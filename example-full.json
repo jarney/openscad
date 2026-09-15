@@ -1,0 +1,284 @@
+{
+    "main": {
+        "connections": [
+            {
+                "inNodeId": 1,
+                "inPortIndex": 0,
+                "outNodeId": 11,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 3,
+                "inPortIndex": 0,
+                "outNodeId": 5,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 5,
+                "inPortIndex": 1,
+                "outNodeId": 1,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 7,
+                "inPortIndex": 2,
+                "outNodeId": 3,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 0,
+                "inPortIndex": 0,
+                "outNodeId": 2,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 4,
+                "inPortIndex": 0,
+                "outNodeId": 7,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 7,
+                "inPortIndex": 1,
+                "outNodeId": 10,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 7,
+                "inPortIndex": 0,
+                "outNodeId": 5,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 11,
+                "inPortIndex": 0,
+                "outNodeId": 0,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 10,
+                "inPortIndex": 0,
+                "outNodeId": 5,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 10,
+                "inPortIndex": 1,
+                "outNodeId": 8,
+                "outPortIndex": 0
+            }
+        ],
+        "nodes": [
+            {
+                "id": 12,
+                "internal-data": {
+                    "model-name": "sphere"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -91.52603396865847,
+                    "y": -93.8141848178747
+                }
+            },
+            {
+                "id": 11,
+                "internal-data": {
+                    "model-name": "sphere"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -640.6822377806095,
+                    "y": -567.4614106056827
+                }
+            },
+            {
+                "id": 10,
+                "internal-data": {
+                    "model-name": "translate"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 160.6522636530218,
+                    "y": -455.7859933437764
+                }
+            },
+            {
+                "id": 8,
+                "internal-data": {
+                    "model-name": "cylinder"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 129.98066528189236,
+                    "y": -298.1161796920834
+                }
+            },
+            {
+                "id": 7,
+                "internal-data": {
+                    "model-name": "if"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 478.4249831757728,
+                    "y": -518.2264893446562
+                }
+            },
+            {
+                "id": 5,
+                "internal-data": {
+                    "model-name": "max"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -206.2676093222707,
+                    "y": -533.5278708350822
+                }
+            },
+            {
+                "id": 4,
+                "internal-data": {
+                    "model-name": "output"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 681.5655119371896,
+                    "y": -422.1829578593173
+                }
+            },
+            {
+                "id": 3,
+                "internal-data": {
+                    "model-name": "sphere"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 192.1078327163837,
+                    "y": -88.16362481372002
+                }
+            },
+            {
+                "id": 2,
+                "internal-data": {
+                    "model-name": "const_float"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -942.0736589438154,
+                    "y": -626.8342361395344
+                }
+            },
+            {
+                "id": 14,
+                "internal-data": {
+                    "model-name": "floor"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -247.1202917153775,
+                    "y": -773.3949870351645
+                }
+            },
+            {
+                "id": 1,
+                "internal-data": {
+                    "model-name": "floor"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -473.89597395880014,
+                    "y": -551.1506600645789
+                }
+            },
+            {
+                "id": 13,
+                "internal-data": {
+                    "model-name": "for"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -485.08798003388927,
+                    "y": -771.1068361859478
+                }
+            },
+            {
+                "id": 0,
+                "internal-data": {
+                    "model-name": "abs"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -878.0026484891058,
+                    "y": -817.0855876304848
+                }
+            }
+        ]
+    },
+    "second-flow": {
+        "connections": [
+            {
+                "inNodeId": 2,
+                "inPortIndex": 0,
+                "outNodeId": 0,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 0,
+                "inPortIndex": 0,
+                "outNodeId": 1,
+                "outPortIndex": 0
+            }
+        ],
+        "nodes": [
+            {
+                "id": 0,
+                "internal-data": {
+                    "model-name": "minkowski"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -131,
+                    "y": -146
+                }
+            },
+            {
+                "id": 1,
+                "internal-data": {
+                    "model-name": "intersection"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -393,
+                    "y": -245
+                }
+            },
+            {
+                "id": 2,
+                "internal-data": {
+                    "model-name": "output"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 55,
+                    "y": -171
+                }
+            }
+        ]
+    }
+}
