@@ -89,10 +89,10 @@ static void processNode(
 	
 	std::string inputPortName = nodeData->inputPortName(connection.inPortIndex);
 	const PortFunctionData & connected_node_data = all_node_data[connection.outNodeId];
-	const auto & it = connected_node_data.find(outputPortName);
-	if (it != connected_node_data.end()) {
-	    input_data[inputPortName] = it->second;
-	    fprintf(stderr, "Node %d:%s => %d:%s = %s\n", connection.outNodeId, outputPortName.c_str(), nodeId, inputPortName.c_str(), it->second.c_str());
+	if (connected_node_data.hasValue(outputPortName)) {
+	    std::string outputValue = connected_node_data.getValue(outputPortName, "");
+	    input_data.setValue(inputPortName, outputValue);
+	    fprintf(stderr, "Node %d:%s => %d:%s = %s\n", connection.outNodeId, outputPortName.c_str(), nodeId, inputPortName.c_str(), outputValue.c_str());
 	}
     }
     // Create a new entry and pass it by reference.
@@ -132,7 +132,7 @@ std::string evaluateToSCAD(const NodeProgramGraphModel & model)
 	// Output nodes should have only one
 	// input connection at index 0.
 	processNode(model, processed_nodes, all_node_data, nodeId, 0);
-	return all_node_data[nodeId]["out"];
+	return all_node_data[nodeId].getValue("out", "");
     }
 
     // Next, for each output node, wire up all of the input ports upstream.

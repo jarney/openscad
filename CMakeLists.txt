@@ -1322,8 +1322,18 @@ set(GUI_SOURCES
   src/nodes/OpenSCADBuiltinModel.cpp
   src/nodes/OpenSCADBuiltinFactory.cpp
   src/nodes/OpenSCADBuiltins.cpp
+  src/nodes/OpenSCADBuiltins3D.cpp
+  src/nodes/OpenSCADBuiltinsOperators.cpp
+  src/nodes/OpenSCADBuiltinsTransforms.cpp
+  src/nodes/OpenSCADBuiltinsTypeTest.cpp
+  src/nodes/OpenSCADBuiltinsMath.cpp
+  src/nodes/OpenSCADBuiltinsFunctions.cpp
+  src/nodes/OpenSCADBuiltinsConstants.cpp
+  src/nodes/OpenSCADBuiltinsFlowControl.cpp
+  src/nodes/OpenSCADBuiltinsBooleanOperations.cpp
   src/nodes/JBreadcrumbs.cpp
   src/nodes/JNodeProgramEditor.cpp
+  src/nodes/PortFunctionData.cpp
   src/nodes/NodeProgram.cpp
   src/nodes/NodeProgramSerializer.cpp
   src/nodes/NodeModelPort.cpp

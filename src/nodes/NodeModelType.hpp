@@ -2,8 +2,7 @@
 
 #include "nodes/OpenSCADDataTypes.hpp"
 #include "nodes/NodeModelPort.hpp"
-
-typedef std::map<std::string, std::string> PortFunctionData;
+#include "nodes/PortFunctionData.hpp"
 
 class OpenSCADBuiltinModel;
 
