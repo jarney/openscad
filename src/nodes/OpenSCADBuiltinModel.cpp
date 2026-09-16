@@ -49,6 +49,17 @@ OpenSCADBuiltinModel::dataType(QtNodes::PortType portType, QtNodes::PortIndex po
     }
 }
 
+QtNodes::ConnectionPolicy
+OpenSCADBuiltinModel::portConnectionPolicy(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+{
+    if (portType == QtNodes::PortType::In) {
+	return _modelType.getInputPort(portIndex).getConnectionPolicy();
+    }
+    else {
+	return _modelType.getOutputPort(portIndex).getConnectionPolicy();
+    }
+}
+
 QString
 OpenSCADBuiltinModel::portCaption(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {

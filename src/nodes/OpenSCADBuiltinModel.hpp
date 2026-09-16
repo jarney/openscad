@@ -16,6 +16,8 @@ public:
     unsigned int nPorts(QtNodes::PortType portType) const override;
 
     QtNodes::NodeDataType dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
+    QtNodes::ConnectionPolicy portConnectionPolicy(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const;
+    
     QString portCaption(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
     bool portCaptionVisible(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 

@@ -30,10 +30,17 @@ NodeModelType::setResizable(bool resizable)
 { _resizable = resizable; }
 
 void
-NodeModelType::addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName)
+NodeModelType::addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName, QtNodes::ConnectionPolicy policy)
 {
     _inputPortNames[_inputPorts.size()] = inputPortName;
+    inputPort->setConnectionPolicy(policy);
     _inputPorts.push_back(std::move(inputPort));
+}
+
+void
+NodeModelType::addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName)
+{
+    addInputPort(std::move(inputPort), inputPortName, QtNodes::ConnectionPolicy::One);
 }
 
 unsigned int
@@ -74,6 +81,7 @@ void
 NodeModelType::addOutputPort(std::unique_ptr<NodeModelPort> outputPort, std::string outputPortName)
 {
     _outputPortNames[_outputPorts.size()] = outputPortName;
+    outputPort->setConnectionPolicy(QtNodes::ConnectionPolicy::Many);
     _outputPorts.push_back(std::move(outputPort));
 }
 

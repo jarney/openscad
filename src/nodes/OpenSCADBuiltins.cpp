@@ -11,6 +11,38 @@ OpenSCADBuiltins::registerDataModels()
 {
     auto ret = std::make_shared<NodeProgramModelRegistry>();
 
+    // Syntax
+    //_OPENSCAD_NODE_DECL(syntax_assign);
+    //_OPENSCAD_NODE_DECL(syntax_variable);
+    //_OPENSCAD_NODE_DECL(syntax_module);
+    //_OPENSCAD_NODE_DECL(syntax_function);
+    //_OPENSCAD_NODE_DECL(syntax_use);
+    
+    // Constants
+    _OPENSCAD_NODE_REGISTER(const_true);
+    _OPENSCAD_NODE_REGISTER(const_false);
+    _OPENSCAD_NODE_REGISTER(const_int);
+    _OPENSCAD_NODE_REGISTER(const_float);
+    _OPENSCAD_NODE_REGISTER(const_string);
+    _OPENSCAD_NODE_REGISTER(const_undef);
+    _OPENSCAD_NODE_REGISTER(const_pi);
+
+    // Operators
+    _OPENSCAD_NODE_REGISTER(operator_add);
+    _OPENSCAD_NODE_REGISTER(operator_subtract);
+    _OPENSCAD_NODE_REGISTER(operator_multiply);
+    _OPENSCAD_NODE_REGISTER(operator_divide);
+    _OPENSCAD_NODE_REGISTER(operator_modulo);
+    _OPENSCAD_NODE_REGISTER(operator_exponentiate);
+    _OPENSCAD_NODE_REGISTER(operator_lt);
+    _OPENSCAD_NODE_REGISTER(operator_leq);
+    _OPENSCAD_NODE_REGISTER(operator_eq);
+    _OPENSCAD_NODE_REGISTER(operator_geq);
+    _OPENSCAD_NODE_REGISTER(operator_gt);
+    _OPENSCAD_NODE_REGISTER(operator_and);
+    _OPENSCAD_NODE_REGISTER(operator_or);
+    _OPENSCAD_NODE_REGISTER(operator_not);
+    
     // 2D
     _OPENSCAD_NODE_REGISTER(2d_circle);
     _OPENSCAD_NODE_REGISTER(2d_square);
@@ -27,6 +59,8 @@ OpenSCADBuiltins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(3d_linear_extrude);
     _OPENSCAD_NODE_REGISTER(3d_rotate_extrude);
     _OPENSCAD_NODE_REGISTER(3d_surface);
+    _OPENSCAD_NODE_REGISTER(import_dxf_dim);
+    _OPENSCAD_NODE_REGISTER(import_dxf_cross);
 
     // Boolean Operations
     _OPENSCAD_NODE_REGISTER(op_union);
@@ -45,17 +79,16 @@ OpenSCADBuiltins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(xform_hull);
     _OPENSCAD_NODE_REGISTER(xform_fill);
     _OPENSCAD_NODE_REGISTER(xform_minkowski);
-    
-    // Aeshetics
 
-    // Constants
-    _OPENSCAD_NODE_REGISTER(const_true);
-    _OPENSCAD_NODE_REGISTER(const_false);
-    _OPENSCAD_NODE_REGISTER(const_int);
-    _OPENSCAD_NODE_REGISTER(const_float);
-    _OPENSCAD_NODE_REGISTER(const_string);
-    _OPENSCAD_NODE_REGISTER(const_undef);
-    _OPENSCAD_NODE_REGISTER(const_pi);
+    // Lists
+    _OPENSCAD_NODE_REGISTER(list_index);
+    _OPENSCAD_NODE_REGISTER(list_get_xyz);
+    _OPENSCAD_NODE_REGISTER(list_set_xyz);
+    _OPENSCAD_NODE_REGISTER(list_get_xy);
+    _OPENSCAD_NODE_REGISTER(list_set_xy);
+    _OPENSCAD_NODE_REGISTER(list_get_rgba);
+    _OPENSCAD_NODE_REGISTER(list_set_rgba);
+    _OPENSCAD_NODE_REGISTER(list_set_range);
 
     // Functions
     _OPENSCAD_NODE_REGISTER(function_concat);
@@ -68,73 +101,54 @@ OpenSCADBuiltins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(function_version_num);
     _OPENSCAD_NODE_REGISTER(function_parent_module);
     
-    // Output node, result of operations
-    _OPENSCAD_NODE_REGISTER(output);
-    //_OPENSCAD_NODE_REGISTER(echo);
-
     // Flow control
     _OPENSCAD_NODE_REGISTER(flow_for);
+    _OPENSCAD_NODE_REGISTER(flow_intersection_for);
     _OPENSCAD_NODE_REGISTER(flow_if);
+    _OPENSCAD_NODE_REGISTER(flow_let);
     _OPENSCAD_NODE_REGISTER(flow_comment);
-    //_OPENSCAD_NODE_REGISTER(flow_let);
-    //_OPENSCAD_NODE_REGISTER(flow_group);
-    //_OPENSCAD_NODE_REGISTER(flow_assert);
-    //_OPENSCAD_NODE_REGISTER(flow_children);
-    //_OPENSCAD_NODE_REGISTER(flow_module);
-    //_OPENSCAD_NODE_REGISTER(flow_function);
-
+    _OPENSCAD_NODE_REGISTER(flow_group);
+    _OPENSCAD_NODE_REGISTER(flow_output);
     
     // Math functions:
-    
-    _OPENSCAD_NODE_REGISTER(math_asin);
-    _OPENSCAD_NODE_REGISTER(math_sin);
-    _OPENSCAD_NODE_REGISTER(math_acos);
     _OPENSCAD_NODE_REGISTER(math_abs);
-    _OPENSCAD_NODE_REGISTER(math_atan);
-    _OPENSCAD_NODE_REGISTER(math_atan2);
+    _OPENSCAD_NODE_REGISTER(math_sign);
+    _OPENSCAD_NODE_REGISTER(math_sin);
     _OPENSCAD_NODE_REGISTER(math_cos);
     _OPENSCAD_NODE_REGISTER(math_tan);
-    _OPENSCAD_NODE_REGISTER(math_sign);
-    _OPENSCAD_NODE_REGISTER(math_ceil);
+    _OPENSCAD_NODE_REGISTER(math_acos);
+    _OPENSCAD_NODE_REGISTER(math_asin);
+    _OPENSCAD_NODE_REGISTER(math_atan);
+    _OPENSCAD_NODE_REGISTER(math_atan2);
     _OPENSCAD_NODE_REGISTER(math_floor);
     _OPENSCAD_NODE_REGISTER(math_round);
+    _OPENSCAD_NODE_REGISTER(math_ceil);
     _OPENSCAD_NODE_REGISTER(math_ln);
     _OPENSCAD_NODE_REGISTER(math_len);
     _OPENSCAD_NODE_REGISTER(math_log);
-    _OPENSCAD_NODE_REGISTER(math_exp);
-    _OPENSCAD_NODE_REGISTER(math_sqrt);
-    _OPENSCAD_NODE_REGISTER(math_min);
     _OPENSCAD_NODE_REGISTER(math_pow);
+    _OPENSCAD_NODE_REGISTER(math_sqrt);
+    _OPENSCAD_NODE_REGISTER(math_exp);
+    _OPENSCAD_NODE_REGISTER(math_rands);
+    _OPENSCAD_NODE_REGISTER(math_min);
     _OPENSCAD_NODE_REGISTER(math_max);
     _OPENSCAD_NODE_REGISTER(math_norm);
     _OPENSCAD_NODE_REGISTER(math_cross);
 
-    _OPENSCAD_NODE_REGISTER(math_add);
-    _OPENSCAD_NODE_REGISTER(math_subtract);
-    _OPENSCAD_NODE_REGISTER(math_multiply);
-    _OPENSCAD_NODE_REGISTER(math_divide);
-    _OPENSCAD_NODE_REGISTER(math_modulo);
-    _OPENSCAD_NODE_REGISTER(math_exponentiate);
-    _OPENSCAD_NODE_REGISTER(math_lt);
-    _OPENSCAD_NODE_REGISTER(math_leq);
-    _OPENSCAD_NODE_REGISTER(math_eq);
-    _OPENSCAD_NODE_REGISTER(math_geq);
-    _OPENSCAD_NODE_REGISTER(math_gt);
-    _OPENSCAD_NODE_REGISTER(math_and);
-    _OPENSCAD_NODE_REGISTER(math_or);
-    _OPENSCAD_NODE_REGISTER(math_not);
-    
-    _OPENSCAD_NODE_REGISTER(math_is_bool);
-    _OPENSCAD_NODE_REGISTER(math_is_string);
-    _OPENSCAD_NODE_REGISTER(math_is_num);
-    _OPENSCAD_NODE_REGISTER(math_is_function);
-    _OPENSCAD_NODE_REGISTER(math_is_list);
-    _OPENSCAD_NODE_REGISTER(math_is_undef);
+    // Type Test functions
+    _OPENSCAD_NODE_REGISTER(typetest_is_bool);
+    _OPENSCAD_NODE_REGISTER(typetest_is_string);
+    _OPENSCAD_NODE_REGISTER(typetest_is_num);
+    _OPENSCAD_NODE_REGISTER(typetest_is_function);
+    _OPENSCAD_NODE_REGISTER(typetest_is_list);
+    _OPENSCAD_NODE_REGISTER(typetest_is_undef);
 
-    _OPENSCAD_NODE_REGISTER(math_rands);
+    // Other
+    _OPENSCAD_NODE_REGISTER(other_echo);
+    _OPENSCAD_NODE_REGISTER(other_render);
+    _OPENSCAD_NODE_REGISTER(other_children);
+    _OPENSCAD_NODE_REGISTER(other_assert);
 
-    _OPENSCAD_NODE_REGISTER(import_dxf_dim);
-    _OPENSCAD_NODE_REGISTER(import_dxf_cross);
     
     return ret;
 }

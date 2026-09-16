@@ -2,21 +2,117 @@
     "main": {
         "connections": [
             {
+                "inNodeId": 17,
+                "inPortIndex": 0,
+                "outNodeId": 16,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 10,
+                "inPortIndex": 0,
+                "outNodeId": 5,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 19,
+                "inPortIndex": 2,
+                "outNodeId": 21,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 10,
+                "inPortIndex": 1,
+                "outNodeId": 8,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 19,
+                "inPortIndex": 1,
+                "outNodeId": 21,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 11,
+                "inPortIndex": 0,
+                "outNodeId": 0,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 7,
+                "inPortIndex": 0,
+                "outNodeId": 5,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 7,
+                "inPortIndex": 1,
+                "outNodeId": 10,
+                "outPortIndex": 0
+            },
+            {
                 "inNodeId": 1,
                 "inPortIndex": 0,
                 "outNodeId": 11,
                 "outPortIndex": 0
             },
             {
-                "inNodeId": 3,
+                "inNodeId": 4,
                 "inPortIndex": 0,
-                "outNodeId": 5,
+                "outNodeId": 7,
                 "outPortIndex": 0
             },
             {
-                "inNodeId": 5,
+                "inNodeId": 22,
+                "inPortIndex": 0,
+                "outNodeId": 21,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 4,
+                "inPortIndex": 0,
+                "outNodeId": 18,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 14,
+                "inPortIndex": 0,
+                "outNodeId": 21,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 13,
                 "inPortIndex": 1,
-                "outNodeId": 1,
+                "outNodeId": 22,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 13,
+                "inPortIndex": 0,
+                "outNodeId": 14,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 4,
+                "inPortIndex": 0,
+                "outNodeId": 15,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 18,
+                "inPortIndex": 0,
+                "outNodeId": 17,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 19,
+                "inPortIndex": 0,
+                "outNodeId": 21,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 3,
+                "inPortIndex": 0,
+                "outNodeId": 5,
                 "outPortIndex": 0
             },
             {
@@ -32,77 +128,59 @@
                 "outPortIndex": 0
             },
             {
-                "inNodeId": 4,
+                "inNodeId": 16,
                 "inPortIndex": 0,
-                "outNodeId": 7,
+                "outNodeId": 19,
                 "outPortIndex": 0
             },
             {
-                "inNodeId": 7,
+                "inNodeId": 5,
                 "inPortIndex": 1,
-                "outNodeId": 10,
+                "outNodeId": 1,
                 "outPortIndex": 0
             },
             {
-                "inNodeId": 7,
-                "inPortIndex": 0,
-                "outNodeId": 5,
-                "outPortIndex": 0
-            },
-            {
-                "inNodeId": 11,
-                "inPortIndex": 0,
-                "outNodeId": 0,
-                "outPortIndex": 0
-            },
-            {
-                "inNodeId": 10,
-                "inPortIndex": 0,
-                "outNodeId": 5,
-                "outPortIndex": 0
-            },
-            {
-                "inNodeId": 10,
+                "inNodeId": 15,
                 "inPortIndex": 1,
-                "outNodeId": 8,
+                "outNodeId": 13,
                 "outPortIndex": 0
             }
         ],
         "nodes": [
             {
-                "id": 12,
+                "id": 5,
                 "internal-data": {
-                    "model-name": "sphere"
+                    "model-name": "max"
                 },
                 "label": "",
                 "labelVisible": true,
                 "position": {
-                    "x": -91.52603396865847,
-                    "y": -93.8141848178747
+                    "x": -206.2676093222707,
+                    "y": -533.5278708350822
                 }
             },
             {
-                "id": 11,
+                "id": 18,
                 "internal-data": {
-                    "model-name": "sphere"
+                    "model-name": "if"
                 },
                 "label": "",
                 "labelVisible": true,
                 "position": {
-                    "x": -640.6822377806095,
-                    "y": -567.4614106056827
+                    "x": 372.1649532514114,
+                    "y": -939.7356643870576
                 }
             },
             {
-                "id": 10,
+                "id": 19,
                 "internal-data": {
-                    "model-name": "translate"
+                    "model-name": "__builtin_list_set_xyz"
                 },
                 "label": "",
                 "labelVisible": true,
                 "position": {
-                    "x": 160.6522636530218,
-                    "y": -455.7859933437764
+                    "x": -252.2394587067733,
+                    "y": -966.8114948912781
                 }
             },
             {
@@ -118,27 +196,27 @@
                 }
             },
             {
-                "id": 7,
+                "id": 21,
                 "internal-data": {
-                    "model-name": "if"
+                    "model-name": "const_float"
                 },
                 "label": "",
                 "labelVisible": true,
                 "position": {
-                    "x": 478.4249831757728,
-                    "y": -518.2264893446562
+                    "x": -753.5305802269928,
+                    "y": -1000.3191123020674
                 }
             },
             {
-                "id": 5,
+                "id": 22,
                 "internal-data": {
-                    "model-name": "max"
+                    "model-name": "sin"
                 },
                 "label": "",
                 "labelVisible": true,
                 "position": {
-                    "x": -206.2676093222707,
-                    "y": -533.5278708350822
+                    "x": -593.6656813649965,
+                    "y": -736.0130287554886
                 }
             },
             {
@@ -149,8 +227,8 @@
                 "label": "",
                 "labelVisible": true,
                 "position": {
-                    "x": 681.5655119371896,
-                    "y": -422.1829578593173
+                    "x": 709.152207167905,
+                    "y": -691.4291033111003
                 }
             },
             {
@@ -166,6 +244,78 @@
                 }
             },
             {
+                "id": 23,
+                "internal-data": {
+                    "model-name": "comment"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -253.17168828100043,
+                    "y": -1297.8006637582123
+                }
+            },
+            {
+                "id": 10,
+                "internal-data": {
+                    "model-name": "translate"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 160.6522636530218,
+                    "y": -455.7859933437764
+                }
+            },
+            {
+                "id": 7,
+                "internal-data": {
+                    "model-name": "if"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 479.5284509850014,
+                    "y": -557.9513304768866
+                }
+            },
+            {
+                "id": 11,
+                "internal-data": {
+                    "model-name": "sphere"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -640.6822377806095,
+                    "y": -567.4614106056827
+                }
+            },
+            {
+                "id": 12,
+                "internal-data": {
+                    "model-name": "sphere"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -91.52603396865847,
+                    "y": -93.8141848178747
+                }
+            },
+            {
+                "id": 15,
+                "internal-data": {
+                    "model-name": "let"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 178.98090519352425,
+                    "y": -734.8957199179365
+                }
+            },
+            {
                 "id": 2,
                 "internal-data": {
                     "model-name": "const_float"
@@ -178,15 +328,51 @@
                 }
             },
             {
-                "id": 14,
+                "id": 16,
                 "internal-data": {
-                    "model-name": "floor"
+                    "model-name": "__builtin_list_index"
                 },
                 "label": "",
                 "labelVisible": true,
                 "position": {
-                    "x": -247.1202917153775,
-                    "y": -773.3949870351645
+                    "x": -83.89886447127026,
+                    "y": -966.7437337939554
+                }
+            },
+            {
+                "id": 17,
+                "internal-data": {
+                    "model-name": "is_list"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 93.2359186428254,
+                    "y": -935.0766598197812
+                }
+            },
+            {
+                "id": 0,
+                "internal-data": {
+                    "model-name": "abs"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -878.0026484891058,
+                    "y": -817.0855876304848
+                }
+            },
+            {
+                "id": 13,
+                "internal-data": {
+                    "model-name": "for"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -279.84296751736616,
+                    "y": -743.5201409552325
                 }
             },
             {
@@ -202,27 +388,15 @@
                 }
             },
             {
-                "id": 13,
+                "id": 14,
                 "internal-data": {
-                    "model-name": "for"
+                    "model-name": "floor"
                 },
                 "label": "",
                 "labelVisible": true,
                 "position": {
-                    "x": -485.08798003388927,
-                    "y": -771.1068361859478
-                }
-            },
-            {
-                "id": 0,
-                "internal-data": {
-                    "model-name": "abs"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": -878.0026484891058,
-                    "y": -817.0855876304848
+                    "x": -591.4022481947064,
+                    "y": -844.016926825796
                 }
             }
         ]

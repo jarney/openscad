@@ -18,6 +18,7 @@ public:
     bool getResizable() const;
     void setResizable(bool resizable);
     
+    void addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName, QtNodes::ConnectionPolicy policy);
     void addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName);
     void addOutputPort(std::unique_ptr<NodeModelPort> outputPort, std::string outputPortName);
 

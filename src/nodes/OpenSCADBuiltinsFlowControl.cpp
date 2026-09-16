@@ -6,36 +6,15 @@
 #include <QtWidgets/QPlainTextEdit>
 #include <Qsci/qsciscintilla.h>
 
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_flow_if()
-{
-    auto model = std::make_unique<NodeModelType>("if", "If", "Flow Control");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "condition"), "condition");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "b"), "b");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_flow_if_process);
-    return model;
-}
+#define _OPENSCAD_NODE_CATEGORY "Flow Control"
 
-void
-OpenSCADBuiltins::f_flow_if_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
-{
-    std::string out = std::string();
-    out += std::string("if(");
-    out += input.getValue("condition", "true");
-    out += std::string(") {\n");
-    out += input.getValue("a", "");
-    out += std::string("} else {\n");
-    out += input.getValue("b", "");
-    out += std::string("}\n");
-    output.setValue("Geometry", out);
-}
-
+////////////////////////////////////////
+// For
+////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_flow_for()
 {
-    auto model = std::make_unique<NodeModelType>("for", "Loop", "Flow Control");
+    auto model = std::make_unique<NodeModelType>("for", "Loop", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "start"), "start");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "end"), "end");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -58,7 +37,6 @@ OpenSCADBuiltins::f_flow_for_widget(OpenSCADBuiltinModel *model)
     return button;
 }
 
-
 void
 OpenSCADBuiltins::f_flow_for_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
@@ -74,27 +52,92 @@ OpenSCADBuiltins::f_flow_for_process(const OpenSCADBuiltinModel & model, const P
     output.setValue("Geometry", out);
 }
 
+////////////////////////////////////////
+// Intersection For
+////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_output()
+OpenSCADBuiltins::f_flow_intersection_for()
 {
-    auto model = std::make_unique<NodeModelType>("output", "Output", "Output");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY), "out");
-    model->setProcessor(f_output_process);
+    auto model = std::make_unique<NodeModelType>("intersection_for", "Intersection For", _OPENSCAD_NODE_CATEGORY);
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "var"), "var");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_flow_intersection_for_process);
     return model;
 }
+
 void
-OpenSCADBuiltins::f_output_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_flow_intersection_for_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    std::string s = input.getValue("out", "//No Geometry Output\n");
-    output.setValue("out", s);
+    // TODO: Call/evaluate sub-flow
+    std::string out = std::string();
+    out += std::string("intersection_for(") + std::string("var = ") + input.getValue("var", "[1:10]") + std::string(") {\n");
+    out += input.getValue("Geometry", "");
+    out += std::string("}\n");
+    output.setValue("Geometry", out);
 }
 
+////////////////////////////////////////
+// If
+////////////////////////////////////////
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_flow_if()
+{
+    auto model = std::make_unique<NodeModelType>("if", "If", _OPENSCAD_NODE_CATEGORY);
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "condition"), "condition");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "b"), "b");
+    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_flow_if_process);
+    return model;
+}
 
+void
+OpenSCADBuiltins::f_flow_if_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::string out = std::string();
+    out += std::string("if(");
+    out += input.getValue("condition", "true");
+    out += std::string(") {\n");
+    out += input.getValue("a", "");
+    out += std::string("} else {\n");
+    out += input.getValue("b", "");
+    out += std::string("}\n");
+    output.setValue("Geometry", out);
+}
 
+////////////////////////////////////////
+// Let
+////////////////////////////////////////
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_flow_let()
+{
+    auto model = std::make_unique<NodeModelType>("let", "Let", _OPENSCAD_NODE_CATEGORY);
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "var"), "var");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_flow_let_process);
+    return model;
+}
+
+void
+OpenSCADBuiltins::f_flow_let_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    // TODO: Call/evaluate sub-flow
+    std::string out = std::string();
+    out += std::string("let(") + std::string("var = ") + input.getValue("var", "[1:10]") + std::string(") {\n");
+    out += input.getValue("Geometry", "");
+    out += std::string("}\n");
+    output.setValue("Geometry", out);
+}
+
+////////////////////////////////////////
+// Comment
+////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_flow_comment()
 {
-    auto model = std::make_unique<NodeModelType>("comment", "Comment", "Flow Control");
+    auto model = std::make_unique<NodeModelType>("comment", "Comment", _OPENSCAD_NODE_CATEGORY);
     model->setResizable(true);
     model->setWidgetFactory(OpenSCADBuiltins::f_flow_comment_widget);
     return model;
@@ -107,4 +150,44 @@ OpenSCADBuiltins::f_flow_comment_widget(OpenSCADBuiltinModel *model)
     comment->setPlainText("Place Comment Here...");
     return comment;
 }
+
+////////////////////////////////////////
+// Group
+////////////////////////////////////////
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_flow_group()
+{
+    auto model = std::make_unique<NodeModelType>("group", "Group", _OPENSCAD_NODE_CATEGORY);
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_flow_group_process);
+    return model;
+}
+void
+OpenSCADBuiltins::f_flow_group_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    output.setValue("Geometry", std::string("group() {\n") +
+        input.getValue("a", "{}") +
+        std::string("});"));
+}
+
+////////////////////////////////////////
+// Output
+////////////////////////////////////////
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_flow_output()
+{
+    auto model = std::make_unique<NodeModelType>("output", "Output", _OPENSCAD_NODE_CATEGORY);
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY), "out", QtNodes::ConnectionPolicy::Many);
+    model->setProcessor(f_flow_output_process);
+    return model;
+}
+void
+OpenSCADBuiltins::f_flow_output_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::string s = input.getValue("out", "//No Geometry Output\n");
+    output.setValue("out", s);
+}
+
+
 

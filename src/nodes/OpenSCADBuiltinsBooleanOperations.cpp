@@ -11,8 +11,7 @@ OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_op_union()
 {
     auto model = std::make_unique<NodeModelType>("union", "Union", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "b"), "b");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_op_union_process);
     return model;
@@ -20,14 +19,11 @@ OpenSCADBuiltins::f_op_union()
 void
 OpenSCADBuiltins::f_op_union_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    output.setValue("Geometry", std::string("union() {\n") +
-	std::string("    {\n") + 
-        input.getValue("a", "{}") +
-	std::string("    }") + 
-	std::string("    {\n") +
-        input.getValue("b", "{}") +
-	std::string("    }") + 
-        std::string("});"));
+    std::string out;
+    out += std::string("union() {\n");
+    out +=     input.getValue("Geometry", "{}");
+    out += std::string("}");
+    output.setValue("Geometry", out);
 }
 
 ////////////////////////////////////////
@@ -37,8 +33,8 @@ OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_op_difference()
 {
     auto model = std::make_unique<NodeModelType>("difference", "Difference", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "b"), "b");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::One);
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "b"), "b", QtNodes::ConnectionPolicy::Many);
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_op_difference_process);
     return model;
@@ -46,14 +42,16 @@ OpenSCADBuiltins::f_op_difference()
 void
 OpenSCADBuiltins::f_op_difference_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    output.setValue("Geometry", std::string("difference() {\n") +
-	std::string("    {\n") + 
-        input.getValue("a", "{}") +
-	std::string("    }") + 
-	std::string("    {\n") +
-        input.getValue("b", "{}") +
-	std::string("    }") + 
-        std::string("});"));
+    std::string out;
+    out += std::string("difference() {\n");
+    out += std::string("    {\n");
+    out +=     input.getValue("a", "{}");
+    out += std::string("    }");
+    out += std::string("    {\n");
+    out +=     input.getValue("b", "{}");
+    out += std::string("    }");
+    out += std::string("}");
+    output.setValue("Geometry", out);
 }
 
 ////////////////////////////////////////
@@ -63,8 +61,7 @@ OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_op_intersection()
 {
     auto model = std::make_unique<NodeModelType>("intersection", "Intersection", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "b"), "b");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_op_intersection_process);
     return model;
@@ -72,14 +69,11 @@ OpenSCADBuiltins::f_op_intersection()
 void
 OpenSCADBuiltins::f_op_intersection_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    output.setValue("Geometry", std::string("intersection() {\n") +
-	std::string("    {\n") + 
-        input.getValue("a", "{}") +
-	std::string("    }") + 
-	std::string("    {\n") +
-        input.getValue("b", "{}") +
-	std::string("    }") + 
-        std::string("});"));
+    std::string out;
+    out += std::string("intersection() {\n");
+    out +=     input.getValue("Geometry", "{}");
+    out += std::string("}");
+    output.setValue("Geometry", out);
 }
 
 

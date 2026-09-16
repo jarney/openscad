@@ -39,6 +39,42 @@ public:
     static std::unique_ptr<NodeModelType> f_##name();				\
     static void f_##name##_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output);
 
+    // Syntax
+    _OPENSCAD_NODE_DECL(syntax_assign);
+    _OPENSCAD_NODE_DECL(syntax_module);
+    _OPENSCAD_NODE_DECL(syntax_function);
+    _OPENSCAD_NODE_DECL(syntax_use);
+    
+    // Constants
+    _OPENSCAD_NODE_DECL(const_true);
+    _OPENSCAD_NODE_DECL(const_false);
+    _OPENSCAD_NODE_DECL(const_int);
+    _OPENSCAD_NODE_DECL(const_float);
+    _OPENSCAD_NODE_DECL(const_string);
+    _OPENSCAD_NODE_DECL(const_undef);
+    _OPENSCAD_NODE_DECL(const_pi);
+
+    // Operators
+    _OPENSCAD_NODE_DECL(operator_add);
+    _OPENSCAD_NODE_DECL(operator_subtract);
+    _OPENSCAD_NODE_DECL(operator_multiply);
+    _OPENSCAD_NODE_DECL(operator_divide);
+    _OPENSCAD_NODE_DECL(operator_modulo);
+    _OPENSCAD_NODE_DECL(operator_exponentiate);
+    _OPENSCAD_NODE_DECL(operator_lt);
+    _OPENSCAD_NODE_DECL(operator_leq);
+    _OPENSCAD_NODE_DECL(operator_eq);
+    _OPENSCAD_NODE_DECL(operator_geq);
+    _OPENSCAD_NODE_DECL(operator_gt);
+    _OPENSCAD_NODE_DECL(operator_and);
+    _OPENSCAD_NODE_DECL(operator_or);
+    _OPENSCAD_NODE_DECL(operator_not);
+
+    // Modifiers (TODO)
+    // How should these be handled from a graph/UI perspective?
+    // Maybe like a checkbox on each geometry node?
+    // Maybe like a modifier you can drop in the geometry stream?
+    
     // 2d primitives
     _OPENSCAD_NODE_DECL(2d_circle);
     _OPENSCAD_NODE_DECL(2d_square);
@@ -58,11 +94,6 @@ public:
     _OPENSCAD_NODE_DECL(import_dxf_dim);
     _OPENSCAD_NODE_DECL(import_dxf_cross);
 
-    // Boolean operations
-    _OPENSCAD_NODE_DECL(op_union);
-    _OPENSCAD_NODE_DECL(op_difference);
-    _OPENSCAD_NODE_DECL(op_intersection);
-
     // Transformations
     _OPENSCAD_NODE_DECL(xform_translate);
     _OPENSCAD_NODE_DECL(xform_rotate);
@@ -76,15 +107,49 @@ public:
     _OPENSCAD_NODE_DECL(xform_fill);
     _OPENSCAD_NODE_DECL(xform_minkowski);
 
-    // Literal Constants
-    _OPENSCAD_NODE_DECL(const_true);
-    _OPENSCAD_NODE_DECL(const_false);
-    _OPENSCAD_NODE_DECL(const_int);
-    _OPENSCAD_NODE_DECL(const_float);
-    _OPENSCAD_NODE_DECL(const_string);
-    _OPENSCAD_NODE_DECL(const_undef);
-    _OPENSCAD_NODE_DECL(const_pi);
+    // Lists
+    _OPENSCAD_NODE_DECL(list_index);
+    _OPENSCAD_NODE_DECL(list_get_xyz);
+    _OPENSCAD_NODE_DECL(list_set_xyz);
+    _OPENSCAD_NODE_DECL(list_get_xy);
+    _OPENSCAD_NODE_DECL(list_set_xy);
+    _OPENSCAD_NODE_DECL(list_get_rgba);
+    _OPENSCAD_NODE_DECL(list_set_rgba);
+    _OPENSCAD_NODE_DECL(list_set_range);
 
+    // Boolean operations
+    _OPENSCAD_NODE_DECL(op_union);
+    _OPENSCAD_NODE_DECL(op_difference);
+    _OPENSCAD_NODE_DECL(op_intersection);
+
+    // List Comprehensions (probably not needed?)
+    // Maybe this can just be syntactic sugar?
+
+    // Flow control
+    _OPENSCAD_NODE_DECL(flow_for);
+        static QWidget* f_flow_for_widget(OpenSCADBuiltinModel *model);
+    _OPENSCAD_NODE_DECL(flow_intersection_for);
+    _OPENSCAD_NODE_DECL(flow_if);
+    _OPENSCAD_NODE_DECL(flow_let);
+    _OPENSCAD_NODE_DECL(flow_comment);
+        static QWidget* f_flow_comment_widget(OpenSCADBuiltinModel *model);
+    _OPENSCAD_NODE_DECL(flow_group);
+    _OPENSCAD_NODE_DECL(flow_output);
+
+    // Type Test functions
+    _OPENSCAD_NODE_DECL(typetest_is_bool);
+    _OPENSCAD_NODE_DECL(typetest_is_string);
+    _OPENSCAD_NODE_DECL(typetest_is_num);
+    _OPENSCAD_NODE_DECL(typetest_is_function);
+    _OPENSCAD_NODE_DECL(typetest_is_list);
+    _OPENSCAD_NODE_DECL(typetest_is_undef);
+
+    // Other
+    _OPENSCAD_NODE_DECL(other_echo);
+    _OPENSCAD_NODE_DECL(other_render);
+    _OPENSCAD_NODE_DECL(other_children);
+    _OPENSCAD_NODE_DECL(other_assert);
+    
     // Functions
     _OPENSCAD_NODE_DECL(function_concat);
     _OPENSCAD_NODE_DECL(function_lookup);
@@ -95,75 +160,31 @@ public:
     _OPENSCAD_NODE_DECL(function_version);
     _OPENSCAD_NODE_DECL(function_version_num);
     _OPENSCAD_NODE_DECL(function_parent_module);
-    
-    // Special module operations
-    _OPENSCAD_NODE_DECL(mod_children);
 
-    // Debug/utility
-    _OPENSCAD_NODE_DECL(util_echo);
-    _OPENSCAD_NODE_DECL(util_assert);
-    _OPENSCAD_NODE_DECL(util_render);
-
-    // Flow control
-    _OPENSCAD_NODE_DECL(flow_for);
-    static QWidget* f_flow_for_widget(OpenSCADBuiltinModel *model);
-
-    _OPENSCAD_NODE_DECL(flow_comment);
-    static QWidget* f_flow_comment_widget(OpenSCADBuiltinModel *model);
-    
-    _OPENSCAD_NODE_DECL(flow_if);
-    _OPENSCAD_NODE_DECL(flow_let);
-    _OPENSCAD_NODE_DECL(flow_group);
-
-    _OPENSCAD_NODE_DECL(math_asin);
-    _OPENSCAD_NODE_DECL(math_sin);
-    _OPENSCAD_NODE_DECL(math_acos);
-    _OPENSCAD_NODE_DECL(math_cos);
+    // Mathematical
     _OPENSCAD_NODE_DECL(math_abs);
+    _OPENSCAD_NODE_DECL(math_sign);
+    _OPENSCAD_NODE_DECL(math_sin);
+    _OPENSCAD_NODE_DECL(math_cos);
+    _OPENSCAD_NODE_DECL(math_tan);
+    _OPENSCAD_NODE_DECL(math_acos);
+    _OPENSCAD_NODE_DECL(math_asin);
     _OPENSCAD_NODE_DECL(math_atan);
     _OPENSCAD_NODE_DECL(math_atan2);
-    _OPENSCAD_NODE_DECL(math_tan);
-    _OPENSCAD_NODE_DECL(math_sign);
-    _OPENSCAD_NODE_DECL(math_ceil);
     _OPENSCAD_NODE_DECL(math_floor);
     _OPENSCAD_NODE_DECL(math_round);
+    _OPENSCAD_NODE_DECL(math_ceil);
     _OPENSCAD_NODE_DECL(math_ln);
+    _OPENSCAD_NODE_DECL(math_len);
     _OPENSCAD_NODE_DECL(math_log);
-    _OPENSCAD_NODE_DECL(math_exp);
     _OPENSCAD_NODE_DECL(math_pow);
     _OPENSCAD_NODE_DECL(math_sqrt);
+    _OPENSCAD_NODE_DECL(math_exp);
+    _OPENSCAD_NODE_DECL(math_rands);
     _OPENSCAD_NODE_DECL(math_min);
     _OPENSCAD_NODE_DECL(math_max);
     _OPENSCAD_NODE_DECL(math_norm);
-    _OPENSCAD_NODE_DECL(math_len);
     _OPENSCAD_NODE_DECL(math_cross);
-
-    _OPENSCAD_NODE_DECL(math_add);
-    _OPENSCAD_NODE_DECL(math_subtract);
-    _OPENSCAD_NODE_DECL(math_multiply);
-    _OPENSCAD_NODE_DECL(math_divide);
-    _OPENSCAD_NODE_DECL(math_modulo);
-    _OPENSCAD_NODE_DECL(math_exponentiate);
-    _OPENSCAD_NODE_DECL(math_lt);
-    _OPENSCAD_NODE_DECL(math_leq);
-    _OPENSCAD_NODE_DECL(math_eq);
-    _OPENSCAD_NODE_DECL(math_geq);
-    _OPENSCAD_NODE_DECL(math_gt);
-    _OPENSCAD_NODE_DECL(math_and);
-    _OPENSCAD_NODE_DECL(math_or);
-    _OPENSCAD_NODE_DECL(math_not);
-    
-    _OPENSCAD_NODE_DECL(math_is_bool);
-    _OPENSCAD_NODE_DECL(math_is_string);
-    _OPENSCAD_NODE_DECL(math_is_num);
-    _OPENSCAD_NODE_DECL(math_is_function);
-    _OPENSCAD_NODE_DECL(math_is_list);
-    _OPENSCAD_NODE_DECL(math_is_undef);
-
-    _OPENSCAD_NODE_DECL(math_rands);
-    
-    // Outputs
-    _OPENSCAD_NODE_DECL(output);
     
 #undef _OPENSCAD_NODE_DECL
 private:

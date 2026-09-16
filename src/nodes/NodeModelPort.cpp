@@ -3,7 +3,9 @@
 NodeModelPort::NodeModelPort(QtNodes::NodeDataType type, QString caption)
     : _type(type)
     , _caption(caption)
-{}
+    , _policy(QtNodes::ConnectionPolicy::One)
+{
+}
 
 NodeModelPort::NodeModelPort(QtNodes::NodeDataType type)
     : _type(type)
@@ -16,6 +18,14 @@ NodeModelPort::~NodeModelPort()
 QtNodes::NodeDataType
 NodeModelPort::nodeDataType() const
 { return _type; }
+
+QtNodes::ConnectionPolicy
+NodeModelPort::getConnectionPolicy() const
+{ return _policy; }
+
+void
+NodeModelPort::setConnectionPolicy(QtNodes::ConnectionPolicy policy)
+{ _policy = policy; }
 
 QWidget *
 NodeModelPort::portWidget()

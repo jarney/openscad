@@ -9,6 +9,9 @@ public:
     virtual ~NodeModelPort();
 
     QtNodes::NodeDataType nodeDataType() const;
+    QtNodes::ConnectionPolicy getConnectionPolicy() const;
+    void setConnectionPolicy(QtNodes::ConnectionPolicy policy);
+    
     QWidget *portWidget();
     void setData(std::shared_ptr<QtNodes::NodeData> data);
     std::shared_ptr<QtNodes::NodeData> getData(void) const;
@@ -16,8 +19,9 @@ public:
     QString portCaption() const;
     bool portCaptionVisible() const;
 private:
-    QString _caption;
     QtNodes::NodeDataType _type;
+    QString _caption;
+    QtNodes::ConnectionPolicy _policy;
     std::shared_ptr<QtNodes::NodeData> _data;
 };
 
