@@ -10,13 +10,14 @@ public:
     OpenSCADBuiltinFactory(
 	std::unique_ptr<NodeModelType> type
     );
-    virtual ~OpenSCADBuiltinFactory();
+    virtual ~OpenSCADBuiltinFactory() = default;
     
     std::string getName() const override;
+    std::string getDescription() const override;
     std::string getCategory() const override;
     std::unique_ptr<QtNodes::NodeDelegateModel> create(NodeProgramGraphModel & model) const;
-    QIcon *getIcon(void) override;
+    std::string getIcon(void) const override;
 private:
     std::unique_ptr<NodeModelType> _type;
-    QIcon *_icon;
+    std::string _icon;
 };

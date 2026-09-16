@@ -59,8 +59,8 @@ void dumpBuiltins(void)
 
 void dumpNotImplemented(std::shared_ptr<NodeProgramModelRegistry> registry)
 {
-    const NodeProgramModelRegistry::RegisteredModelsCategoryMap & registered
-	= registry->registeredModelsCategoryAssociation();
+    const NodeProgramModelRegistry::RegisteredModelCreatorsMap & registered
+	= registry->getModels();
 
     for (const auto & builtin_it : Builtins::instance().getModules()) {
 	QString registeredName = QString::fromStdString(builtin_it.first);
@@ -88,13 +88,10 @@ void dumpNotImplemented(std::shared_ptr<NodeProgramModelRegistry> registry)
 
 void dumpRegistry(std::shared_ptr<NodeProgramModelRegistry> registry)
 {
-    for (const auto & it : registry->registeredModelsCategoryAssociation()) {
+    for (const auto & it : registry->getModels()) {
 	fprintf(stderr, "%s : %s\n",
 		it.first.toStdString().c_str(),
-		it.second.toStdString().c_str());
+		it.second->getCategory().c_str());
     }
-//    for (const auto & it : registry->registeredModelCreators()) {
-//	fprintf(stderr, "%s\n", it->first.c_str());
-//    }
     
 }

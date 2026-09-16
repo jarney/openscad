@@ -11,31 +11,25 @@ std::unique_ptr<QtNodes::NodeDelegateModel> NodeProgramModelRegistry::create(QSt
     return nullptr;
 }
 
-NodeProgramModelRegistry::RegisteredModelCreatorsMap const &
-NodeProgramModelRegistry::registeredModelCreators() const
-{
-    return _registeredItemCreators;
-}
-
-NodeProgramModelRegistry::RegisteredModelsCategoryMap const &
-NodeProgramModelRegistry::registeredModelsCategoryAssociation() const
-{
-    return _registeredModelsCategory;
-}
-
-NodeProgramModelRegistry::CategoriesSet const &NodeProgramModelRegistry::categories() const
+NodeProgramModelRegistry::CategoriesSet const &
+NodeProgramModelRegistry::categories() const
 {
     return _categories;
 }
 
+const NodeProgramModelRegistry::RegisteredModelCreatorsMap &
+NodeProgramModelRegistry::getModels() const
+{
+    return _registeredItemCreators;
+}
 
 void
 NodeProgramModelRegistry::registerCategory(const NodeModelCategory & category)
 {
-    _categoryMap.insert(std::make_pair(category.getName(), category));
+    _categoryMap.insert(std::make_pair(category.getName(), &category));
 }
 
-const std::map<std::string, const NodeModelCategory &> &
+const std::map<std::string, const NodeModelCategory *> &
 NodeProgramModelRegistry::getCategories() const
 {
     return _categoryMap;
@@ -48,7 +42,20 @@ NodeProgramModelRegistry::getCategory(std::string category_name) const
     if (it == _categoryMap.end()) {
 	return nullptr;
     }
-    return &it->second;
+    const NodeModelCategory *cat = it->second;
+    return cat;
+}
+
+const std::vector<const NodeDelegateFactory *> &
+NodeProgramModelRegistry::getModelsByCategory(std::string category) const
+{
+    static const std::vector<const NodeDelegateFactory*> emptyList;
+    
+    const auto it = _nodesByCategory.find(category);
+    if (it == _nodesByCategory.end()) {
+	return emptyList;
+    }
+    return it->second;
 }
 
 void
@@ -56,21 +63,9 @@ NodeProgramModelRegistry::registerModel(std::unique_ptr<NodeDelegateFactory> fac
 {
     QString const name = QString::fromStdString(factory->getName());
     if (!_registeredItemCreators.count(name)) {
-	QString category = QString::fromStdString(factory->getCategory());
+	_nodesByCategory[factory->getCategory()].push_back(factory.get());
+	_categories.insert(QString::fromStdString(factory->getCategory()));
 	_registeredItemCreators[name] = std::move(factory);
-	_categories.insert(category);
-	_registeredModelsCategory[name] = category;
     }	
 }
 
-QIcon *
-NodeProgramModelRegistry::getIcon(QString const & modelName) const
-{
-    auto it = _registeredItemCreators.find(modelName);
-
-    if (it != _registeredItemCreators.end()) {
-        return it->second->getIcon();
-    }
-
-    return nullptr;
-}

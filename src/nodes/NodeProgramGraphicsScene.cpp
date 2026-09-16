@@ -142,30 +142,25 @@ QMenu *NodeProgramGraphicsScene::createSceneMenu(QPointF const scenePos)
     auto registry = _graphModel.dataModelRegistry();
 
     for (auto const &cat : registry->categories()) {
-        auto item = new QTreeWidgetItem(treeView);
+        auto categoryItem = new QTreeWidgetItem(treeView);
 	auto categoryObj = registry->getCategory(cat.toStdString());
 	if (categoryObj) {
-	    item->setText(0, QString::fromStdString(categoryObj->getDescription()));
-//	    item->setIcon(0, iconCache(categoryObj->getIcon()));
+	    categoryItem->setText(0, QString::fromStdString(categoryObj->getDescription()));
+	    categoryItem->setIcon(0, iconCache(categoryObj->getIcon()));
 	}
 	else {
-	    item->setText(0, cat);
+	    categoryItem->setText(0, cat);
 	}
-        item->setFlags(item->flags() & ~Qt::ItemIsSelectable);
-    }
+        categoryItem->setFlags(categoryItem->flags() & ~Qt::ItemIsSelectable);
 
-    for (auto const &assoc : registry->registeredModelsCategoryAssociation()) {
-        QList<QTreeWidgetItem *> parent = treeView->findItems(assoc.second, Qt::MatchExactly);
-
-        if (parent.count() <= 0)
-            continue;
-
-        auto item = new QTreeWidgetItem(parent.first());
-	QIcon *icon = registry->getIcon(assoc.first);
-	if (icon != nullptr) {
-	    item->setIcon(0, *icon);
+	auto modelsByCategory = registry->getModelsByCategory(categoryObj->getName());
+	for (const NodeDelegateFactory *factory : modelsByCategory) {
+	    auto item = new QTreeWidgetItem(categoryItem);
+	    item->setText(0, QString::fromStdString(factory->getDescription()));
+	    item->setIcon(0, iconCache(factory->getIcon()));
+	    item->setData(0, Qt::UserRole, QVariant(QString::fromStdString(factory->getName())));
 	}
-        item->setText(0, assoc.first);
+	
     }
 
     treeView->expandAll();
@@ -177,7 +172,11 @@ QMenu *NodeProgramGraphicsScene::createSceneMenu(QPointF const scenePos)
                     return;
                 }
 
-                this->undoStack().push(new QtNodes::CreateCommand(this, item->text(0), scenePos));
+		// This is the key element.  We need to
+		// create the command with the name of the node
+		// but the menu contains (will contain) the description.
+		QVariant modelType = item->data(0, Qt::UserRole);
+                this->undoStack().push(new QtNodes::CreateCommand(this, modelType.toString(), scenePos));
 
                 modelMenu->close();
             });
@@ -214,12 +213,10 @@ QMenu *NodeProgramGraphicsScene::createSceneMenu(QPointF const scenePos)
 
 bool NodeProgramGraphicsScene::save() const
 {
-    fprintf(stderr, "Saving flow...before file\n");
     QString fileName = QFileDialog::getSaveFileName(nullptr,
                                                     tr("Open Flow Scene"),
                                                     QDir::homePath(),
                                                     tr("Flow Scene Files (*.flow)"));
-    fprintf(stderr, "Saving flow...\n");
     if (!fileName.isEmpty()) {
         if (!fileName.endsWith("flow", Qt::CaseInsensitive))
             fileName += ".flow";

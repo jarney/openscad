@@ -732,7 +732,6 @@ void NodeProgramGraphModel::load(QJsonObject const &jsonDocument)
 	QJsonArray nodeListJsonArray = group["nodes"].toArray();
 	for (QJsonValueRef node : nodeListJsonArray) {
 	    QtNodes::NodeId nodeId = node.toInt();
-	    fprintf(stderr, "Loaded group %d %d\n", groupId, nodeId);
 	    setNodeGroup(nodeId, groupId);
 	}
     }

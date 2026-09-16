@@ -23,9 +23,10 @@ class NodeDelegateFactory {
 public:
     virtual ~NodeDelegateFactory() = default;
     virtual std::string getName() const = 0;
+    virtual std::string getDescription() const = 0;
     virtual std::string getCategory() const = 0;
     virtual std::unique_ptr<QtNodes::NodeDelegateModel> create(NodeProgramGraphModel & graph) const = 0;
-    virtual QIcon *getIcon() = 0;
+    virtual std::string getIcon() const = 0;
 };
 
 /// Class uses map for storing models (name, model)
@@ -34,7 +35,6 @@ public:
     using RegistryItemPtr = std::unique_ptr<QtNodes::NodeDelegateModel>;
     using RegistryItemCreator = std::unique_ptr<NodeDelegateFactory>;
     using RegisteredModelCreatorsMap = std::unordered_map<QString, RegistryItemCreator>;
-    using RegisteredModelsCategoryMap = std::unordered_map<QString, QString>;
     using CategoriesSet = std::set<QString>;
 
     //using RegisteredTypeConvertersMap = std::map<TypeConverterId, TypeConverter>;
@@ -51,34 +51,27 @@ public:
 
 public:
     void registerCategory(const NodeModelCategory & category);
-    const std::map<std::string, const NodeModelCategory &> & getCategories() const;
+
+    const std::map<std::string, const NodeModelCategory *> & getCategories() const;
+
     const NodeModelCategory * getCategory(std::string category_name) const;
     
+    const std::vector<const NodeDelegateFactory *> & getModelsByCategory(std::string category) const;
+
     void registerModel(std::unique_ptr<NodeDelegateFactory> factory);
     
     std::unique_ptr<QtNodes::NodeDelegateModel> create(QString const &modelName, NodeProgramGraphModel & graph);
 
-    RegisteredModelCreatorsMap const &registeredModelCreators() const;
-
-    RegisteredModelsCategoryMap const &registeredModelsCategoryAssociation() const;
-
+    const RegisteredModelCreatorsMap & getModels() const;
+    
     CategoriesSet const &categories() const;
 
-    /**
-     * Returns an icon for displaying the model
-     * on the UI if it has one or nullptr if it
-     * does not.  The model factory retains ownership
-     * of the icon.
-     */
-    QIcon * getIcon(QString const & modelName) const;
-
-    
 private:
 
     // Map of category name to  category.
-    std::map<std::string, const NodeModelCategory &> _categoryMap;
+    std::map<std::string, const NodeModelCategory *> _categoryMap;
+    std::map<std::string, std::vector<const NodeDelegateFactory *>> _nodesByCategory;
     
     CategoriesSet _categories;
-    RegisteredModelsCategoryMap _registeredModelsCategory;
     RegisteredModelCreatorsMap _registeredItemCreators;
 };

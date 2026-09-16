@@ -1,8 +1,11 @@
 # TODO list for node editor project:
 
-* Process nodes into valid OpenSCAD code.
-
-* Parse SCAD code into nodes (use existing parse code)
+* Interoperability with wider OpenSCAD:
+  * Process nodes into valid OpenSCAD code.
+  * Parse SCAD code into nodes (use existing parse code)
+  * Auto-render when graph updated?
+  * We should deal with the whole tab-manager load/save thing
+    and possibly implement EditorInterface.
 
 * Add the node library as a submodule and add configuration to CMakeLists
   so that we can optionally build with or without it.
@@ -11,15 +14,20 @@
 
 * Allow ports to have individual widgets so we can enter literals where needed.
 
-* Better menu/UI semantics
-  * Make or get a whole bunch of icons for each of the node types.
-  * Allow extraction of node icons from module comment text (as base64?)
+* Context Menus
+  * Icons for each builtin.
+  * Tooltips for each builtin.
+  * Translations for each tooltip/accessible text.
+  * Allow extraction of node icons from module and function comment text (as base64?)
   * Allow removing nodes from groups (the group/node menu needs attention).
-  * Allow categories to also have icons
 
 * UI bugs/annoyances:
   * When the UI is first loaded, the size of the view is way zoomed out to the maximum
     and not centered on our scene.
+
+* Translations
+  * Create/find translations for nodes and categories
+    so we can have a better experience cross-language.
 
 * Control flow stuff:
   * Each function, module, for loop, etc will be its own graph with an 'edit' button
