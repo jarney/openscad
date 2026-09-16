@@ -182,7 +182,13 @@ QJsonObject OpenSCADBuiltinModel::save() const
     return modelJson;
 }
 
-void OpenSCADBuiltinModel::load(QJsonObject const &)
+void OpenSCADBuiltinModel::load(QJsonObject const & obj)
 {
-    //
+    QJsonObject data = obj["data"].toObject();
+    
+    for (const auto [key, value] : data.asKeyValueRange()) {
+	const auto s_key = key.toString().toStdString();
+	const auto s_value = value.toString().toStdString();
+	_modelData[s_key] = s_value;
+    }
 }
