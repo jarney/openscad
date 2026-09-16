@@ -35,18 +35,18 @@ OpenSCADBuiltins::registerDataModels()
 
     // Transformations
     _OPENSCAD_NODE_REGISTER(xform_translate);
-    //_OPENSCAD_NODE_REGISTER(xform_offset);
+    _OPENSCAD_NODE_REGISTER(xform_rotate);
     _OPENSCAD_NODE_REGISTER(xform_scale);
-    //_OPENSCAD_NODE_REGISTER(xform_rotate);
-    _OPENSCAD_NODE_REGISTER(xform_mirror);
     _OPENSCAD_NODE_REGISTER(xform_resize);
-    //_OPENSCAD_NODE_REGISTER(xform_multmatrix);
+    _OPENSCAD_NODE_REGISTER(xform_mirror);
+    _OPENSCAD_NODE_REGISTER(xform_multmatrix);
+    _OPENSCAD_NODE_REGISTER(xform_color);
+    _OPENSCAD_NODE_REGISTER(xform_offset);
     _OPENSCAD_NODE_REGISTER(xform_hull);
     _OPENSCAD_NODE_REGISTER(xform_fill);
     _OPENSCAD_NODE_REGISTER(xform_minkowski);
     
     // Aeshetics
-    _OPENSCAD_NODE_REGISTER(util_color);
 
     // Constants
     _OPENSCAD_NODE_REGISTER(const_true);
@@ -56,9 +56,18 @@ OpenSCADBuiltins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(const_string);
     _OPENSCAD_NODE_REGISTER(const_undef);
     _OPENSCAD_NODE_REGISTER(const_pi);
-    _OPENSCAD_NODE_REGISTER(const_version);
-    _OPENSCAD_NODE_REGISTER(const_version_num);
 
+    // Functions
+    _OPENSCAD_NODE_REGISTER(function_concat);
+    _OPENSCAD_NODE_REGISTER(function_lookup);
+    _OPENSCAD_NODE_REGISTER(function_str);
+    _OPENSCAD_NODE_REGISTER(function_chr);
+    _OPENSCAD_NODE_REGISTER(function_ord);
+    _OPENSCAD_NODE_REGISTER(function_search);
+    _OPENSCAD_NODE_REGISTER(function_version);
+    _OPENSCAD_NODE_REGISTER(function_version_num);
+    _OPENSCAD_NODE_REGISTER(function_parent_module);
+    
     // Output node, result of operations
     _OPENSCAD_NODE_REGISTER(output);
     //_OPENSCAD_NODE_REGISTER(echo);
@@ -94,14 +103,10 @@ OpenSCADBuiltins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(math_log);
     _OPENSCAD_NODE_REGISTER(math_exp);
     _OPENSCAD_NODE_REGISTER(math_sqrt);
-    _OPENSCAD_NODE_REGISTER(math_concat);
     _OPENSCAD_NODE_REGISTER(math_min);
     _OPENSCAD_NODE_REGISTER(math_pow);
     _OPENSCAD_NODE_REGISTER(math_max);
     _OPENSCAD_NODE_REGISTER(math_norm);
-    _OPENSCAD_NODE_REGISTER(math_str);
-    _OPENSCAD_NODE_REGISTER(math_chr);
-    _OPENSCAD_NODE_REGISTER(math_ord);
     _OPENSCAD_NODE_REGISTER(math_cross);
 
     _OPENSCAD_NODE_REGISTER(math_add);
@@ -118,9 +123,6 @@ OpenSCADBuiltins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(math_and);
     _OPENSCAD_NODE_REGISTER(math_or);
     _OPENSCAD_NODE_REGISTER(math_not);
-    _OPENSCAD_NODE_REGISTER(math_lookup);
-    _OPENSCAD_NODE_REGISTER(math_search);
-    _OPENSCAD_NODE_REGISTER(math_parent_module);
     
     _OPENSCAD_NODE_REGISTER(math_is_bool);
     _OPENSCAD_NODE_REGISTER(math_is_string);

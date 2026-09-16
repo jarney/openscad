@@ -65,16 +65,37 @@ public:
 
     // Transformations
     _OPENSCAD_NODE_DECL(xform_translate);
-    _OPENSCAD_NODE_DECL(xform_offset);
-    _OPENSCAD_NODE_DECL(xform_scale);
     _OPENSCAD_NODE_DECL(xform_rotate);
-    _OPENSCAD_NODE_DECL(xform_mirror);
+    _OPENSCAD_NODE_DECL(xform_scale);
     _OPENSCAD_NODE_DECL(xform_resize);
+    _OPENSCAD_NODE_DECL(xform_mirror);
     _OPENSCAD_NODE_DECL(xform_multmatrix);
+    _OPENSCAD_NODE_DECL(xform_color);
+    _OPENSCAD_NODE_DECL(xform_offset);
     _OPENSCAD_NODE_DECL(xform_hull);
     _OPENSCAD_NODE_DECL(xform_fill);
     _OPENSCAD_NODE_DECL(xform_minkowski);
 
+    // Literal Constants
+    _OPENSCAD_NODE_DECL(const_true);
+    _OPENSCAD_NODE_DECL(const_false);
+    _OPENSCAD_NODE_DECL(const_int);
+    _OPENSCAD_NODE_DECL(const_float);
+    _OPENSCAD_NODE_DECL(const_string);
+    _OPENSCAD_NODE_DECL(const_undef);
+    _OPENSCAD_NODE_DECL(const_pi);
+
+    // Functions
+    _OPENSCAD_NODE_DECL(function_concat);
+    _OPENSCAD_NODE_DECL(function_lookup);
+    _OPENSCAD_NODE_DECL(function_str);
+    _OPENSCAD_NODE_DECL(function_chr);
+    _OPENSCAD_NODE_DECL(function_ord);
+    _OPENSCAD_NODE_DECL(function_search);
+    _OPENSCAD_NODE_DECL(function_version);
+    _OPENSCAD_NODE_DECL(function_version_num);
+    _OPENSCAD_NODE_DECL(function_parent_module);
+    
     // Special module operations
     _OPENSCAD_NODE_DECL(mod_children);
 
@@ -82,7 +103,6 @@ public:
     _OPENSCAD_NODE_DECL(util_echo);
     _OPENSCAD_NODE_DECL(util_assert);
     _OPENSCAD_NODE_DECL(util_render);
-    _OPENSCAD_NODE_DECL(util_color);
 
     // Flow control
     _OPENSCAD_NODE_DECL(flow_for);
@@ -114,12 +134,8 @@ public:
     _OPENSCAD_NODE_DECL(math_sqrt);
     _OPENSCAD_NODE_DECL(math_min);
     _OPENSCAD_NODE_DECL(math_max);
-    _OPENSCAD_NODE_DECL(math_concat);
     _OPENSCAD_NODE_DECL(math_norm);
     _OPENSCAD_NODE_DECL(math_len);
-    _OPENSCAD_NODE_DECL(math_str);
-    _OPENSCAD_NODE_DECL(math_chr);
-    _OPENSCAD_NODE_DECL(math_ord);
     _OPENSCAD_NODE_DECL(math_cross);
 
     _OPENSCAD_NODE_DECL(math_add);
@@ -144,21 +160,7 @@ public:
     _OPENSCAD_NODE_DECL(math_is_list);
     _OPENSCAD_NODE_DECL(math_is_undef);
 
-    // Literal Constants
-    _OPENSCAD_NODE_DECL(const_true);
-    _OPENSCAD_NODE_DECL(const_false);
-    _OPENSCAD_NODE_DECL(const_int);
-    _OPENSCAD_NODE_DECL(const_float);
-    _OPENSCAD_NODE_DECL(const_string);
-    _OPENSCAD_NODE_DECL(const_undef);
-    _OPENSCAD_NODE_DECL(const_version);
-    _OPENSCAD_NODE_DECL(const_version_num);
-    _OPENSCAD_NODE_DECL(const_pi);
-
     _OPENSCAD_NODE_DECL(math_rands);
-    _OPENSCAD_NODE_DECL(math_lookup);
-    _OPENSCAD_NODE_DECL(math_search);
-    _OPENSCAD_NODE_DECL(math_parent_module);
     
     // Outputs
     _OPENSCAD_NODE_DECL(output);

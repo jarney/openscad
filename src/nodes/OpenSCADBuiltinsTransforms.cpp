@@ -31,13 +31,40 @@ OpenSCADBuiltins::f_xform_translate_process(const OpenSCADBuiltinModel & model, 
 }
 
 ////////////////////////////////////////
+// Rotate
+////////////////////////////////////////
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_xform_rotate()
+{
+    auto model = std::make_unique<NodeModelType>("rotate", "Rotate", _OPENSCAD_NODE_CATEGORY);
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "a"), "a");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "v"), "v");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_xform_rotate_process);
+    return model;
+}
+void
+OpenSCADBuiltins::f_xform_rotate_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::vector<std::string> args;
+    conditionalArg(args, input, model, "a");
+    conditionalArg(args, input, model, "v");
+    
+    std::string out;
+    out += std::string("rotate(") + joinArguments(args) + std::string(") {\n");
+    out += input.getValue("Geometry", "");
+    out += std::string("}\n");
+    output.setValue("Geometry", out);
+}
+////////////////////////////////////////
 // Scale
 ////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_xform_scale()
 {
     auto model = std::make_unique<NodeModelType>("scale", "Scale", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "vector"), "vector");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "v"), "v");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_scale_process);
@@ -46,10 +73,11 @@ OpenSCADBuiltins::f_xform_scale()
 void
 OpenSCADBuiltins::f_xform_scale_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
+    std::vector<std::string> args;
+    conditionalArg(args, input, model, "v");
+
     std::string out = std::string();
-    out += std::string("scale(");
-    out += std::string("v=") + input.getValue("vector", "[0,0,0]");
-    out += std::string(") {\n");
+    out += std::string("scale(") + joinArguments(args) + std::string(") {\n");
     out += input.getValue("Geometry", "");
     out += std::string("}\n");
     output.setValue("Geometry", out);
@@ -62,7 +90,9 @@ OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_xform_resize()
 {
     auto model = std::make_unique<NodeModelType>("resize", "Resize", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "vector"), "vector");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "newsize"), "newsize");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "auto"), "auto");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "convexity"), "convexity");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_resize_process);
@@ -72,9 +102,12 @@ void
 OpenSCADBuiltins::f_xform_resize_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
-    out += std::string("resize(");
-    out += std::string("v=") + input.getValue("vector", "[0,0,0]");
-    out += std::string(") {\n");
+    std::vector<std::string> args;
+    conditionalArg(args, input, model, "newsize");
+    conditionalArg(args, input, model, "auto");
+    conditionalArg(args, input, model, "convexity");
+
+    out += std::string("resize(") + joinArguments(args) + std::string(") {\n");
     out += input.getValue("Geometry", "");
     out += std::string("}\n");
     output.setValue("Geometry", out);
@@ -107,32 +140,54 @@ OpenSCADBuiltins::f_xform_mirror_process(const OpenSCADBuiltinModel & model, con
 }
 
 ////////////////////////////////////////
-// Mirror
+// Multmatrix
 ////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_util_color()
+OpenSCADBuiltins::f_xform_multmatrix()
+{
+    auto model = std::make_unique<NodeModelType>("multmatrix", "Multiply by Matrix", _OPENSCAD_NODE_CATEGORY);
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "m"), "m");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_xform_multmatrix_process);
+    return model;
+}
+void
+OpenSCADBuiltins::f_xform_multmatrix_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::vector<std::string> args;
+    conditionalArg(args, input, model, "m");
+    
+    std::string out;
+    out += std::string("multmatrix(") + joinArguments(args) + std::string(") {\n");
+    out += input.getValue("Geometry", "");
+    out += std::string("}\n");
+    output.setValue("Geometry", out);
+}
+
+////////////////////////////////////////
+// Color
+////////////////////////////////////////
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_xform_color()
 {
     auto model = std::make_unique<NodeModelType>("color", "Color", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "c"), "color");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "alpha"), "alpha");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_util_color_process);
+    model->setProcessor(f_xform_color_process);
     return model;
 }
 
 void
-OpenSCADBuiltins::f_util_color_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_xform_color_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
+    std::vector<std::string> args;
+    conditionalArg(args, input, model, "v");
+    
     std::string out = std::string();
-    out += std::string("color(");
-    if (input.hasValue("color")) {
-	out += std::string("c=") + input.getValue("color", "15.0") + ", ";
-    }
-    else if (input.hasValue("alpha")) {
-	out += std::string("alpha=") + input.getValue("alpha", "30.0");
-    }
-    out += std::string(") {\n");
+    out += std::string("color(") + joinArguments(args) + std::string(") {\n");
     out += input.getValue("Geometry", "");
     out += std::string("}\n");
     output.setValue("Geometry", out);
@@ -141,6 +196,33 @@ OpenSCADBuiltins::f_util_color_process(const OpenSCADBuiltinModel & model, const
 ////////////////////////////////////////
 // Offset
 ////////////////////////////////////////
+OpenSCADBuiltins::RegistryItemPtr
+OpenSCADBuiltins::f_xform_offset()
+{
+    auto model = std::make_unique<NodeModelType>("offset", "Offset", _OPENSCAD_NODE_CATEGORY);
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "delta"), "delta");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "chamfer"), "chamfer");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->setProcessor(f_xform_color_process);
+    return model;
+}
+
+void
+OpenSCADBuiltins::f_xform_offset_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::vector<std::string> args;
+    conditionalArg(args, input, model, "r");
+    conditionalArg(args, input, model, "delta");
+    conditionalArg(args, input, model, "chamfer");
+    
+    std::string out = std::string();
+    out += std::string("offset(") + joinArguments(args) + std::string(") {\n");
+    out += input.getValue("Geometry", "");
+    out += std::string("}\n");
+    output.setValue("Geometry", out);
+}
 
 ////////////////////////////////////////
 // Convex Hull
@@ -157,11 +239,13 @@ OpenSCADBuiltins::f_xform_hull()
 void
 OpenSCADBuiltins::f_xform_hull_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
-    output.setValue("Geometry", std::string("hull() {\n") +
-	std::string("    {\n") + 
-        input.getValue("a", "{}") +
-	std::string("    }") + 
-        std::string("})"));
+    std::string out;
+    out += std::string("hull() {\n");
+    out += std::string("    {\n");
+    out += input.getValue("a", "{}");
+    out += std::string("    }");
+    out += std::string("})");
+    output.setValue("Geometry", out);
 }
 
 ////////////////////////////////////////

@@ -2,80 +2,104 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-UNARY_FUNCTION_BODY(math, asin, "Arc Sine", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("asin(") + _input.getValue("x", "0") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, sin, "Sine", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("sin(") + _input.getValue("x", "0") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, acos, "Arc Cosine", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("acos(") + _input.getValue("x", "1") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, cos, "Cosine", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("cos(") + _input.getValue("x", "0") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, abs, "Absolute Value", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("abs(") + _input.getValue("x", "0") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, atan, "Arc Tangent", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("atan(") + _input.getValue("x", "0") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, tan, "Tangent", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("tan(") + _input.getValue("x", "0") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, sign, "Sign", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("sign(") + _input.getValue("x", "0") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, ceil, "Ceiling", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("ceil(") + _input.getValue("x", "0") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, floor, "Floor", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("floor(") + _input.getValue("x", "0") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, round, "Round", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("round(") + _input.getValue("x", "0") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, ln, "Natural Log", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("ln(") + _input.getValue("x", "2.718") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, log, "Log Base 10", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("log(") + _input.getValue("x", "10") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, exp, "Exponential(e)", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("exp(") + _input.getValue("x", "1") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, sqrt, "Square Root", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-    (std::string("sqrt(") + _input.getValue("x", "1") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, norm, "Norm", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-     (std::string("norm(") + _input.getValue("x", "0") + std::string(")"))
-    )
-UNARY_FUNCTION_BODY(math, len, "Length", "x", DATA_VARIABLE, "out", DATA_VARIABLE,
-     (std::string("len(") + _input.getValue("x", "0") + std::string(")"))
-    )
+#define _OPENSCAD_NODE_CATEGORY "Mathematical"
+
+UNARY_NODE(math, asin, _OPENSCAD_NODE_CATEGORY, "Arc Sine", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("asin(") + input.getValue("x", "0") + std::string(")"));
+}
+UNARY_NODE(math, sin, _OPENSCAD_NODE_CATEGORY, "Sine", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("sin(") + input.getValue("x", "0") + std::string(")"));
+}
+UNARY_NODE(math, acos, _OPENSCAD_NODE_CATEGORY, "Arc Cosine", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("acos(") + input.getValue("x", "1") + std::string(")"));
+}
+UNARY_NODE(math, cos, _OPENSCAD_NODE_CATEGORY, "Cosine", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("cos(") + input.getValue("x", "0") + std::string(")"));
+}
+UNARY_NODE(math, abs, _OPENSCAD_NODE_CATEGORY, "Absolute Value", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("abs(") + input.getValue("x", "0") + std::string(")"));
+}
+UNARY_NODE(math, atan, _OPENSCAD_NODE_CATEGORY, "Arc Tangent", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("atan(") + input.getValue("x", "0") + std::string(")"));
+}
+UNARY_NODE(math, tan, _OPENSCAD_NODE_CATEGORY, "Tangent", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("tan(") + input.getValue("x", "0") + std::string(")"));
+}
+UNARY_NODE(math, sign, _OPENSCAD_NODE_CATEGORY, "Sign", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("sign(") + input.getValue("x", "0") + std::string(")"));
+}
+UNARY_NODE(math, ceil, _OPENSCAD_NODE_CATEGORY, "Ceiling", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("ceil(") + input.getValue("x", "0") + std::string(")"));
+}
+UNARY_NODE(math, floor, _OPENSCAD_NODE_CATEGORY, "Floor", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("floor(") + input.getValue("x", "0") + std::string(")"));
+}
+UNARY_NODE(math, round, _OPENSCAD_NODE_CATEGORY, "Round", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("round(") + input.getValue("x", "0") + std::string(")"));
+}
+UNARY_NODE(math, ln, _OPENSCAD_NODE_CATEGORY, "Natural Log", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("ln(") + input.getValue("x", "2.718") + std::string(")"));
+}
+UNARY_NODE(math, log, _OPENSCAD_NODE_CATEGORY, "Log Base 10", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("log(") + input.getValue("x", "10") + std::string(")"));
+}
+UNARY_NODE(math, exp, _OPENSCAD_NODE_CATEGORY, "Exponential(e)", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("exp(") + input.getValue("x", "1") + std::string(")"));
+}
+UNARY_NODE(math, sqrt, _OPENSCAD_NODE_CATEGORY, "Square Root", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("sqrt(") + input.getValue("x", "1") + std::string(")"));
+}
+UNARY_NODE(math, norm, _OPENSCAD_NODE_CATEGORY, "Norm", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("norm(") + input.getValue("x", "0") + std::string(")"));
+}
+UNARY_NODE(math, len, _OPENSCAD_NODE_CATEGORY, "Length", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("len(") + input.getValue("x", "0") + std::string(")"));
+}
 
 
-BINARY_FUNCTION_BODY(math, max, "Maximum", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
-     (std::string("max(") + _input.getValue("a", "0") + "," + _input.getValue("b", "0") + std::string(")"))
-    )
-BINARY_FUNCTION_BODY(math, pow, "Power", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
-     (std::string("pow(") + _input.getValue("a", "0") + "," + _input.getValue("b", "0") + std::string(")"))
-    )
-BINARY_FUNCTION_BODY(math, min, "Minimum", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
-     (std::string("min(") + _input.getValue("a", "0") + "," + _input.getValue("b", "0") + std::string(")"))
-    )
-BINARY_FUNCTION_BODY(math, atan2, "Arc Tan(2)", "x", DATA_VARIABLE, "y", DATA_VARIABLE, "out", DATA_VARIABLE,
-     (std::string("atan2(") + _input.getValue("x", "0") + "," + _input.getValue("y", "0") + std::string(")"))
-    )
-BINARY_FUNCTION_BODY(math, cross, "Cross Product", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE,
-     (std::string("cross(") + _input.getValue("a", "[1,0,0]") + "," + _input.getValue("b", "[0,1,0]") + std::string(")"))
-    )
+BINARY_NODE(math, max, _OPENSCAD_NODE_CATEGORY, "Maximum", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("max(") + input.getValue("a", "0") + "," + input.getValue("b", "0") + std::string(")"));
+}
+BINARY_NODE(math, pow, _OPENSCAD_NODE_CATEGORY, "Power", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("pow(") + input.getValue("a", "0") + "," + input.getValue("b", "0") + std::string(")"));
+}
+BINARY_NODE(math, min, _OPENSCAD_NODE_CATEGORY, "Minimum", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("min(") + input.getValue("a", "0") + "," + input.getValue("b", "0") + std::string(")"));
+}
+BINARY_NODE(math, atan2, _OPENSCAD_NODE_CATEGORY, "Arc Tan(2)", "x", DATA_VARIABLE, "y", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("atan2(") + input.getValue("x", "0") + "," + input.getValue("y", "0") + std::string(")"));
+}
+BINARY_NODE(math, cross, _OPENSCAD_NODE_CATEGORY, "Cross Product", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("cross(") + input.getValue("a", "[1,0,0]") + "," + input.getValue("b", "[0,1,0]") + std::string(")"));
+}
 
 
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_math_rands()
 {
-    auto model = std::make_unique<NodeModelType>("rands", "Random Vector", "Math");
+    auto model = std::make_unique<NodeModelType>("rands", "Random Vector", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "min"), "max");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "min"), "max");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "n"), "n");

@@ -2,21 +2,23 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-NONARY_NODE(const, true, "True", "Constants", "value", DATA_VARIABLE)
+#define _OPENSCAD_NODE_CATEGORY "Constants"
+
+NONARY_NODE(const, true, _OPENSCAD_NODE_CATEGORY, "True", "value", DATA_VARIABLE)
 {
-    _output.setValue("value", std::string("true"));
+    output.setValue("value", std::string("true"));
 }
-NONARY_NODE(const, false, "False", "Constants", "value", DATA_VARIABLE)
+NONARY_NODE(const, false, _OPENSCAD_NODE_CATEGORY, "False", "value", DATA_VARIABLE)
 {
-    _output.setValue("value", std::string("false"));
+    output.setValue("value", std::string("false"));
 }
-NONARY_NODE(const, undef, "Undefined", "Constants", "value", DATA_VARIABLE)
+NONARY_NODE(const, undef, _OPENSCAD_NODE_CATEGORY, "Undefined", "value", DATA_VARIABLE)
 {
-    _output.setValue("value", std::string("undef"));
+    output.setValue("value", std::string("undef"));
 }
-NONARY_NODE(const, pi, "PI", "Constants", "value", DATA_VARIABLE)
+NONARY_NODE(const, pi, _OPENSCAD_NODE_CATEGORY, "PI", "value", DATA_VARIABLE)
 {
-    _output.setValue("value", std::string("PI"));
+    output.setValue("value", std::string("PI"));
 }
 
 // These are not macros because we want to put widgets in here
@@ -24,7 +26,7 @@ NONARY_NODE(const, pi, "PI", "Constants", "value", DATA_VARIABLE)
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_const_int()
 {
-    auto model = std::make_unique<NodeModelType>("const_int", "Integer", "Constants");
+    auto model = std::make_unique<NodeModelType>("const_int", "Integer", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_float_process);
     return model;
@@ -38,7 +40,7 @@ OpenSCADBuiltins::f_const_int_process(const OpenSCADBuiltinModel & model, const 
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_const_float()
 {
-    auto model = std::make_unique<NodeModelType>("const_float", "Float", "Constants");
+    auto model = std::make_unique<NodeModelType>("const_float", "Float", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_float_process);
     return model;
@@ -52,7 +54,7 @@ OpenSCADBuiltins::f_const_float_process(const OpenSCADBuiltinModel & model, cons
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_const_string()
 {
-    auto model = std::make_unique<NodeModelType>("const_string", "String", "Constants");
+    auto model = std::make_unique<NodeModelType>("const_string", "String", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_string_process);
     return model;
