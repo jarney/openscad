@@ -4,6 +4,20 @@
 #include "nodes/JNodeProgramEditor.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_SYNTAX("syntax", "Syntax", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_CONST("const", "Constants", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_OPERATOR("operator", "Operators", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_2D("2d", "2D Primitives", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_3D("3d", "3d Primitives", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_BOOLEAN_OPS("op", "Boolean Operations", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_XFORM("xform", "Transformations", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_LIST("list", "List", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_FUNCTION("function", "Functions", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_FLOW("flow", "Flow Control", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_MATH("math", "Mathematical", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_TYPETEST("typetest", "Type Test", "../resources/icons/stopbutton.png");
+const NodeModelCategory OpenSCADBuiltins::CATEGORY_OTHER("other", "Other", "../resources/icons/stopbutton.png");
+
 #define _OPENSCAD_NODE_REGISTER(name) ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_##name()))
 
 std::shared_ptr<NodeProgramModelRegistry>
@@ -11,6 +25,20 @@ OpenSCADBuiltins::registerDataModels()
 {
     auto ret = std::make_shared<NodeProgramModelRegistry>();
 
+    ret->registerCategory(CATEGORY_SYNTAX);
+    ret->registerCategory(CATEGORY_CONST);
+    ret->registerCategory(CATEGORY_OPERATOR);
+    ret->registerCategory(CATEGORY_2D);
+    ret->registerCategory(CATEGORY_3D);
+    ret->registerCategory(CATEGORY_BOOLEAN_OPS);
+    ret->registerCategory(CATEGORY_XFORM);
+    ret->registerCategory(CATEGORY_LIST);
+    ret->registerCategory(CATEGORY_FUNCTION);
+    ret->registerCategory(CATEGORY_FLOW);
+    ret->registerCategory(CATEGORY_MATH);
+    ret->registerCategory(CATEGORY_TYPETEST);
+    ret->registerCategory(CATEGORY_OTHER);
+    
     // Syntax
     //_OPENSCAD_NODE_REGISTER(syntax_assign);
     //_OPENSCAD_NODE_REGISTER(syntax_assign_list);

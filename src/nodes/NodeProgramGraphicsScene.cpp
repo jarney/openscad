@@ -99,6 +99,21 @@ std::vector<QtNodes::NodeId> NodeProgramGraphicsScene::selectedNodes() const
     return result;
 }
 
+static std::map<std::string, std::unique_ptr<QIcon>> _icons;
+static const QIcon & iconCache(std::string name)
+{
+    const auto & it = _icons.find(name);
+    if (it == _icons.end()) {
+	auto icon = std::make_unique<QIcon>(QString::fromStdString(name));
+	const QIcon & icon_ref = *icon.get();
+	_icons.insert(std::make_pair(name, std::move(icon)));
+	return icon_ref;
+    }
+    else {
+	return *(it->second.get());
+    }
+}
+
 QMenu *NodeProgramGraphicsScene::createSceneMenu(QPointF const scenePos)
 {
     QMenu *modelMenu = new QMenu();
@@ -128,7 +143,14 @@ QMenu *NodeProgramGraphicsScene::createSceneMenu(QPointF const scenePos)
 
     for (auto const &cat : registry->categories()) {
         auto item = new QTreeWidgetItem(treeView);
-        item->setText(0, cat);
+	auto categoryObj = registry->getCategory(cat.toStdString());
+	if (categoryObj) {
+	    item->setText(0, QString::fromStdString(categoryObj->getDescription()));
+//	    item->setIcon(0, iconCache(categoryObj->getIcon()));
+	}
+	else {
+	    item->setText(0, cat);
+	}
         item->setFlags(item->flags() & ~Qt::ItemIsSelectable);
     }
 

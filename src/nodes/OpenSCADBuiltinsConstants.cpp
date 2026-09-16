@@ -2,7 +2,7 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY "Constants"
+#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_CONST.getName()
 
 NONARY_NODE(const, true, _OPENSCAD_NODE_CATEGORY, "True", "value", DATA_VARIABLE)
 {

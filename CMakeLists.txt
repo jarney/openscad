@@ -1340,6 +1340,7 @@ set(GUI_SOURCES
   src/nodes/NodeProgram.cpp
   src/nodes/NodeProgramSerializer.cpp
   src/nodes/NodeModelPort.cpp
+  src/nodes/NodeModelCategory.cpp
   src/nodes/NodeModelType.cpp
   src/nodes/NodeProgramGraphModel.cpp
   src/nodes/NodeProgramModelRegistry.cpp

@@ -2,7 +2,7 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY "Functions"
+#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_FUNCTION.getName()
 
 BINARY_NODE(function, concat, _OPENSCAD_NODE_CATEGORY, "Concatenate", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE)
 {

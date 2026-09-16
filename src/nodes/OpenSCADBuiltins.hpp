@@ -29,6 +29,21 @@
 class OpenSCADBuiltins {
 public:
     using RegistryItemPtr = std::unique_ptr<NodeModelType>;
+
+    static const NodeModelCategory CATEGORY_SYNTAX;
+    static const NodeModelCategory CATEGORY_CONST;
+    static const NodeModelCategory CATEGORY_OPERATOR;
+    static const NodeModelCategory CATEGORY_2D;
+    static const NodeModelCategory CATEGORY_3D;
+    static const NodeModelCategory CATEGORY_BOOLEAN_OPS;
+    static const NodeModelCategory CATEGORY_XFORM;
+    static const NodeModelCategory CATEGORY_LIST;
+    static const NodeModelCategory CATEGORY_FUNCTION;
+    static const NodeModelCategory CATEGORY_FLOW;
+    static const NodeModelCategory CATEGORY_MATH;
+    static const NodeModelCategory CATEGORY_TYPETEST;
+    static const NodeModelCategory CATEGORY_OTHER;
+    
     static std::shared_ptr<NodeProgramModelRegistry> registerDataModels();
 
     /**

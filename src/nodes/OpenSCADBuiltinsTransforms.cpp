@@ -2,7 +2,7 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY "Transformations"
+#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_XFORM.getName()
 
 ////////////////////////////////////////
 // Translate

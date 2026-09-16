@@ -2,7 +2,7 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY "Operators"
+#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_OPERATOR.getName()
 
 BINARY_NODE(operator, add, _OPENSCAD_NODE_CATEGORY, "Add", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE)
 {

@@ -2,7 +2,7 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY "Type Test functions"
+#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_TYPETEST.getName()
 
 UNARY_NODE(typetest, is_bool, _OPENSCAD_NODE_CATEGORY, "Is Boolean", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
 {

@@ -2,7 +2,7 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY "Boolean Operations"
+#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_BOOLEAN_OPS.getName()
 
 ////////////////////////////////////////
 // Union

@@ -7,7 +7,7 @@
 #include <QtWidgets/QPlainTextEdit>
 #include <Qsci/qsciscintilla.h>
 
-#define _OPENSCAD_NODE_CATEGORY "Flow Control"
+#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_FLOW.getName()
 
 ////////////////////////////////////////
 // For

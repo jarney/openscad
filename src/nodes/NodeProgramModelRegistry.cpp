@@ -28,6 +28,29 @@ NodeProgramModelRegistry::CategoriesSet const &NodeProgramModelRegistry::categor
     return _categories;
 }
 
+
+void
+NodeProgramModelRegistry::registerCategory(const NodeModelCategory & category)
+{
+    _categoryMap.insert(std::make_pair(category.getName(), category));
+}
+
+const std::map<std::string, const NodeModelCategory &> &
+NodeProgramModelRegistry::getCategories() const
+{
+    return _categoryMap;
+}
+
+const NodeModelCategory *
+NodeProgramModelRegistry::getCategory(std::string category_name) const
+{
+    const auto it = _categoryMap.find(category_name);
+    if (it == _categoryMap.end()) {
+	return nullptr;
+    }
+    return &it->second;
+}
+
 void
 NodeProgramModelRegistry::registerModel(std::unique_ptr<NodeDelegateFactory> factory)
 {

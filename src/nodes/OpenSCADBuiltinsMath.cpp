@@ -2,7 +2,7 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY "Mathematical"
+#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_MATH.getName()
 
 UNARY_NODE(math, abs, _OPENSCAD_NODE_CATEGORY, "Absolute Value", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
 {

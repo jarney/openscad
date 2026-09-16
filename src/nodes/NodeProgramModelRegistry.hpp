@@ -15,6 +15,8 @@
 #include <utility>
 #include <vector>
 
+#include "nodes/NodeModelCategory.hpp"
+
 class NodeProgramGraphModel;
 
 class NodeDelegateFactory {
@@ -48,7 +50,10 @@ public:
     NodeProgramModelRegistry &operator=(NodeProgramModelRegistry &&) = default;
 
 public:
-
+    void registerCategory(const NodeModelCategory & category);
+    const std::map<std::string, const NodeModelCategory &> & getCategories() const;
+    const NodeModelCategory * getCategory(std::string category_name) const;
+    
     void registerModel(std::unique_ptr<NodeDelegateFactory> factory);
     
     std::unique_ptr<QtNodes::NodeDelegateModel> create(QString const &modelName, NodeProgramGraphModel & graph);
@@ -66,8 +71,13 @@ public:
      * of the icon.
      */
     QIcon * getIcon(QString const & modelName) const;
+
     
 private:
+
+    // Map of category name to  category.
+    std::map<std::string, const NodeModelCategory &> _categoryMap;
+    
     CategoriesSet _categories;
     RegisteredModelsCategoryMap _registeredModelsCategory;
     RegisteredModelCreatorsMap _registeredItemCreators;

@@ -2,7 +2,7 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY "Other"
+#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_OTHER.getName()
 
 UNARY_NODE(other, echo, _OPENSCAD_NODE_CATEGORY, "Echo", "value", DATA_VARIABLE, "out", DATA_VARIABLE)
 {

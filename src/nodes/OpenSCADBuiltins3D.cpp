@@ -2,7 +2,7 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY "3D Primitives"
+#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_3D.getName()
 
 ////////////////////////////////////////
 // Sphere

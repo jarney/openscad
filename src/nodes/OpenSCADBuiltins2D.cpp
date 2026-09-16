@@ -2,7 +2,7 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY "2D Primitives"
+#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_2D.getName()
 
 ////////////////////////////////////////
 // Circle
