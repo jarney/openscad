@@ -5,6 +5,7 @@
 #include "NodeProgramModelRegistry.hpp"
 #include <QtNodes/internal/Serializable.hpp>
 #include <QtNodes/StyleCollection>
+#include <QtNodes/NodeGroup>
 
 //#include "Export.hpp"
 
@@ -114,6 +115,24 @@ public:
 
     NodeProgram & getParent(void) const;
     
+    /**
+     * This method is used to indicate that the given node should be a part
+     * of the given node group.  Node groups are not heirarchal, so
+     * if a node is a member of one group, it is not a member of another.
+     */
+    void setNodeGroup(QtNodes::NodeId const nodeId, QtNodes::GroupId const groupId);
+    
+    /**
+     * This method is used to indicate that the given node should no longer
+     * be a part of any node group.
+     */
+    void unsetNodeGroup(QtNodes::NodeId const nodeId);
+
+    /**
+     * Returns the map of groups.
+     */
+    std::map<QtNodes::GroupId, std::vector<QtNodes::NodeId>> getGroups() const;
+    
 Q_SIGNALS:
     void inPortDataWasSet(QtNodes::NodeId const, QtNodes::PortType const, QtNodes::PortIndex const);
 
@@ -153,6 +172,8 @@ private:
 
     std::unordered_map<QtNodes::NodeId, QString> _labels;
     std::unordered_map<QtNodes::NodeId, bool> _labelsVisible;
+
+    std::map<QtNodes::NodeId, QtNodes::GroupId> _groups;
 
     NodeProgram & _parent;
 };

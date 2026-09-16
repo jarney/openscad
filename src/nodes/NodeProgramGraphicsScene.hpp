@@ -24,6 +24,8 @@ public:
     QMenu *createSceneMenu(QPointF const scenePos) override;
     void updateConnectionGraphics(const std::unordered_set<QtNodes::ConnectionId> &connections, bool state);
 
+    QMenu *createGroupMenu(QPointF const scenePos, QtNodes::GroupGraphicsObject *groupGo);
+
 public Q_SLOTS:
     bool save() const;
     bool load();

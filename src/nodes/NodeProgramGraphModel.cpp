@@ -17,7 +17,7 @@ NodeProgramGraphModel::NodeProgramGraphModel(std::shared_ptr<NodeProgramModelReg
 std::unordered_set<QtNodes::NodeId> NodeProgramGraphModel::allNodeIds() const
 {
     std::unordered_set<QtNodes::NodeId> nodeIds;
-    for_each(_models.begin(), _models.end(), [&nodeIds](auto const &p) { nodeIds.insert(p.first); });
+    for_each(_models.begin(), _models.end(), [&nodeIds](const auto &p) { nodeIds.insert(p.first); });
 
     return nodeIds;
 }
@@ -151,7 +151,7 @@ bool NodeProgramGraphModel::connectionPossible(QtNodes::ConnectionId const conne
     auto portVacant = [&](QtNodes::PortType const portType) {
         QtNodes::NodeId const nodeId = getNodeId(portType, connectionId);
         QtNodes::PortIndex const portIndex = getPortIndex(portType, connectionId);
-        auto const connected = connections(nodeId, portType, portIndex);
+        const auto connected = connections(nodeId, portType, portIndex);
 
         auto policy = portData(nodeId, portType, portIndex, QtNodes::PortRole::ConnectionPolicyRole)
 	    .value<QtNodes::ConnectionPolicy>();
@@ -185,7 +185,7 @@ bool NodeProgramGraphModel::connectionPossible(QtNodes::ConnectionId const conne
             std::size_t const nOutPorts = nodeData(id, QtNodes::NodeRole::OutPortCount).toUInt();
 
             for (QtNodes::PortIndex index = 0; index < nOutPorts; ++index) {
-                auto const &outConnectionIds = connections(id, QtNodes::PortType::Out, index);
+                const auto &outConnectionIds = connections(id, QtNodes::PortType::Out, index);
 
                 for (auto cid : outConnectionIds) {
                     filo.push(cid.inNodeId);
@@ -320,13 +320,13 @@ QVariant NodeProgramGraphModel::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRo
     } break;
 
     case QtNodes::NodeRole::LabelVisible: {
-        auto const labelVisibleIt = _labelsVisible.find(nodeId);
+        const auto labelVisibleIt = _labelsVisible.find(nodeId);
         result = (labelVisibleIt != _labelsVisible.end()) ? labelVisibleIt->second
                                                           : model->labelVisible();
     } break;
 
     case QtNodes::NodeRole::Label: {
-        auto const labelIt = _labels.find(nodeId);
+        const auto labelIt = _labels.find(nodeId);
         result = (labelIt != _labels.end()) ? labelIt->second : model->label();
     } break;
 
@@ -562,20 +562,20 @@ QJsonObject NodeProgramGraphModel::saveNode(QtNodes::NodeId const nodeId) const
 {
     QJsonObject nodeJson;
 
-    auto const modelIt = _models.find(nodeId);
+    const auto modelIt = _models.find(nodeId);
     if (modelIt == _models.end()) {
         return nodeJson;
     }
 
-    auto const &model = modelIt->second;
+    const auto &model = modelIt->second;
 
     nodeJson["id"] = static_cast<qint64>(nodeId);
     nodeJson["internal-data"] = model->save();
 
-    auto const labelIt = _labels.find(nodeId);
+    const auto labelIt = _labels.find(nodeId);
     nodeJson["label"] = (labelIt != _labels.end()) ? labelIt->second : model->label();
 
-    auto const labelVisibleIt = _labelsVisible.find(nodeId);
+    const auto labelVisibleIt = _labelsVisible.find(nodeId);
     nodeJson["labelVisible"] = (labelVisibleIt != _labelsVisible.end()) ? labelVisibleIt->second
                                                                         : model->labelVisible();
 
@@ -595,17 +595,37 @@ QJsonObject NodeProgramGraphModel::save() const
     QJsonObject sceneJson;
 
     QJsonArray nodesJsonArray;
-    for (auto const nodeId : allNodeIds()) {
+    for (const auto nodeId : allNodeIds()) {
         nodesJsonArray.append(saveNode(nodeId));
     }
     sceneJson["nodes"] = nodesJsonArray;
 
     QJsonArray connJsonArray;
-    for (auto const &cid : _connectivity) {
+    for (const auto &cid : _connectivity) {
         connJsonArray.append(toJson(cid));
     }
     sceneJson["connections"] = connJsonArray;
 
+    // Take the 'transpose' of this map:
+    auto groupMap = getGroups();
+    QJsonArray groupJsonArray;
+    for (const auto & gid : groupMap) {
+	QJsonObject groupObj;
+
+	QJsonValue gidJson((qint64)gid.first);
+	groupObj["id"] = gidJson;
+	QJsonArray nodesJsonArray;
+	for (const auto & nodeid : gid.second) {
+	    QJsonValue nidJson((qint64)nodeid);
+	    nodesJsonArray.append(nidJson);
+	}
+	groupObj["nodes"] = nodesJsonArray;
+	
+	groupJsonArray.append(groupObj);
+    }
+    
+    sceneJson["groups"] = groupJsonArray;
+    
     return sceneJson;
 }
 
@@ -704,6 +724,19 @@ void NodeProgramGraphModel::load(QJsonObject const &jsonDocument)
         // Restore the connection
         addConnection(connId);
     }
+
+    QJsonArray groupJsonArray = jsonDocument["groups"].toArray();
+    for (QJsonValueRef groupRef : groupJsonArray) {
+	QJsonObject group = groupRef.toObject();
+	QtNodes::GroupId groupId = group["id"].toInt();
+	QJsonArray nodeListJsonArray = group["nodes"].toArray();
+	for (QJsonValueRef node : nodeListJsonArray) {
+	    QtNodes::NodeId nodeId = node.toInt();
+	    fprintf(stderr, "Loaded group %d %d\n", groupId, nodeId);
+	    setNodeGroup(nodeId, groupId);
+	}
+    }
+    
 }
 
 void NodeProgramGraphModel::onOutPortDataUpdated(QtNodes::NodeId const nodeId, QtNodes::PortIndex const portIndex)
@@ -714,7 +747,7 @@ void NodeProgramGraphModel::onOutPortDataUpdated(QtNodes::NodeId const nodeId, Q
 
     QVariant const portDataToPropagate = portData(nodeId, QtNodes::PortType::Out, portIndex, QtNodes::PortRole::Data);
 
-    for (auto const &cn : connected) {
+    for (const auto &cn : connected) {
         setPortData(cn.inNodeId, QtNodes::PortType::In, cn.inPortIndex, portDataToPropagate, QtNodes::PortRole::Data);
     }
 }
@@ -724,4 +757,25 @@ void NodeProgramGraphModel::propagateEmptyDataTo(QtNodes::NodeId const nodeId, Q
     QVariant emptyData{};
 
     setPortData(nodeId, QtNodes::PortType::In, portIndex, emptyData, QtNodes::PortRole::Data);
+}
+
+void NodeProgramGraphModel::setNodeGroup(QtNodes::NodeId const nodeId, QtNodes::GroupId const groupId)
+{
+    _groups[nodeId] = groupId;
+}
+
+void
+NodeProgramGraphModel::unsetNodeGroup(QtNodes::NodeId const nodeId)
+{
+    _groups.erase(nodeId);
+}
+
+std::map<QtNodes::GroupId, std::vector<QtNodes::NodeId>>
+NodeProgramGraphModel::getGroups() const
+{
+    std::map<QtNodes::GroupId, std::vector<QtNodes::NodeId>> groupMap;
+    for (const auto & gid : _groups) {
+	groupMap[gid.second].push_back(gid.first);
+    }
+    return groupMap;
 }

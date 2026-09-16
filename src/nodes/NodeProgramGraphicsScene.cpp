@@ -12,6 +12,7 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QWidgetAction>
+#include <QtWidgets/QMenu>
 
 #include <QtCore/QBuffer>
 #include <QtCore/QByteArray>
@@ -64,6 +65,15 @@ NodeProgramGraphicsScene::NodeProgramGraphicsScene(NodeProgramGraphModel &graphM
     : BasicGraphicsScene(graphModel, parent)
     , _graphModel(graphModel)
 {
+    auto groupMap = graphModel.getGroups();
+    for (const auto & groupIt : groupMap) {
+	std::vector<QtNodes::NodeGraphicsObject*> nodeGraphicsObjects;
+	for (const auto & nodeId : groupIt.second) {
+	    nodeGraphicsObjects.push_back(nodeGraphicsObject(nodeId));
+	}
+	createGroup(nodeGraphicsObjects, QString::number(groupIt.first), groupIt.first);
+    }
+    
     connect(&_graphModel,
             &NodeProgramGraphModel::inPortDataWasSet,
             [this](QtNodes::NodeId const nodeId, QtNodes::PortType const, QtNodes::PortIndex const) { onNodeUpdated(nodeId); });
@@ -178,11 +188,12 @@ QMenu *NodeProgramGraphicsScene::createSceneMenu(QPointF const scenePos)
 
 bool NodeProgramGraphicsScene::save() const
 {
+    fprintf(stderr, "Saving flow...before file\n");
     QString fileName = QFileDialog::getSaveFileName(nullptr,
                                                     tr("Open Flow Scene"),
                                                     QDir::homePath(),
                                                     tr("Flow Scene Files (*.flow)"));
-
+    fprintf(stderr, "Saving flow...\n");
     if (!fileName.isEmpty()) {
         if (!fileName.endsWith("flow", Qt::CaseInsensitive))
             fileName += ".flow";
@@ -297,3 +308,6 @@ void NodeProgramGraphicsScene::updateConnectionGraphics(
 }
 
 
+QMenu *
+NodeProgramGraphicsScene::createGroupMenu(QPointF const scenePos, QtNodes::GroupGraphicsObject *groupGo)
+{ return nullptr; }

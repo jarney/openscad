@@ -71,6 +71,9 @@ JNodeProgramEditor::editGraph(std::string editGraph)
 	return;
     }
     auto scene = new NodeProgramGraphicsScene(*graph);
+
+    // Load up the groups.
+    
     auto view = new QtNodes::GraphicsView(scene);
     view->centerScene();
     _jbreadcrumbs->addPage(view);
