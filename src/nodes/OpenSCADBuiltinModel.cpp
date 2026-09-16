@@ -168,3 +168,21 @@ OpenSCADBuiltinModel::setValue(std::string key, std::string value)
     _modelData[key] = value;
 }
 
+QJsonObject OpenSCADBuiltinModel::save() const
+{
+    QJsonObject modelJson;
+
+    modelJson["model-name"] = name();
+    QJsonObject data;
+    for (const auto & it : _modelData) {
+	data[QString::fromStdString(it.first)] = QString::fromStdString(it.second);
+    }
+    modelJson["data"] = data;
+
+    return modelJson;
+}
+
+void OpenSCADBuiltinModel::load(QJsonObject const &)
+{
+    //
+}

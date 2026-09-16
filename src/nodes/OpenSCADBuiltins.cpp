@@ -12,11 +12,11 @@ OpenSCADBuiltins::registerDataModels()
     auto ret = std::make_shared<NodeProgramModelRegistry>();
 
     // Syntax
-    //_OPENSCAD_NODE_DECL(syntax_assign);
-    //_OPENSCAD_NODE_DECL(syntax_variable);
-    //_OPENSCAD_NODE_DECL(syntax_module);
-    //_OPENSCAD_NODE_DECL(syntax_function);
-    //_OPENSCAD_NODE_DECL(syntax_use);
+    //_OPENSCAD_NODE_REGISTER(syntax_assign);
+    //_OPENSCAD_NODE_REGISTER(syntax_assign_list);
+    //_OPENSCAD_NODE_REGISTER(syntax_module);
+    //_OPENSCAD_NODE_REGISTER(syntax_function);
+    //_OPENSCAD_NODE_REGISTER(syntax_use);
     
     // Constants
     _OPENSCAD_NODE_REGISTER(const_true);

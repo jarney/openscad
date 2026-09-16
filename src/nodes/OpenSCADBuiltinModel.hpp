@@ -48,6 +48,9 @@ public:
     
     void editGraph();
 
+    QJsonObject save() const;
+    void load(QJsonObject const &);
+    
 protected:
     // Data purely about the abstract node
     // that is the same for each instance.  Factor this out

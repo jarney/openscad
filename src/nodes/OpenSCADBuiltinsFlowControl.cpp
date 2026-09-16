@@ -3,6 +3,7 @@
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QPlainTextEdit>
 #include <Qsci/qsciscintilla.h>
 
@@ -145,10 +146,22 @@ OpenSCADBuiltins::f_flow_comment()
 QWidget*
 OpenSCADBuiltins::f_flow_comment_widget(OpenSCADBuiltinModel *model)
 {
-//    QsciScintilla *comment = new QsciScintilla();
+    // Should we have rich text and markups or perhaps IDE-style
+    // input boxes or is plain text enough?
+    //    QsciScintilla *comment = new QsciScintilla();
+    QWidget *w = new QWidget();
+    QHBoxLayout *layout = new QHBoxLayout(w);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
     QPlainTextEdit *comment = new QPlainTextEdit();
     comment->setPlainText("Place Comment Here...");
-    return comment;
+    layout->addWidget(comment);
+    
+    QObject::connect(comment, &QPlainTextEdit::textChanged, [comment, model]() {
+	model->setValue("comment", comment->toPlainText().toStdString());
+    });
+
+    return w;
 }
 
 ////////////////////////////////////////

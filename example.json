@@ -2,20 +2,44 @@
     "main": {
         "connections": [
             {
-                "inNodeId": 17,
+                "inNodeId": 4,
                 "inPortIndex": 0,
-                "outNodeId": 16,
+                "outNodeId": 18,
                 "outPortIndex": 0
             },
             {
-                "inNodeId": 10,
+                "inNodeId": 22,
+                "inPortIndex": 0,
+                "outNodeId": 21,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 1,
+                "inPortIndex": 0,
+                "outNodeId": 11,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 7,
+                "inPortIndex": 1,
+                "outNodeId": 10,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 4,
+                "inPortIndex": 0,
+                "outNodeId": 7,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 7,
                 "inPortIndex": 0,
                 "outNodeId": 5,
                 "outPortIndex": 0
             },
             {
                 "inNodeId": 19,
-                "inPortIndex": 2,
+                "inPortIndex": 1,
                 "outNodeId": 21,
                 "outPortIndex": 0
             },
@@ -26,63 +50,9 @@
                 "outPortIndex": 0
             },
             {
-                "inNodeId": 19,
-                "inPortIndex": 1,
-                "outNodeId": 21,
-                "outPortIndex": 0
-            },
-            {
                 "inNodeId": 11,
                 "inPortIndex": 0,
                 "outNodeId": 0,
-                "outPortIndex": 0
-            },
-            {
-                "inNodeId": 7,
-                "inPortIndex": 0,
-                "outNodeId": 5,
-                "outPortIndex": 0
-            },
-            {
-                "inNodeId": 7,
-                "inPortIndex": 1,
-                "outNodeId": 10,
-                "outPortIndex": 0
-            },
-            {
-                "inNodeId": 1,
-                "inPortIndex": 0,
-                "outNodeId": 11,
-                "outPortIndex": 0
-            },
-            {
-                "inNodeId": 4,
-                "inPortIndex": 0,
-                "outNodeId": 7,
-                "outPortIndex": 0
-            },
-            {
-                "inNodeId": 22,
-                "inPortIndex": 0,
-                "outNodeId": 21,
-                "outPortIndex": 0
-            },
-            {
-                "inNodeId": 4,
-                "inPortIndex": 0,
-                "outNodeId": 18,
-                "outPortIndex": 0
-            },
-            {
-                "inNodeId": 14,
-                "inPortIndex": 0,
-                "outNodeId": 21,
-                "outPortIndex": 0
-            },
-            {
-                "inNodeId": 13,
-                "inPortIndex": 1,
-                "outNodeId": 22,
                 "outPortIndex": 0
             },
             {
@@ -98,15 +68,39 @@
                 "outPortIndex": 0
             },
             {
-                "inNodeId": 18,
+                "inNodeId": 14,
                 "inPortIndex": 0,
-                "outNodeId": 17,
+                "outNodeId": 21,
                 "outPortIndex": 0
             },
             {
                 "inNodeId": 19,
-                "inPortIndex": 0,
+                "inPortIndex": 2,
                 "outNodeId": 21,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 10,
+                "inPortIndex": 0,
+                "outNodeId": 5,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 17,
+                "inPortIndex": 0,
+                "outNodeId": 16,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 15,
+                "inPortIndex": 1,
+                "outNodeId": 13,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 5,
+                "inPortIndex": 1,
+                "outNodeId": 1,
                 "outPortIndex": 0
             },
             {
@@ -122,9 +116,9 @@
                 "outPortIndex": 0
             },
             {
-                "inNodeId": 0,
+                "inNodeId": 19,
                 "inPortIndex": 0,
-                "outNodeId": 2,
+                "outNodeId": 21,
                 "outPortIndex": 0
             },
             {
@@ -134,226 +128,30 @@
                 "outPortIndex": 0
             },
             {
-                "inNodeId": 5,
-                "inPortIndex": 1,
-                "outNodeId": 1,
+                "inNodeId": 0,
+                "inPortIndex": 0,
+                "outNodeId": 2,
                 "outPortIndex": 0
             },
             {
-                "inNodeId": 15,
+                "inNodeId": 18,
+                "inPortIndex": 0,
+                "outNodeId": 17,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 13,
                 "inPortIndex": 1,
-                "outNodeId": 13,
+                "outNodeId": 22,
                 "outPortIndex": 0
             }
         ],
         "nodes": [
             {
-                "id": 5,
-                "internal-data": {
-                    "model-name": "max"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": -206.2676093222707,
-                    "y": -533.5278708350822
-                }
-            },
-            {
-                "id": 18,
-                "internal-data": {
-                    "model-name": "if"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": 372.1649532514114,
-                    "y": -939.7356643870576
-                }
-            },
-            {
-                "id": 19,
-                "internal-data": {
-                    "model-name": "__builtin_list_set_xyz"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": -252.2394587067733,
-                    "y": -966.8114948912781
-                }
-            },
-            {
-                "id": 8,
-                "internal-data": {
-                    "model-name": "cylinder"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": 129.98066528189236,
-                    "y": -298.1161796920834
-                }
-            },
-            {
-                "id": 21,
-                "internal-data": {
-                    "model-name": "const_float"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": -753.5305802269928,
-                    "y": -1000.3191123020674
-                }
-            },
-            {
-                "id": 22,
-                "internal-data": {
-                    "model-name": "sin"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": -593.6656813649965,
-                    "y": -736.0130287554886
-                }
-            },
-            {
-                "id": 4,
-                "internal-data": {
-                    "model-name": "output"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": 709.152207167905,
-                    "y": -691.4291033111003
-                }
-            },
-            {
-                "id": 3,
-                "internal-data": {
-                    "model-name": "sphere"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": 192.1078327163837,
-                    "y": -88.16362481372002
-                }
-            },
-            {
-                "id": 23,
-                "internal-data": {
-                    "model-name": "comment"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": -253.17168828100043,
-                    "y": -1297.8006637582123
-                }
-            },
-            {
-                "id": 10,
-                "internal-data": {
-                    "model-name": "translate"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": 160.6522636530218,
-                    "y": -455.7859933437764
-                }
-            },
-            {
-                "id": 7,
-                "internal-data": {
-                    "model-name": "if"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": 479.5284509850014,
-                    "y": -557.9513304768866
-                }
-            },
-            {
-                "id": 11,
-                "internal-data": {
-                    "model-name": "sphere"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": -640.6822377806095,
-                    "y": -567.4614106056827
-                }
-            },
-            {
-                "id": 12,
-                "internal-data": {
-                    "model-name": "sphere"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": -91.52603396865847,
-                    "y": -93.8141848178747
-                }
-            },
-            {
-                "id": 15,
-                "internal-data": {
-                    "model-name": "let"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": 178.98090519352425,
-                    "y": -734.8957199179365
-                }
-            },
-            {
-                "id": 2,
-                "internal-data": {
-                    "model-name": "const_float"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": -942.0736589438154,
-                    "y": -626.8342361395344
-                }
-            },
-            {
-                "id": 16,
-                "internal-data": {
-                    "model-name": "__builtin_list_index"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": -83.89886447127026,
-                    "y": -966.7437337939554
-                }
-            },
-            {
-                "id": 17,
-                "internal-data": {
-                    "model-name": "is_list"
-                },
-                "label": "",
-                "labelVisible": true,
-                "position": {
-                    "x": 93.2359186428254,
-                    "y": -935.0766598197812
-                }
-            },
-            {
                 "id": 0,
                 "internal-data": {
+                    "data": {
+                    },
                     "model-name": "abs"
                 },
                 "label": "",
@@ -366,6 +164,8 @@
             {
                 "id": 13,
                 "internal-data": {
+                    "data": {
+                    },
                     "model-name": "for"
                 },
                 "label": "",
@@ -378,6 +178,8 @@
             {
                 "id": 1,
                 "internal-data": {
+                    "data": {
+                    },
                     "model-name": "floor"
                 },
                 "label": "",
@@ -390,13 +192,254 @@
             {
                 "id": 14,
                 "internal-data": {
+                    "data": {
+                    },
                     "model-name": "floor"
                 },
                 "label": "",
                 "labelVisible": true,
                 "position": {
-                    "x": -591.4022481947064,
-                    "y": -844.016926825796
+                    "x": -596.0318778243361,
+                    "y": -857.9058157146849
+                }
+            },
+            {
+                "id": 22,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "sin"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -593.6656813649965,
+                    "y": -736.0130287554886
+                }
+            },
+            {
+                "id": 17,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "is_list"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 114.64795567986239,
+                    "y": -981.8873594082584
+                }
+            },
+            {
+                "id": 4,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "output"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 709.152207167905,
+                    "y": -691.4291033111003
+                }
+            },
+            {
+                "id": 3,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "sphere"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 192.1078327163837,
+                    "y": -88.16362481372002
+                }
+            },
+            {
+                "id": 21,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "const_float"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -753.5305802269928,
+                    "y": -1000.3191123020674
+                }
+            },
+            {
+                "id": 8,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "cylinder"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 129.98066528189236,
+                    "y": -298.1161796920834
+                }
+            },
+            {
+                "id": 19,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "__builtin_list_set_xyz"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -230.82742166973628,
+                    "y": -1011.3073796649408
+                }
+            },
+            {
+                "id": 18,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "if"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 393.57699028844854,
+                    "y": -986.5463639755349
+                }
+            },
+            {
+                "id": 5,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "max"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -206.2676093222707,
+                    "y": -533.5278708350822
+                }
+            },
+            {
+                "id": 15,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "let"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 178.98090519352425,
+                    "y": -734.8957199179365
+                }
+            },
+            {
+                "id": 2,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "const_float"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -942.0736589438154,
+                    "y": -626.8342361395344
+                }
+            },
+            {
+                "id": 16,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "__builtin_list_index"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -62.48682743423325,
+                    "y": -1011.2396185676178
+                }
+            },
+            {
+                "id": 12,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "sphere"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -91.52603396865847,
+                    "y": -93.8141848178747
+                }
+            },
+            {
+                "id": 11,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "sphere"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -640.6822377806095,
+                    "y": -567.4614106056827
+                }
+            },
+            {
+                "id": 7,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "if"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 479.5284509850014,
+                    "y": -557.9513304768866
+                }
+            },
+            {
+                "id": 10,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "translate"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 160.6522636530218,
+                    "y": -455.7859933437764
+                }
+            },
+            {
+                "id": 23,
+                "internal-data": {
+                    "data": {
+                        "comment": "Save me now!"
+                    },
+                    "model-name": "comment"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -296.17761420692636,
+                    "y": -1311.8684621121213
                 }
             }
         ]
@@ -420,6 +463,8 @@
             {
                 "id": 0,
                 "internal-data": {
+                    "data": {
+                    },
                     "model-name": "minkowski"
                 },
                 "label": "",
@@ -432,6 +477,8 @@
             {
                 "id": 1,
                 "internal-data": {
+                    "data": {
+                    },
                     "model-name": "intersection"
                 },
                 "label": "",
@@ -444,6 +491,8 @@
             {
                 "id": 2,
                 "internal-data": {
+                    "data": {
+                    },
                     "model-name": "output"
                 },
                 "label": "",

@@ -41,6 +41,7 @@ public:
 
     // Syntax
     _OPENSCAD_NODE_DECL(syntax_assign);
+    _OPENSCAD_NODE_DECL(syntax_assign_list);
     _OPENSCAD_NODE_DECL(syntax_module);
     _OPENSCAD_NODE_DECL(syntax_function);
     _OPENSCAD_NODE_DECL(syntax_use);
