@@ -11,31 +11,20 @@
 
 * Allow ports to have individual widgets so we can enter literals where needed.
 
-* Make a better menu for adding nodes that allows some kind of icons to be displayed.
+* Better menu/UI semantics
+  * Make or get a whole bunch of icons for each of the node types.
+  * Allow extraction of node icons from module comment text (as base64?)
+  * Allow removing nodes from groups (the group/node menu needs attention).
+  * Allow categories to also have icons
 
-* Zoom problem in example tool when it first loads the 'node' one.
-
-* Allow ports to specify a set of types instead of a single one
-  so we can accept more than one type of data for some functions.
-
-* Node Programs
-  A node program is a collection of graphs.
-  * Create a serializer for a program that includes:
-    * All of the graphs
-    * All of the nodes in each graph
-      Including any node-specific data like internal node data or
-      connections to other graphs for 'for' and 'module' things.
-    * All of the connections
-    * All of the groups
-    * Coordinates
+* UI bugs/annoyances:
+  * When the UI is first loaded, the size of the view is way zoomed out to the maximum
+    and not centered on our scene.
 
 * Control flow stuff:
   * Each function, module, for loop, etc will be its own graph with an 'edit' button
     to allow you to go inside it.  They should completely own their sub-graphs
     and express things recursively inside each node.
-  * Group should have a 'title/name' and some 'comment' text.
-
-  * Each graph should have a 'comment' block to allow rich text documentation in-line.
 
   * Module and Function groups should have a text widget allowing the name to be specified.
     This is essentially a node that has no ports, but has a widget inside it.
@@ -46,3 +35,5 @@
   * Module and function groups should have dedicated 'in' and 'out' nodes
     to manage what variables are currently in-scope for that module.
 
+  * Still need variable assignment nodes so we can have named variables.
+  

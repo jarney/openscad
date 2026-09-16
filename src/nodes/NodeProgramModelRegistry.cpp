@@ -39,3 +39,15 @@ NodeProgramModelRegistry::registerModel(std::unique_ptr<NodeDelegateFactory> fac
 	_registeredModelsCategory[name] = category;
     }	
 }
+
+QIcon *
+NodeProgramModelRegistry::getIcon(QString const & modelName) const
+{
+    auto it = _registeredItemCreators.find(modelName);
+
+    if (it != _registeredItemCreators.end()) {
+        return it->second->getIcon();
+    }
+
+    return nullptr;
+}

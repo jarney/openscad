@@ -19,9 +19,11 @@ class NodeProgramGraphModel;
 
 class NodeDelegateFactory {
 public:
+    virtual ~NodeDelegateFactory() = default;
     virtual std::string getName() const = 0;
     virtual std::string getCategory() const = 0;
     virtual std::unique_ptr<QtNodes::NodeDelegateModel> create(NodeProgramGraphModel & graph) const = 0;
+    virtual QIcon *getIcon() = 0;
 };
 
 /// Class uses map for storing models (name, model)
@@ -57,6 +59,14 @@ public:
 
     CategoriesSet const &categories() const;
 
+    /**
+     * Returns an icon for displaying the model
+     * on the UI if it has one or nullptr if it
+     * does not.  The model factory retains ownership
+     * of the icon.
+     */
+    QIcon * getIcon(QString const & modelName) const;
+    
 private:
     CategoriesSet _categories;
     RegisteredModelsCategoryMap _registeredModelsCategory;

@@ -139,6 +139,10 @@ QMenu *NodeProgramGraphicsScene::createSceneMenu(QPointF const scenePos)
             continue;
 
         auto item = new QTreeWidgetItem(parent.first());
+	QIcon *icon = registry->getIcon(assoc.first);
+	if (icon != nullptr) {
+	    item->setIcon(0, *icon);
+	}
         item->setText(0, assoc.first);
     }
 

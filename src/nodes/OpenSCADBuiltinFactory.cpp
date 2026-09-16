@@ -5,8 +5,13 @@ OpenSCADBuiltinFactory::OpenSCADBuiltinFactory(
     std::unique_ptr<NodeModelType> type
     )
     : _type(std::move(type))
-{}
-
+{
+    _icon = new QIcon("../resources/icons/prefsEditor.png");
+}
+OpenSCADBuiltinFactory::~OpenSCADBuiltinFactory()
+{
+    delete _icon;
+}
 std::string
 OpenSCADBuiltinFactory::getName() const
 {
@@ -23,5 +28,11 @@ std::unique_ptr<QtNodes::NodeDelegateModel>
 OpenSCADBuiltinFactory::create(NodeProgramGraphModel & model) const
 {
     return std::make_unique<OpenSCADBuiltinModel>(*_type);
+}
+
+QIcon *
+OpenSCADBuiltinFactory::getIcon()
+{
+    return _icon;
 }
 
