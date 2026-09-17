@@ -19,29 +19,30 @@ OpenSCADBuiltins::f_flow_for()
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "start"), "start");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "end"), "end");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(OpenSCADBuiltins::f_flow_for_process);
-    model->setWidgetFactory(OpenSCADBuiltins::f_flow_for_widget);
+    model->setProcessor(f_flow_for_process);
+    model->setInitializer(f_flow_for_initializer);
+    model->setWidgetFactory(f_flow_for_widget);
     return model;
+}
+
+void
+OpenSCADBuiltins::f_flow_for_initializer(OpenSCADBuiltinModel & node)
+{
+    if (!node.hasValue("graph")) {
+	NodeProgram::GraphId graphId =
+	    node.getGraph().getParent().newGraphWithPrefix("for");
+	node.setValue("graph", graphId);
+    }
 }
 
 QWidget*
 OpenSCADBuiltins::f_flow_for_widget(OpenSCADBuiltinModel & node)
 {
-    fprintf(stderr, "Push button for edit of for content\n");
     QPushButton *button = new QPushButton();
     button->setText("Edit");
     QObject::connect(button, &QPushButton::clicked, [&node]() {
-	fprintf(stderr, "Edit button pushed\n");
-
 	// If we already have a graph, use it.
-	NodeProgram::GraphId graphId;
-	if (node.hasValue("graph")) {
-	    graphId = node.getValue("graph");
-	}
-	else {
-	    graphId = node.getGraph().getParent().newGraphWithPrefix("for");
-	    node.setValue("graph", graphId);
-	}
+	NodeProgram::GraphId graphId = node.getValue("graph");
 	node.editGraph(graphId);
     });
     

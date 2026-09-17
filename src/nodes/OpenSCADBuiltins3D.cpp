@@ -243,7 +243,7 @@ OpenSCADBuiltins::f_3d_surface_process(const OpenSCADBuiltinModel & model, const
 // Import DXF Dimensions
 ////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_import_dxf_dim()
+OpenSCADBuiltins::f_3d_dxf_dim()
 {
     auto model = std::make_unique<NodeModelType>("dxf_dim", "Read DXF Dimension", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
@@ -252,12 +252,12 @@ OpenSCADBuiltins::f_import_dxf_dim()
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "origin"), "origin");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "scale"), "scale");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "out"), "out");
-    model->setProcessor(f_import_dxf_dim_process);
+    model->setProcessor(f_3d_dxf_dim_process);
     return model;
 }
 
 void
-OpenSCADBuiltins::f_import_dxf_dim_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_3d_dxf_dim_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "file");
@@ -273,7 +273,7 @@ OpenSCADBuiltins::f_import_dxf_dim_process(const OpenSCADBuiltinModel & model, c
 // Import DXF Cross (Origin)
 ////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_import_dxf_cross()
+OpenSCADBuiltins::f_3d_dxf_cross()
 {
     auto model = std::make_unique<NodeModelType>("dxf_cross", "Read DXF Origin", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
@@ -281,12 +281,12 @@ OpenSCADBuiltins::f_import_dxf_cross()
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "origin"), "origin");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "scale"), "scale");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "out"), "out");
-    model->setProcessor(f_import_dxf_cross_process);
+    model->setProcessor(f_3d_dxf_cross_process);
     return model;
 }
 
 void
-OpenSCADBuiltins::f_import_dxf_cross_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_3d_dxf_cross_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "file");

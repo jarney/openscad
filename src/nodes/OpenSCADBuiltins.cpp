@@ -30,21 +30,23 @@ OpenSCADBuiltins::registerDataModels()
     ret->registerCategory(CATEGORY_OPERATOR);
     ret->registerCategory(CATEGORY_2D);
     ret->registerCategory(CATEGORY_3D);
-    ret->registerCategory(CATEGORY_BOOLEAN_OPS);
     ret->registerCategory(CATEGORY_XFORM);
     ret->registerCategory(CATEGORY_LIST);
-    ret->registerCategory(CATEGORY_FUNCTION);
+    ret->registerCategory(CATEGORY_BOOLEAN_OPS);
     ret->registerCategory(CATEGORY_FLOW);
-    ret->registerCategory(CATEGORY_MATH);
     ret->registerCategory(CATEGORY_TYPETEST);
     ret->registerCategory(CATEGORY_OTHER);
+    ret->registerCategory(CATEGORY_FUNCTION);
+    ret->registerCategory(CATEGORY_MATH);
     
     // Syntax
-    //_OPENSCAD_NODE_REGISTER(syntax_assign);
-    //_OPENSCAD_NODE_REGISTER(syntax_assign_list);
-    //_OPENSCAD_NODE_REGISTER(syntax_module);
-    //_OPENSCAD_NODE_REGISTER(syntax_function);
-    //_OPENSCAD_NODE_REGISTER(syntax_use);
+    _OPENSCAD_NODE_REGISTER(syntax_assign);
+//    _OPENSCAD_NODE_REGISTER(syntax_assign_list);
+//    _OPENSCAD_NODE_REGISTER(syntax_variable);
+//    _OPENSCAD_NODE_REGISTER(syntax_module);
+//    _OPENSCAD_NODE_REGISTER(syntax_function);
+//    _OPENSCAD_NODE_REGISTER(syntax_include);
+//    _OPENSCAD_NODE_REGISTER(syntax_use);
     
     // Constants
     _OPENSCAD_NODE_REGISTER(const_true);
@@ -87,13 +89,8 @@ OpenSCADBuiltins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(3d_linear_extrude);
     _OPENSCAD_NODE_REGISTER(3d_rotate_extrude);
     _OPENSCAD_NODE_REGISTER(3d_surface);
-    _OPENSCAD_NODE_REGISTER(import_dxf_dim);
-    _OPENSCAD_NODE_REGISTER(import_dxf_cross);
-
-    // Boolean Operations
-    _OPENSCAD_NODE_REGISTER(op_union);
-    _OPENSCAD_NODE_REGISTER(op_difference);
-    _OPENSCAD_NODE_REGISTER(op_intersection);
+    _OPENSCAD_NODE_REGISTER(3d_dxf_dim);
+    _OPENSCAD_NODE_REGISTER(3d_dxf_cross);
 
     // Transformations
     _OPENSCAD_NODE_REGISTER(xform_translate);
@@ -118,6 +115,34 @@ OpenSCADBuiltins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(list_set_rgba);
     _OPENSCAD_NODE_REGISTER(list_set_range);
 
+    // Boolean Operations
+    _OPENSCAD_NODE_REGISTER(op_union);
+    _OPENSCAD_NODE_REGISTER(op_difference);
+    _OPENSCAD_NODE_REGISTER(op_intersection);
+
+    // Flow control
+    _OPENSCAD_NODE_REGISTER(flow_for);
+    _OPENSCAD_NODE_REGISTER(flow_intersection_for);
+    _OPENSCAD_NODE_REGISTER(flow_if);
+    _OPENSCAD_NODE_REGISTER(flow_let);
+    _OPENSCAD_NODE_REGISTER(flow_comment);
+    _OPENSCAD_NODE_REGISTER(flow_group);
+    _OPENSCAD_NODE_REGISTER(flow_output);
+    
+    // Type Test functions
+    _OPENSCAD_NODE_REGISTER(typetest_is_bool);
+    _OPENSCAD_NODE_REGISTER(typetest_is_string);
+    _OPENSCAD_NODE_REGISTER(typetest_is_num);
+    _OPENSCAD_NODE_REGISTER(typetest_is_function);
+    _OPENSCAD_NODE_REGISTER(typetest_is_list);
+    _OPENSCAD_NODE_REGISTER(typetest_is_undef);
+
+    // Other
+    _OPENSCAD_NODE_REGISTER(other_echo);
+    _OPENSCAD_NODE_REGISTER(other_render);
+    _OPENSCAD_NODE_REGISTER(other_children);
+    _OPENSCAD_NODE_REGISTER(other_assert);
+    
     // Functions
     _OPENSCAD_NODE_REGISTER(function_concat);
     _OPENSCAD_NODE_REGISTER(function_lookup);
@@ -128,15 +153,6 @@ OpenSCADBuiltins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(function_version);
     _OPENSCAD_NODE_REGISTER(function_version_num);
     _OPENSCAD_NODE_REGISTER(function_parent_module);
-    
-    // Flow control
-    _OPENSCAD_NODE_REGISTER(flow_for);
-    _OPENSCAD_NODE_REGISTER(flow_intersection_for);
-    _OPENSCAD_NODE_REGISTER(flow_if);
-    _OPENSCAD_NODE_REGISTER(flow_let);
-    _OPENSCAD_NODE_REGISTER(flow_comment);
-    _OPENSCAD_NODE_REGISTER(flow_group);
-    _OPENSCAD_NODE_REGISTER(flow_output);
     
     // Math functions:
     _OPENSCAD_NODE_REGISTER(math_abs);
@@ -163,21 +179,6 @@ OpenSCADBuiltins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(math_norm);
     _OPENSCAD_NODE_REGISTER(math_cross);
 
-    // Type Test functions
-    _OPENSCAD_NODE_REGISTER(typetest_is_bool);
-    _OPENSCAD_NODE_REGISTER(typetest_is_string);
-    _OPENSCAD_NODE_REGISTER(typetest_is_num);
-    _OPENSCAD_NODE_REGISTER(typetest_is_function);
-    _OPENSCAD_NODE_REGISTER(typetest_is_list);
-    _OPENSCAD_NODE_REGISTER(typetest_is_undef);
-
-    // Other
-    _OPENSCAD_NODE_REGISTER(other_echo);
-    _OPENSCAD_NODE_REGISTER(other_render);
-    _OPENSCAD_NODE_REGISTER(other_children);
-    _OPENSCAD_NODE_REGISTER(other_assert);
-
-    
     return ret;
 }
 

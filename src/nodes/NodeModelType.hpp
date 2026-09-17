@@ -10,6 +10,7 @@ class NodeModelType {
 public:
     typedef std::function<void(const OpenSCADBuiltinModel & model, const PortFunctionData &, PortFunctionData & )> NodeProcessor;
     typedef std::function<QWidget*(OpenSCADBuiltinModel &)> WidgetFactory;
+    typedef std::function<void(OpenSCADBuiltinModel &)> Initializer;
     
     NodeModelType(std::string name, std::string caption, std::string category);
     std::string getName() const;
@@ -31,13 +32,16 @@ public:
 
     void setProcessor(NodeProcessor processor);
     NodeProcessor getProcessor() const;
+    static void default_processor(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output);
+    
+    void setInitializer(Initializer initializer);
+    Initializer getInitializer() const;
+    static void default_initializer(OpenSCADBuiltinModel &model);
     
     void setWidgetFactory(WidgetFactory widgetFactory);
     WidgetFactory getWidgetFactory() const;
-
-    static void default_processor(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output);
     static QWidget *default_widget_factory(OpenSCADBuiltinModel &model);
-
+    
     void dump();
 private:
     std::string _name;
@@ -49,6 +53,7 @@ private:
     std::map<int, std::string> _inputPortNames;
     std::map<int, std::string> _outputPortNames;
     NodeModelType::NodeProcessor _processor;
+    NodeModelType::Initializer _initializer;
     NodeModelType::WidgetFactory _widgetFactory;
 };
 

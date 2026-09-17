@@ -42,7 +42,6 @@ int main(int argc, char *argv[])
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
 	std::ifstream exampleInputFile("../example.json");
 	serializer.read(program, exampleInputFile);
-	fprintf(stderr, "Finished reading\n");
     }
 
     // Register builtins...
@@ -140,7 +139,6 @@ int main(int argc, char *argv[])
         QObject::connect(loadGroupAction, &QAction::triggered, [scene] { scene->loadGroupFile(); });
     }
 #endif
-    fprintf(stderr, "Going to run the window\n");
     
     mainWidget.setWindowTitle("[*]Data Flow: simplest calculator");
     mainWidget.resize(800, 600);

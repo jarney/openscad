@@ -6,6 +6,7 @@ NodeModelType::NodeModelType(std::string name, std::string caption, std::string 
     , _category(category)
     , _resizable(false)
     , _processor(default_processor)
+    , _initializer(default_initializer)
     , _widgetFactory(default_widget_factory)
 {}
 
@@ -85,6 +86,9 @@ NodeModelType::addOutputPort(std::unique_ptr<NodeModelPort> outputPort, std::str
     _outputPorts.push_back(std::move(outputPort));
 }
 
+////////////////////////////////////////
+// Processor
+////////////////////////////////////////
 void
 NodeModelType::setProcessor(NodeModelType::NodeProcessor processor)
 {
@@ -98,6 +102,32 @@ NodeModelType::getProcessor() const
 }
 
 void
+NodeModelType::default_processor(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+{}
+
+////////////////////////////////////////
+// Initializer
+////////////////////////////////////////
+void
+NodeModelType::setInitializer(NodeModelType::Initializer initializer)
+{
+    _initializer = initializer;
+}
+
+NodeModelType::Initializer
+NodeModelType::getInitializer() const
+{
+    return _initializer;
+}
+
+void
+NodeModelType::default_initializer(OpenSCADBuiltinModel &model)
+{}
+
+////////////////////////////////////////
+// Widget Factory
+////////////////////////////////////////
+void
 NodeModelType::setWidgetFactory(NodeModelType::WidgetFactory widgetFactory)
 {
     _widgetFactory = widgetFactory;
@@ -109,11 +139,6 @@ NodeModelType::getWidgetFactory() const
     return _widgetFactory;
 }
 
-
-void
-NodeModelType::default_processor(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
-{
-}
 
 QWidget*
 NodeModelType::default_widget_factory(OpenSCADBuiltinModel &)

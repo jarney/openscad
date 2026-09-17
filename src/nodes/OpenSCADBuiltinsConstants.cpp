@@ -16,13 +16,10 @@ NONARY_NODE(const, undef, _OPENSCAD_NODE_CATEGORY, "Undefined", "value", DATA_VA
 {
     output.setValue("value", std::string("undef"));
 }
-NONARY_NODE(const, pi, _OPENSCAD_NODE_CATEGORY, "PI", "value", DATA_VARIABLE)
-{
-    output.setValue("value", std::string("PI"));
-}
 
-// These are not macros because we want to put widgets in here
-// to contain and edit their data.
+////////////////////////////////////////
+// Integer Constant
+////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_const_int()
 {
@@ -37,6 +34,9 @@ OpenSCADBuiltins::f_const_int_process(const OpenSCADBuiltinModel & model, const 
     output.setValue("value", std::string("15"));
 }
 
+////////////////////////////////////////
+// Float Constant
+////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_const_float()
 {
@@ -51,6 +51,9 @@ OpenSCADBuiltins::f_const_float_process(const OpenSCADBuiltinModel & model, cons
     output.setValue("value", std::string("15.0"));
 }
 
+////////////////////////////////////////
+// String Constant
+////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_const_string()
 {
@@ -63,5 +66,13 @@ void
 OpenSCADBuiltins::f_const_string_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output.setValue("value", std::string("\"constant string\""));
+}
+
+////////////////////////////////////////
+// PI Constant
+////////////////////////////////////////
+NONARY_NODE(const, pi, _OPENSCAD_NODE_CATEGORY, "PI", "value", DATA_VARIABLE)
+{
+    output.setValue("value", std::string("PI"));
 }
 

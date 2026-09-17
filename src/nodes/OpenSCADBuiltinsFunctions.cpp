@@ -29,6 +29,9 @@ BINARY_NODE(function, search, _OPENSCAD_NODE_CATEGORY, "Search for value", "need
     output.setValue("out", std::string("search(") + input.getValue("needle", "0") + ", " + input.getValue("haystack", "[]") + std::string(")"));
 }
 
+////////////////////////////////////////
+// Version
+////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_function_version()
 {
@@ -42,6 +45,9 @@ OpenSCADBuiltins::f_function_version_process(const OpenSCADBuiltinModel & model,
 {
     output.setValue("value", std::string("version()"));
 }
+////////////////////////////////////////
+// Version Number
+////////////////////////////////////////
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_function_version_num()
 {
@@ -56,6 +62,9 @@ OpenSCADBuiltins::f_function_version_num_process(const OpenSCADBuiltinModel & mo
     output.setValue("value", std::string("version_num()"));
 }
 
+////////////////////////////////////////
+// Parent Module
+////////////////////////////////////////
 UNARY_NODE(function, parent_module, _OPENSCAD_NODE_CATEGORY, "Parent Module Name", "index", DATA_VARIABLE, "out", DATA_VARIABLE)
 {
     output.setValue("out", std::string("parent_module(") + input.getValue("index", "0") + std::string(")"));

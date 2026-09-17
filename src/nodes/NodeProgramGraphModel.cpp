@@ -107,11 +107,18 @@ QtNodes::NodeId NodeProgramGraphModel::addNode(std::unique_ptr<QtNodes::NodeDele
         Q_EMIT nodeUpdated(newId);
     });
 
+    // To initialize the node, we
+    // call 'load' on an empty JSON
+    // so that no data actually gets loaded,
+    // but we call the initializer.
+    QJsonObject const internalDataJson;
+    model->load(internalDataJson);
+    
     _models[newId] = std::move(model);
 
     _labels[newId] = _models[newId]->label();
     _labelsVisible[newId] = _models[newId]->labelVisible();
-
+    
     Q_EMIT nodeCreated(newId);
 
     return newId;
@@ -558,6 +565,32 @@ bool NodeProgramGraphModel::deleteNode(QtNodes::NodeId const nodeId)
     return true;
 }
 
+static QJsonObject savePoint(QPointF const pos)
+{
+    QJsonObject posJson;
+    posJson["x"] = pos.x();
+    posJson["y"] = pos.y();
+    return posJson;
+}
+static QJsonObject saveSize(QSizeF const size)
+{
+    QJsonObject posJson;
+    posJson["width"] = size.width();
+    posJson["height"] = size.height();
+    return posJson;
+}
+static QPointF loadPoint(QJsonValue loaded)
+{
+    QJsonObject posJson = loaded.toObject();
+    return QPointF(posJson["x"].toDouble(), posJson["y"].toDouble());
+}
+static QSize loadSize(QJsonValue loaded)
+{
+    QJsonObject posJson = loaded.toObject();
+    QSize size(posJson["width"].toInt(), posJson["height"].toInt());
+    return size;
+}
+
 QJsonObject NodeProgramGraphModel::saveNode(QtNodes::NodeId const nodeId) const
 {
     QJsonObject nodeJson;
@@ -579,12 +612,9 @@ QJsonObject NodeProgramGraphModel::saveNode(QtNodes::NodeId const nodeId) const
     nodeJson["labelVisible"] = (labelVisibleIt != _labelsVisible.end()) ? labelVisibleIt->second
                                                                         : model->labelVisible();
 
-    {
-        QPointF const pos = nodeData(nodeId, QtNodes::NodeRole::Position).value<QPointF>();
-        QJsonObject posJson;
-        posJson["x"] = pos.x();
-        posJson["y"] = pos.y();
-        nodeJson["position"] = posJson;
+    nodeJson["position"] = savePoint(nodeData(nodeId, QtNodes::NodeRole::Position).value<QPointF>());
+    if (nodeFlags(nodeId) & QtNodes::NodeFlag::Resizable) {
+	nodeJson["size"] = saveSize(nodeData(nodeId, QtNodes::NodeRole::Size).value<QSizeF>());
     }
 
     return nodeJson;
@@ -689,9 +719,8 @@ void NodeProgramGraphModel::loadNode(QJsonObject const &nodeJson)
 
         Q_EMIT nodeCreated(restoredNodeId);
 
-        QJsonObject posJson = nodeJson["position"].toObject();
-        QPointF const pos(posJson["x"].toDouble(), posJson["y"].toDouble());
-        setNodeData(restoredNodeId, QtNodes::NodeRole::Position, pos);
+        setNodeData(restoredNodeId, QtNodes::NodeRole::Position, loadPoint(nodeJson["position"]));
+        setNodeData(restoredNodeId, QtNodes::NodeRole::Size, loadSize(nodeJson["size"]));
 
         auto *restoredModel = _models[restoredNodeId].get();
         _labels[restoredNodeId] = nodeJson["label"].toString(restoredModel->label());

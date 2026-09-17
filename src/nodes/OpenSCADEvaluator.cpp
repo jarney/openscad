@@ -12,22 +12,9 @@ findOutputNodes(
     )
 {
     for (auto nodeId : model.allNodeIds()) {
-	QString nodeType = model.nodeData(nodeId, QtNodes::NodeRole::Type).value<QString>();
-
-
-	if (nodeType == "output") {
-	    // First, verify that this really is an output node.
-	    auto connections = model.connections(nodeId, QtNodes::PortType::In, 0);
-	    if (connections.size() == 0) {
-		fprintf(stderr, "No connection to output node\n");
-	    }
-	    else if (connections.size() > 1) {
-		fprintf(stderr, "Only one geometry node must be connected to output\n");
-	    }
-	    else {
-		outputNodes.push_back(nodeId);
-	    }
-	
+	OpenSCADBuiltinModel *delegate = model.delegateModel<OpenSCADBuiltinModel>(nodeId);
+	if (delegate->nPorts(QtNodes::PortType::Out) == 0) {
+	    outputNodes.push_back(nodeId);
 	}
     }
 }

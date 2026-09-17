@@ -24,7 +24,6 @@ JNodeProgramEditor::JNodeProgramEditor(NodeProgram & program)
     // If the program is non-trivial, we should
     // edit the 'main' graph.
     std::vector<NodeProgram::GraphId> graphs = _program.getGraphs();
-    fprintf(stderr, "Size of graphs is %ld\n", graphs.size());
     if (graphs.size() > 0) {
 	// Somehow this we should designate a main
 	// graph through the program itself

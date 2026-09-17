@@ -50,7 +50,6 @@ NodeProgramSerializerJSON::read(NodeProgram & program, std::istream & input_stre
     // For each key in the json object...
     for (const auto key : document_object.keys()) {
 	QJsonObject object = document_object[key].toObject();
-	fprintf(stderr, "Reading object with key %s\n", key.toStdString().c_str());
 	
 	// The new ID may not match the old one????
 	// This could be a problem for referencing graphs to one another.
