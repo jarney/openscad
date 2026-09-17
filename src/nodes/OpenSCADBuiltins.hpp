@@ -70,7 +70,7 @@ public:
     // Syntax
     _OPENSCAD_NODE_DECL_FULL(syntax_assign);
     _OPENSCAD_NODE_DECL(syntax_assign_list);
-    _OPENSCAD_NODE_DECL(syntax_variable);
+    _OPENSCAD_NODE_DECL_FULL(syntax_variable);
     _OPENSCAD_NODE_DECL(syntax_module);
     _OPENSCAD_NODE_DECL(syntax_function);
     _OPENSCAD_NODE_DECL(syntax_include);
@@ -79,9 +79,9 @@ public:
     // Constants
     _OPENSCAD_NODE_DECL(const_true);
     _OPENSCAD_NODE_DECL(const_false);
-    _OPENSCAD_NODE_DECL(const_int);
-    _OPENSCAD_NODE_DECL(const_float);
-    _OPENSCAD_NODE_DECL(const_string);
+    _OPENSCAD_NODE_DECL_FULL(const_int);
+    _OPENSCAD_NODE_DECL_FULL(const_float);
+    _OPENSCAD_NODE_DECL_FULL(const_string);
     _OPENSCAD_NODE_DECL(const_undef);
     _OPENSCAD_NODE_DECL(const_pi);
 
