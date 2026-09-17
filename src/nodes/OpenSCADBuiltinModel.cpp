@@ -1,11 +1,10 @@
-//#include <QString>
-
 #include "nodes/NodeProgramModelRegistry.hpp"
 #include "nodes/OpenSCADBuiltinModel.hpp"
 #include "nodes/JNodeProgramEditor.hpp"
 
-OpenSCADBuiltinModel::OpenSCADBuiltinModel(const NodeModelType & modelType)
+OpenSCADBuiltinModel::OpenSCADBuiltinModel(const NodeModelType & modelType, NodeProgramGraphModel & graph)
     : _modelType(modelType)
+    , _graph(graph)
     , _widget(nullptr)
     , _editor(nullptr)
 {}
@@ -23,7 +22,7 @@ QWidget *
 OpenSCADBuiltinModel::embeddedWidget()
 {
     if (!_widget) {
-	_widget = _modelType.getWidgetFactory()(this);
+	_widget = _modelType.getWidgetFactory()(*this);
     }
     return _widget;
 }
@@ -134,10 +133,10 @@ OpenSCADBuiltinModel::getEditor() const
 }
 
 void
-OpenSCADBuiltinModel::editGraph()
+OpenSCADBuiltinModel::editGraph(NodeProgram::GraphId graphId) const
 {
     if (_editor) {
-	_editor->editGraph("second-flow");
+	_editor->editGraph(graphId);
     }
 }
 
@@ -160,6 +159,11 @@ OpenSCADBuiltinModel::getValue(std::string key, std::string default_value) const
 	return default_value;
     }
     return it->second;    
+}
+std::string
+OpenSCADBuiltinModel::getValue(std::string key) const
+{
+    return getValue(key, "");
 }
 
 void
@@ -191,4 +195,10 @@ void OpenSCADBuiltinModel::load(QJsonObject const & obj)
 	const auto s_value = value.toString().toStdString();
 	_modelData[s_key] = s_value;
     }
+}
+
+NodeProgramGraphModel &
+OpenSCADBuiltinModel::getGraph() const
+{
+    return _graph;
 }

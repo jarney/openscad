@@ -143,12 +143,12 @@ public:
 
     // Flow control
     _OPENSCAD_NODE_DECL(flow_for);
-        static QWidget* f_flow_for_widget(OpenSCADBuiltinModel *model);
+        static QWidget* f_flow_for_widget(OpenSCADBuiltinModel & model);
     _OPENSCAD_NODE_DECL(flow_intersection_for);
     _OPENSCAD_NODE_DECL(flow_if);
     _OPENSCAD_NODE_DECL(flow_let);
     _OPENSCAD_NODE_DECL(flow_comment);
-        static QWidget* f_flow_comment_widget(OpenSCADBuiltinModel *model);
+        static QWidget* f_flow_comment_widget(OpenSCADBuiltinModel & model);
     _OPENSCAD_NODE_DECL(flow_group);
     _OPENSCAD_NODE_DECL(flow_output);
 

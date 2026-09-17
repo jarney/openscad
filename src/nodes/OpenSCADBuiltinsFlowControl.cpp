@@ -15,7 +15,7 @@
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_flow_for()
 {
-    auto model = std::make_unique<NodeModelType>("for", "Loop", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeModelType>("for", "For Loop", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "start"), "start");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "end"), "end");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -25,14 +25,24 @@ OpenSCADBuiltins::f_flow_for()
 }
 
 QWidget*
-OpenSCADBuiltins::f_flow_for_widget(OpenSCADBuiltinModel *model)
+OpenSCADBuiltins::f_flow_for_widget(OpenSCADBuiltinModel & node)
 {
     fprintf(stderr, "Push button for edit of for content\n");
     QPushButton *button = new QPushButton();
     button->setText("Edit");
-    QObject::connect(button, &QPushButton::clicked, [model]() {
+    QObject::connect(button, &QPushButton::clicked, [&node]() {
 	fprintf(stderr, "Edit button pushed\n");
-	model->editGraph();
+
+	// If we already have a graph, use it.
+	NodeProgram::GraphId graphId;
+	if (node.hasValue("graph")) {
+	    graphId = node.getValue("graph");
+	}
+	else {
+	    graphId = node.getGraph().getParent().newGraphWithPrefix("for");
+	    node.setValue("graph", graphId);
+	}
+	node.editGraph(graphId);
     });
     
     return button;
@@ -144,7 +154,7 @@ OpenSCADBuiltins::f_flow_comment()
     return model;
 }
 QWidget*
-OpenSCADBuiltins::f_flow_comment_widget(OpenSCADBuiltinModel *model)
+OpenSCADBuiltins::f_flow_comment_widget(OpenSCADBuiltinModel & node)
 {
     // Should we have rich text and markups or perhaps IDE-style
     // input boxes or is plain text enough?
@@ -155,11 +165,11 @@ OpenSCADBuiltins::f_flow_comment_widget(OpenSCADBuiltinModel *model)
     layout->setSpacing(0);
     
     QPlainTextEdit *comment = new QPlainTextEdit();
-    comment->setPlainText(QString::fromStdString(model->getValue("comment", "Place Comment Here...")));
+    comment->setPlainText(QString::fromStdString(node.getValue("comment", "Place Comment Here...")));
     layout->addWidget(comment);
     
-    QObject::connect(comment, &QPlainTextEdit::textChanged, [comment, model]() {
-	model->setValue("comment", comment->toPlainText().toStdString());
+    QObject::connect(comment, &QPlainTextEdit::textChanged, [comment, &node]() {
+	node.setValue("comment", comment->toPlainText().toStdString());
     });
 
     return widget;

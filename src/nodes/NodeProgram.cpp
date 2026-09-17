@@ -2,6 +2,7 @@
 
 NodeProgram::NodeProgram(std::shared_ptr<NodeProgramModelRegistry> registry)
     : _registry(registry)
+    , _maxGraphId(0)
 {}
 NodeProgram::~NodeProgram()
 {
@@ -42,12 +43,17 @@ NodeProgram::getGraphs() const
 }
 
 NodeProgram::GraphId
-NodeProgram::newGraph()
+NodeProgram::newGraphWithPrefix(std::string prefix)
 {
     NodeProgramGraphModel *newGraphObj = new NodeProgramGraphModel(_registry, *this);
-    GraphId newId = std::to_string(maxGraphId++);
-    graphs[newId] = newGraphObj;
-    return newId;
+    // Need a much better way of doing this.
+    while (true) {
+	GraphId newId = prefix + std::string("_") + std::to_string(_maxGraphId++);
+	if (graphs.count(newId) == 0) {
+	    graphs[newId] = newGraphObj;
+	    return newId;
+	}
+    }
 }
 
 NodeProgramGraphModel *

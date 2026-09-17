@@ -39,7 +39,7 @@ public:
      * the id of it.  It is responsible for
      * allocating the node ID.
      */
-    GraphId newGraph();
+    GraphId newGraphWithPrefix(std::string prefix);
 
     /**
      * This creates a new graph with the
@@ -60,6 +60,6 @@ public:
     
 private:
     std::shared_ptr<NodeProgramModelRegistry> _registry;
-    int maxGraphId;
+    int _maxGraphId;
     std::map<GraphId, NodeProgramGraphModel*> graphs;
 };

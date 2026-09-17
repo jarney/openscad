@@ -26,7 +26,10 @@ JNodeProgramEditor::JNodeProgramEditor(NodeProgram & program)
     std::vector<NodeProgram::GraphId> graphs = _program.getGraphs();
     fprintf(stderr, "Size of graphs is %ld\n", graphs.size());
     if (graphs.size() > 0) {
-	editGraph(graphs.at(0));
+	// Somehow this we should designate a main
+	// graph through the program itself
+	// presumably through some metadata.
+	editGraph("main");
     }
 
 }

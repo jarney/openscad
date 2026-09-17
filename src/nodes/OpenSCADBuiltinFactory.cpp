@@ -29,7 +29,7 @@ OpenSCADBuiltinFactory::getCategory() const
 std::unique_ptr<QtNodes::NodeDelegateModel>
 OpenSCADBuiltinFactory::create(NodeProgramGraphModel & model) const
 {
-    return std::make_unique<OpenSCADBuiltinModel>(*_type);
+    return std::make_unique<OpenSCADBuiltinModel>(*_type, model);
 }
 
 std::string

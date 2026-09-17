@@ -116,7 +116,7 @@ NodeModelType::default_processor(const OpenSCADBuiltinModel & model, const PortF
 }
 
 QWidget*
-NodeModelType::default_widget_factory(OpenSCADBuiltinModel *)
+NodeModelType::default_widget_factory(OpenSCADBuiltinModel &)
 {
     return nullptr;
 }

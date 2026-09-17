@@ -31,9 +31,11 @@
     so we can have a better experience cross-language.
 
 * Control flow stuff:
+  * For loop node should set a variable name for the iterator variable.
+    * It should also create a variable node and an output node by default.
+
   * Each function, module, for loop, etc will be its own graph with an 'edit' button
-    to allow you to go inside it.  They should completely own their sub-graphs
-    and express things recursively inside each node.
+    to allow you to go inside it.
 
   * Module and Function groups should have a text widget allowing the name to be specified.
     This is essentially a node that has no ports, but has a widget inside it.
