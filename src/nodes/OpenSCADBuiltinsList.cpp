@@ -197,11 +197,12 @@ OpenSCADBuiltins::f_list_set_rgba_process(const OpenSCADBuiltinModel & model, co
 OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_list_set_range()
 {
-    auto model = std::make_unique<NodeModelType>("__builtin_list_set_xyz", "Range", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeModelType>("__builtin_list_set_range", "Range", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "start"), "start");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "end"), "end");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "increment"), "increment");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "range"), "range");
-    model->setProcessor(f_list_set_xyz_process);
+    model->setProcessor(f_list_set_range_process);
     return model;
 }
 
@@ -210,8 +211,11 @@ OpenSCADBuiltins::f_list_set_range_process(const OpenSCADBuiltinModel & model, c
 {
     std::string out;
     out += std::string("[");
-    out += input.getValue("start", "0") + std::string(":");
-    out += input.getValue("end", "1");
+    out += input.getValue("start", "0");
+    out += std::string(":") + input.getValue("end", "1");
+    if (input.hasValue("increment")) {
+	out += std::string(":") + input.getValue("increment", "1");
+    }
     out += std::string("]");
     output.setValue("range", out);
 }

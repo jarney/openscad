@@ -22,6 +22,11 @@ PortFunctionData::getValue(std::string key, std::string default_value) const
     }
     return it->second;
 }
+std::string
+PortFunctionData::getValue(std::string key) const
+{
+    return getValue(key, "");
+}
 
 bool
 PortFunctionData::hasValue(std::string key) const

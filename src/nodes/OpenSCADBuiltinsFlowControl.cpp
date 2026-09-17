@@ -2,9 +2,12 @@
 #include "nodes/OpenSCADBuiltinFactory.hpp"
 #include "nodes/OpenSCADBuiltins_helpers.hpp"
 
+#include "nodes/OpenSCADEvaluator.hpp"
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QPlainTextEdit>
+#include <QtWidgets/QLineEdit>
+#include <QRegularExpressionValidator>
 #include <Qsci/qsciscintilla.h>
 
 #define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_FLOW.getName()
@@ -16,13 +19,47 @@ OpenSCADBuiltins::RegistryItemPtr
 OpenSCADBuiltins::f_flow_for()
 {
     auto model = std::make_unique<NodeModelType>("for", "For Loop", _OPENSCAD_NODE_CATEGORY);
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "range"), "range");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "start"), "start");
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "end"), "end");
+    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "increment"), "increment");
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_flow_for_process);
     model->setInitializer(f_flow_for_initializer);
     model->setWidgetFactory(f_flow_for_widget);
     return model;
+}
+
+void
+OpenSCADBuiltins::f_flow_for_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+{
+    std::string out = std::string();
+    out += std::string("for (");
+    out += std::string(node.getValue("variable"));
+    out += std::string(" = ");
+    if (input.hasValue("range")) {
+	out += input.getValue("range");
+    }
+    else {
+	out += std::string("[");
+	out += input.getValue("start", "0");
+	out += std::string(":");
+	out += input.getValue("end", "0");
+	if (input.hasValue("increment")) {
+	    out += std::string(":");
+	    out += input.getValue("increment");
+	}
+	out += std::string("]");
+    }
+    out += std::string(") {");
+
+    std::string bodyGraphId = node.getValue("graph");
+    const NodeProgramGraphModel *subgraph =
+	node.getGraph().getParent().getGraph(bodyGraphId);
+    out += evaluateToSCAD(*subgraph);
+    
+    out += std::string("}");
+    output.setValue("Geometry", out);
 }
 
 void
@@ -33,35 +70,37 @@ OpenSCADBuiltins::f_flow_for_initializer(OpenSCADBuiltinModel & node)
 	    node.getGraph().getParent().newGraphWithPrefix("for");
 	node.setValue("graph", graphId);
     }
+    if (!node.hasValue("variable")) {
+	node.setValue("variable", "i");
+    }
 }
 
 QWidget*
 OpenSCADBuiltins::f_flow_for_widget(OpenSCADBuiltinModel & node)
 {
+    QWidget *w = new QWidget();
+    QVBoxLayout *layout = new QVBoxLayout(w);
+    
+    // We need a name for the loop iteration variable
+    QLineEdit *textEdit = new QLineEdit();
+    textEdit->setText(QString::fromStdString(node.getValue("value")));
+    QObject::connect(textEdit, &QLineEdit::textChanged, [&node, textEdit]() {
+	node.setValue("variable", textEdit->text().toStdString());
+    });
+    
+    layout->addWidget(textEdit);
+    
+    // We need an edit button to get to the body of the loop.
     QPushButton *button = new QPushButton();
-    button->setText("Edit");
+    button->setText("Edit Body");
     QObject::connect(button, &QPushButton::clicked, [&node]() {
 	// If we already have a graph, use it.
 	NodeProgram::GraphId graphId = node.getValue("graph");
 	node.editGraph(graphId);
     });
+    layout->addWidget(button);
     
-    return button;
-}
-
-void
-OpenSCADBuiltins::f_flow_for_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
-{
-    std::string out = std::string();
-    out += std::string("for (i = ");
-    out += input.getValue("start", "0");
-    out += std::string(";");
-    out += std::string("i < ");
-    out += input.getValue("end", "10");
-    out += std::string("; i++) {");
-    out += std::string("// the sub-flow goes here...");
-    out += std::string("}\n");
-    output.setValue("Geometry", out);
+    return w;
 }
 
 ////////////////////////////////////////
@@ -79,7 +118,7 @@ OpenSCADBuiltins::f_flow_intersection_for()
 }
 
 void
-OpenSCADBuiltins::f_flow_intersection_for_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_flow_intersection_for_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     // TODO: Call/evaluate sub-flow
     std::string out = std::string();
@@ -105,7 +144,7 @@ OpenSCADBuiltins::f_flow_if()
 }
 
 void
-OpenSCADBuiltins::f_flow_if_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_flow_if_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     out += std::string("if(");
@@ -133,7 +172,7 @@ OpenSCADBuiltins::f_flow_let()
 }
 
 void
-OpenSCADBuiltins::f_flow_let_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_flow_let_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     // TODO: Call/evaluate sub-flow
     std::string out = std::string();
@@ -189,7 +228,7 @@ OpenSCADBuiltins::f_flow_group()
     return model;
 }
 void
-OpenSCADBuiltins::f_flow_group_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_flow_group_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     output.setValue("Geometry", std::string("group() {\n") +
         input.getValue("a", "{}") +
@@ -208,7 +247,7 @@ OpenSCADBuiltins::f_flow_output()
     return model;
 }
 void
-OpenSCADBuiltins::f_flow_output_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+OpenSCADBuiltins::f_flow_output_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string s = input.getValue("out", "//No Geometry Output\n");
     output.setValue("out", s);

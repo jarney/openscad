@@ -7,8 +7,7 @@
     not calculating them correctly, I think.
 
 * Control flow stuff:
-  * For loop node should set a variable name for the iterator variable.
-    * It should also create a variable node and an output node by default.
+  * For loop should create a variable node and an output node by default.
 
   * Each function, module, for loop, etc will be its own graph with an 'edit' button
     to allow you to go inside it.
@@ -16,13 +15,8 @@
   * Module and Function groups should have a text widget allowing the name to be specified.
     This is essentially a node that has no ports, but has a widget inside it.
     
-  * Module and function groups should not allow connections outside of them
-    and creating them should create a corresponding function or module node.
-
   * Module and function groups should have dedicated 'in' and 'out' nodes
     to manage what variables are currently in-scope for that module.
-
-  * Still need variable assignment nodes so we can have named variables.
 
 * Interoperability with wider OpenSCAD:
   * Process nodes into valid OpenSCAD code.
