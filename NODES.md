@@ -24,6 +24,7 @@
 * UI bugs/annoyances:
   * When the UI is first loaded, the size of the view is way zoomed out to the maximum
     and not centered on our scene.
+  * Saving nodes should also save the size if it's resizable.
 
 * Translations
   * Create/find translations for nodes and categories
