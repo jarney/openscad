@@ -12,7 +12,7 @@ using namespace JNodes::core;
 Builtins::RegistryItemPtr
 Builtins::f_3d_sphere()
 {
-    auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -37,7 +37,7 @@ Builtins::f_3d_sphere_process(const OpenSCADBuiltinModel & model, const PortFunc
 Builtins::RegistryItemPtr
 Builtins::f_3d_cube()
 {
-    auto model = std::make_unique<NodeModelType>("cube", "Cube", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("cube", "Cube", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "size"), "size");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -61,7 +61,7 @@ Builtins::f_3d_cube_process(const OpenSCADBuiltinModel & model, const PortFuncti
 Builtins::RegistryItemPtr
 Builtins::f_3d_cylinder()
 {
-    auto model = std::make_unique<NodeModelType>("cylinder", "Cylinder", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("cylinder", "Cylinder", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "h"), "h");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r1"), "r1");
@@ -96,7 +96,7 @@ Builtins::f_3d_cylinder_process(const OpenSCADBuiltinModel & model, const PortFu
 Builtins::RegistryItemPtr
 Builtins::f_3d_polyhedron()
 {
-    auto model = std::make_unique<NodeModelType>("polyhedron", "Polyhedron", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("polyhedron", "Polyhedron", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "points"), "points");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "faces"), "faces");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
@@ -121,7 +121,7 @@ Builtins::f_3d_polyhedron_process(const OpenSCADBuiltinModel & model, const Port
 Builtins::RegistryItemPtr
 Builtins::f_3d_import()
 {
-    auto model = std::make_unique<NodeModelType>("import", "Import", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("import", "Import", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
@@ -156,7 +156,7 @@ Builtins::f_3d_import_process(const OpenSCADBuiltinModel & model, const PortFunc
 Builtins::RegistryItemPtr
 Builtins::f_3d_linear_extrude()
 {
-    auto model = std::make_unique<NodeModelType>("linear_extrude", "Linear Extrude", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("linear_extrude", "Linear Extrude", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "height"), "height");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "v"), "v");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
@@ -194,7 +194,7 @@ Builtins::f_3d_linear_extrude_process(const OpenSCADBuiltinModel & model, const 
 Builtins::RegistryItemPtr
 Builtins::f_3d_rotate_extrude()
 {
-    auto model = std::make_unique<NodeModelType>("rotate_extrude", "Rotate Extrude", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("rotate_extrude", "Rotate Extrude", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "angle"), "angle");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "start"), "start");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
@@ -220,7 +220,7 @@ Builtins::f_3d_rotate_extrude_process(const OpenSCADBuiltinModel & model, const 
 Builtins::RegistryItemPtr
 Builtins::f_3d_surface()
 {
-    auto model = std::make_unique<NodeModelType>("surface", "Heightmap Surface", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("surface", "Heightmap Surface", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "invert"), "invert");
@@ -247,7 +247,7 @@ Builtins::f_3d_surface_process(const OpenSCADBuiltinModel & model, const PortFun
 Builtins::RegistryItemPtr
 Builtins::f_3d_dxf_dim()
 {
-    auto model = std::make_unique<NodeModelType>("dxf_dim", "Read DXF Dimension", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("dxf_dim", "Read DXF Dimension", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "name"), "name");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "layer"), "layer");
@@ -277,7 +277,7 @@ Builtins::f_3d_dxf_dim_process(const OpenSCADBuiltinModel & model, const PortFun
 Builtins::RegistryItemPtr
 Builtins::f_3d_dxf_cross()
 {
-    auto model = std::make_unique<NodeModelType>("dxf_cross", "Read DXF Origin", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("dxf_cross", "Read DXF Origin", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "layer"), "layer");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "origin"), "origin");

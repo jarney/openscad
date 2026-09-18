@@ -8,13 +8,13 @@ namespace JNodes {
 
 class OpenSCADBuiltinModel;
 
-class NodeModelType {
+class NodeType {
 public:
     typedef std::function<void(const OpenSCADBuiltinModel & model, const PortFunctionData &, PortFunctionData & )> NodeProcessor;
     typedef std::function<QWidget*(OpenSCADBuiltinModel &)> WidgetFactory;
     typedef std::function<void(OpenSCADBuiltinModel &)> Initializer;
     
-    NodeModelType(std::string name, std::string caption, std::string category);
+    NodeType(std::string name, std::string caption, std::string category);
     std::string getName() const;
     std::string getCaption() const;
     std::string getCategory() const;
@@ -56,9 +56,9 @@ private:
     std::vector<std::unique_ptr<NodePort>> _outputPorts;
     std::map<int, std::string> _inputPortNames;
     std::map<int, std::string> _outputPortNames;
-    NodeModelType::NodeProcessor _processor;
-    NodeModelType::Initializer _initializer;
-    NodeModelType::WidgetFactory _widgetFactory;
+    NodeType::NodeProcessor _processor;
+    NodeType::Initializer _initializer;
+    NodeType::WidgetFactory _widgetFactory;
 };
 
     }

@@ -29,7 +29,7 @@ NONARY_NODE(const, undef, _OPENSCAD_NODE_CATEGORY, "Undefined", "value", DATA_VA
 Builtins::RegistryItemPtr
 Builtins::f_const_int()
 {
-    auto model = std::make_unique<NodeModelType>("const_int", "Integer", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("const_int", "Integer", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_int_process);
     model->setInitializer(f_const_int_initializer);
@@ -69,7 +69,7 @@ Builtins::f_const_int_widget(OpenSCADBuiltinModel & node)
 Builtins::RegistryItemPtr
 Builtins::f_const_float()
 {
-    auto model = std::make_unique<NodeModelType>("const_float", "Float", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("const_float", "Float", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_float_process);
     model->setInitializer(f_const_float_initializer);
@@ -111,7 +111,7 @@ Builtins::f_const_float_widget(OpenSCADBuiltinModel & node)
 Builtins::RegistryItemPtr
 Builtins::f_const_string()
 {
-    auto model = std::make_unique<NodeModelType>("const_string", "String", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("const_string", "String", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_string_process);
     model->setInitializer(f_const_string_initializer);

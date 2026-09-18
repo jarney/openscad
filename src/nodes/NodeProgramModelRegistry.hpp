@@ -15,13 +15,13 @@
 #include <utility>
 #include <vector>
 
-#include "nodes/NodeModelCategory.hpp"
+#include "nodes/NodeCategory.hpp"
 #include "nodes/NodeFactory.hpp"
 
 namespace JNodes {
     namespace core {
 
-class NodeProgramGraphModel;
+class NodeGraph;
 
 /// Class uses map for storing models (name, model)
 class NodeProgramModelRegistry {
@@ -44,17 +44,17 @@ public:
     NodeProgramModelRegistry &operator=(NodeProgramModelRegistry &&) = default;
 
 public:
-    void registerCategory(const NodeModelCategory & category);
+    void registerCategory(const NodeCategory & category);
 
-    const std::map<std::string, const NodeModelCategory *> & getCategories() const;
+    const std::map<std::string, const NodeCategory *> & getCategories() const;
 
-    const NodeModelCategory * getCategory(std::string category_name) const;
+    const NodeCategory * getCategory(std::string category_name) const;
     
     const std::vector<const JNodes::core::NodeFactory *> & getModelsByCategory(std::string category) const;
 
     void registerModel(std::unique_ptr<JNodes::core::NodeFactory> factory);
     
-    std::unique_ptr<QtNodes::NodeDelegateModel> create(QString const &modelName, NodeProgramGraphModel & graph);
+    std::unique_ptr<QtNodes::NodeDelegateModel> create(QString const &modelName, NodeGraph & graph);
 
     const RegisteredModelCreatorsMap & getModels() const;
     
@@ -63,7 +63,7 @@ public:
 private:
 
     // Map of category name to  category.
-    std::map<std::string, const NodeModelCategory *> _categoryMap;
+    std::map<std::string, const NodeCategory *> _categoryMap;
     std::map<std::string, std::vector<const JNodes::core::NodeFactory *>> _nodesByCategory;
     
     CategoriesSet _categories;

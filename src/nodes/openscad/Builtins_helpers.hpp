@@ -1,7 +1,7 @@
 #define NONARY_NODE(prefix, name, category, description, outname, outtype) \
 Builtins::RegistryItemPtr                                                     \
 Builtins::f_##prefix##_##name() {                                             \
-    auto model = std::make_unique<NodeModelType>(#name, description, category);   \
+    auto model = std::make_unique<NodeType>(#name, description, category);   \
     model->addOutputPort(std::make_unique<NodePort>(outtype), outname);     \
     model->setProcessor(f_##prefix##_##name##_process);                         \
     return model;                                                               \
@@ -16,7 +16,7 @@ Builtins::f_##prefix##_##name##_process(                                      \
 #define UNARY_NODE(prefix, name, category, description, inname, atype, outname, outtype) \
 Builtins::RegistryItemPtr                                                     \
 Builtins::f_##prefix##_##name() {                                             \
-    auto model = std::make_unique<NodeModelType>(#name, description, category);   \
+    auto model = std::make_unique<NodeType>(#name, description, category);   \
     model->addInputPort(std::make_unique<NodePort>(atype), inname);         \
     model->addOutputPort(std::make_unique<NodePort>(outtype), outname);     \
     model->setProcessor(f_##prefix##_##name##_process);                         \
@@ -32,7 +32,7 @@ Builtins::f_##prefix##_##name##_process(                                      \
 #define BINARY_NODE(prefix, name, category, description, a, atype, b, btype, outname, outtype) \
 Builtins::RegistryItemPtr                                                     \
 Builtins::f_##prefix##_##name() {                                             \
-    auto model = std::make_unique<NodeModelType>(#name, description, category);   \
+    auto model = std::make_unique<NodeType>(#name, description, category);   \
     model->addInputPort(std::make_unique<NodePort>(atype), a);             \
     model->addInputPort(std::make_unique<NodePort>(btype), b);             \
     model->addOutputPort(std::make_unique<NodePort>(outtype), outname);     \

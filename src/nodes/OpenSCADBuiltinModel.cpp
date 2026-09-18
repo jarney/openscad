@@ -4,7 +4,7 @@
 
 using namespace JNodes::core;
 
-OpenSCADBuiltinModel::OpenSCADBuiltinModel(const NodeModelType & modelType, NodeProgramGraphModel & graph)
+OpenSCADBuiltinModel::OpenSCADBuiltinModel(const NodeType & modelType, NodeGraph & graph)
     : _modelType(modelType)
     , _graph(graph)
     , _widget(nullptr)
@@ -202,7 +202,7 @@ void OpenSCADBuiltinModel::load(QJsonObject const & obj)
     _modelType.getInitializer()(*this);
 }
 
-NodeProgramGraphModel &
+NodeGraph &
 OpenSCADBuiltinModel::getGraph() const
 {
     return _graph;

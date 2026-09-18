@@ -16,7 +16,7 @@ UNARY_NODE(other, echo, _OPENSCAD_NODE_CATEGORY, "Echo", "value", DATA_VARIABLE,
 Builtins::RegistryItemPtr
 Builtins::f_other_render()
 {
-    auto model = std::make_unique<NodeModelType>("render", "Render", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("render", "Render", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
     model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -42,7 +42,7 @@ Builtins::f_other_render_process(const OpenSCADBuiltinModel & model, const PortF
 Builtins::RegistryItemPtr
 Builtins::f_other_children()
 {
-    auto model = std::make_unique<NodeModelType>("children", "Children", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("children", "Children", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "index"), "index");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_other_children_process);
@@ -67,7 +67,7 @@ Builtins::f_other_children_process(const OpenSCADBuiltinModel & model, const Por
 Builtins::RegistryItemPtr
 Builtins::f_other_assert()
 {
-    auto model = std::make_unique<NodeModelType>("assert", "Assert", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("assert", "Assert", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "condition"), "condition");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "message"), "message");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");

@@ -20,7 +20,7 @@ namespace JNodes {
 
 class NodeProgram;
 
-class NODE_EDITOR_PUBLIC NodeProgramGraphModel
+class NODE_EDITOR_PUBLIC NodeGraph
     : public QtNodes::AbstractGraphModel
     , public QtNodes::Serializable
 {
@@ -34,7 +34,7 @@ public:
     };
 
 public:
-    NodeProgramGraphModel(std::shared_ptr<NodeProgramModelRegistry> registry, NodeProgram & parent);
+    NodeGraph(std::shared_ptr<NodeProgramModelRegistry> registry, NodeProgram & parent);
 
     std::shared_ptr<NodeProgramModelRegistry> dataModelRegistry() { return _registry; }
 
@@ -154,11 +154,11 @@ private Q_SLOTS:
      * Fuction is called in three cases:
      *
      * - By underlying NodeDelegateModel when a node has new data to propagate.
-     *   @see NodeProgramGraphModel::addNode
+     *   @see NodeGraph::addNode
      * - When a new connection is created.
-     *   @see NodeProgramGraphModel::addConnection
+     *   @see NodeGraph::addConnection
      * - When a node restored from JSON an needs to send data downstream.
-     *   @see NodeProgramGraphModel::loadNode
+     *   @see NodeGraph::loadNode
      */
     void onOutPortDataUpdated(QtNodes::NodeId const nodeId, QtNodes::PortIndex const portIndex);
 

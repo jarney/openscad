@@ -20,7 +20,7 @@ using namespace JNodes::core;
 Builtins::RegistryItemPtr
 Builtins::f_flow_for()
 {
-    auto model = std::make_unique<NodeModelType>("for", "For Loop", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("for", "For Loop", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "range"), "range");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "start"), "start");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "end"), "end");
@@ -56,7 +56,7 @@ Builtins::f_flow_for_process(const OpenSCADBuiltinModel & node, const PortFuncti
     out += std::string(") {");
 
     std::string bodyGraphId = node.getValue("graph");
-    const NodeProgramGraphModel *subgraph =
+    const NodeGraph *subgraph =
 	node.getGraph().getParent().getGraph(bodyGraphId);
     out += evaluateToSCAD(*subgraph);
     
@@ -111,7 +111,7 @@ Builtins::f_flow_for_widget(OpenSCADBuiltinModel & node)
 Builtins::RegistryItemPtr
 Builtins::f_flow_intersection_for()
 {
-    auto model = std::make_unique<NodeModelType>("intersection_for", "Intersection For", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("intersection_for", "Intersection For", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "var"), "var");
     model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -136,7 +136,7 @@ Builtins::f_flow_intersection_for_process(const OpenSCADBuiltinModel & node, con
 Builtins::RegistryItemPtr
 Builtins::f_flow_if()
 {
-    auto model = std::make_unique<NodeModelType>("if", "If", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("if", "If", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "condition"), "condition");
     model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
     model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "b"), "b", QtNodes::ConnectionPolicy::Many);
@@ -165,7 +165,7 @@ Builtins::f_flow_if_process(const OpenSCADBuiltinModel & node, const PortFunctio
 Builtins::RegistryItemPtr
 Builtins::f_flow_let()
 {
-    auto model = std::make_unique<NodeModelType>("let", "Let", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("let", "Let", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "var"), "var");
     model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -190,7 +190,7 @@ Builtins::f_flow_let_process(const OpenSCADBuiltinModel & node, const PortFuncti
 Builtins::RegistryItemPtr
 Builtins::f_flow_comment()
 {
-    auto model = std::make_unique<NodeModelType>("comment", "Comment", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("comment", "Comment", _OPENSCAD_NODE_CATEGORY);
     model->setResizable(true);
     model->setWidgetFactory(Builtins::f_flow_comment_widget);
     return model;
@@ -223,7 +223,7 @@ Builtins::f_flow_comment_widget(OpenSCADBuiltinModel & node)
 Builtins::RegistryItemPtr
 Builtins::f_flow_group()
 {
-    auto model = std::make_unique<NodeModelType>("group", "Group", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("group", "Group", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_flow_group_process);
@@ -243,7 +243,7 @@ Builtins::f_flow_group_process(const OpenSCADBuiltinModel & node, const PortFunc
 Builtins::RegistryItemPtr
 Builtins::f_flow_output()
 {
-    auto model = std::make_unique<NodeModelType>("output", "Output", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("output", "Output", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY), "out", QtNodes::ConnectionPolicy::Many);
     model->setProcessor(f_flow_output_process);
     return model;

@@ -6,19 +6,19 @@
 using namespace JNodes::openscad;
 using namespace JNodes::core;
 
-const NodeModelCategory Builtins::CATEGORY_SYNTAX("syntax", "Syntax", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_CONST("const", "Constants", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_OPERATOR("operator", "Operators", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_2D("2d", "2D Primitives", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_3D("3d", "3d Primitives", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_BOOLEAN_OPS("op", "Boolean Operations", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_XFORM("xform", "Transformations", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_LIST("list", "List", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_FUNCTION("function", "Functions", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_FLOW("flow", "Flow Control", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_MATH("math", "Mathematical", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_TYPETEST("typetest", "Type Test", "../resources/icons/stopbutton.png");
-const NodeModelCategory Builtins::CATEGORY_OTHER("other", "Other", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_SYNTAX("syntax", "Syntax", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_CONST("const", "Constants", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_OPERATOR("operator", "Operators", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_2D("2d", "2D Primitives", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_3D("3d", "3d Primitives", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_BOOLEAN_OPS("op", "Boolean Operations", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_XFORM("xform", "Transformations", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_LIST("list", "List", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_FUNCTION("function", "Functions", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_FLOW("flow", "Flow Control", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_MATH("math", "Mathematical", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_TYPETEST("typetest", "Type Test", "../resources/icons/stopbutton.png");
+const NodeCategory Builtins::CATEGORY_OTHER("other", "Other", "../resources/icons/stopbutton.png");
 
 #define _OPENSCAD_NODE_REGISTER(name) ret->registerModel(std::make_unique<NodeFactoryTyped>(f_##name()))
 

@@ -64,7 +64,7 @@ static QtNodes::GroupId jsonValueToGroupId(QJsonValue const &value)
     return QtNodes::InvalidGroupId;
 }
 
-GraphicsScene::GraphicsScene(NodeProgramGraphModel &graphModel, QObject *parent)
+GraphicsScene::GraphicsScene(NodeGraph &graphModel, QObject *parent)
     : BasicGraphicsScene(graphModel, parent)
     , _graphModel(graphModel)
 {
@@ -78,7 +78,7 @@ GraphicsScene::GraphicsScene(NodeProgramGraphModel &graphModel, QObject *parent)
     }
     
     connect(&_graphModel,
-            &NodeProgramGraphModel::inPortDataWasSet,
+            &NodeGraph::inPortDataWasSet,
             [this](QtNodes::NodeId const nodeId, QtNodes::PortType const, QtNodes::PortIndex const) { onNodeUpdated(nodeId); });
 }
 

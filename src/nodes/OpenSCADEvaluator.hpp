@@ -1,5 +1,5 @@
 #pragma once
 
-#include "nodes/NodeProgramGraphModel.hpp"
+#include "nodes/NodeGraph.hpp"
 
-std::string evaluateToSCAD(const JNodes::core::NodeProgramGraphModel & model);
+std::string evaluateToSCAD(const JNodes::core::NodeGraph & model);

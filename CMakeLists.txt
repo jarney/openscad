@@ -1315,16 +1315,16 @@ set(GUI_SOURCES
   ${GUI_SOURCES}
 
   src/nodes/OpenSCADEvaluator.cpp
-  src/nodes/OpenSCADBuiltinModel.cpp
-  src/nodes/NodeFactory.cpp
   
   src/nodes/PortFunctionData.cpp
+  src/nodes/OpenSCADBuiltinModel.cpp
+  src/nodes/NodeFactory.cpp
   src/nodes/NodeProgram.cpp
   src/nodes/NodeProgramSerializer.cpp
+  src/nodes/NodeGraph.cpp
   src/nodes/NodePort.cpp
-  src/nodes/NodeModelCategory.cpp
-  src/nodes/NodeModelType.cpp
-  src/nodes/NodeProgramGraphModel.cpp
+  src/nodes/NodeCategory.cpp
+  src/nodes/NodeType.cpp
   src/nodes/NodeProgramModelRegistry.cpp
 
   src/nodes/openscad/Builtins.cpp

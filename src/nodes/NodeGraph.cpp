@@ -1,4 +1,4 @@
-#include "NodeProgramGraphModel.hpp"
+#include "NodeGraph.hpp"
 
 #include <QtNodes/internal/ConnectionIdHash.hpp>
 #include <QtNodes/Definitions>
@@ -10,13 +10,13 @@
 
 using namespace JNodes::core;
 
-NodeProgramGraphModel::NodeProgramGraphModel(std::shared_ptr<NodeProgramModelRegistry> registry, NodeProgram & parent)
+NodeGraph::NodeGraph(std::shared_ptr<NodeProgramModelRegistry> registry, NodeProgram & parent)
     : _registry(std::move(registry))
     , _nextNodeId{0}
     , _parent(parent)
 {}
 
-std::unordered_set<QtNodes::NodeId> NodeProgramGraphModel::allNodeIds() const
+std::unordered_set<QtNodes::NodeId> NodeGraph::allNodeIds() const
 {
     std::unordered_set<QtNodes::NodeId> nodeIds;
     for_each(_models.begin(), _models.end(), [&nodeIds](const auto &p) { nodeIds.insert(p.first); });
@@ -24,7 +24,7 @@ std::unordered_set<QtNodes::NodeId> NodeProgramGraphModel::allNodeIds() const
     return nodeIds;
 }
 
-std::unordered_set<QtNodes::ConnectionId> NodeProgramGraphModel::allConnectionIds(QtNodes::NodeId const nodeId) const
+std::unordered_set<QtNodes::ConnectionId> NodeGraph::allConnectionIds(QtNodes::NodeId const nodeId) const
 {
     std::unordered_set<QtNodes::ConnectionId> result;
 
@@ -38,7 +38,7 @@ std::unordered_set<QtNodes::ConnectionId> NodeProgramGraphModel::allConnectionId
     return result;
 }
 
-std::unordered_set<QtNodes::ConnectionId> NodeProgramGraphModel::connections(QtNodes::NodeId nodeId,
+std::unordered_set<QtNodes::ConnectionId> NodeGraph::connections(QtNodes::NodeId nodeId,
                                                                  QtNodes::PortType portType,
                                                                  QtNodes::PortIndex portIndex) const
 {
@@ -55,12 +55,12 @@ std::unordered_set<QtNodes::ConnectionId> NodeProgramGraphModel::connections(QtN
     return result;
 }
 
-bool NodeProgramGraphModel::connectionExists(QtNodes::ConnectionId const connectionId) const
+bool NodeGraph::connectionExists(QtNodes::ConnectionId const connectionId) const
 {
     return (_connectivity.find(connectionId) != _connectivity.end());
 }
 
-QtNodes::NodeId NodeProgramGraphModel::addNode(QString const nodeType)
+QtNodes::NodeId NodeGraph::addNode(QString const nodeType)
 {
     std::unique_ptr<QtNodes::NodeDelegateModel> model = _registry->create(nodeType, *this);
 
@@ -71,7 +71,7 @@ QtNodes::NodeId NodeProgramGraphModel::addNode(QString const nodeType)
     return QtNodes::InvalidNodeId;
 }
 
-QtNodes::NodeId NodeProgramGraphModel::addNode(std::unique_ptr<QtNodes::NodeDelegateModel> model)
+QtNodes::NodeId NodeGraph::addNode(std::unique_ptr<QtNodes::NodeDelegateModel> model)
 {
     QtNodes::NodeId newId = newNodeId();
 
@@ -91,7 +91,7 @@ QtNodes::NodeId NodeProgramGraphModel::addNode(std::unique_ptr<QtNodes::NodeDele
     connect(model.get(),
             &QtNodes::NodeDelegateModel::portsDeleted,
             this,
-            &NodeProgramGraphModel::portsDeleted);
+            &NodeGraph::portsDeleted);
 
     connect(model.get(),
             &QtNodes::NodeDelegateModel::portsAboutToBeInserted,
@@ -103,7 +103,7 @@ QtNodes::NodeId NodeProgramGraphModel::addNode(std::unique_ptr<QtNodes::NodeDele
     connect(model.get(),
             &QtNodes::NodeDelegateModel::portsInserted,
             this,
-            &NodeProgramGraphModel::portsInserted);
+            &NodeGraph::portsInserted);
 
     connect(model.get(), &QtNodes::NodeDelegateModel::requestNodeUpdate, this, [newId, this]() {
         Q_EMIT nodeUpdated(newId);
@@ -126,12 +126,12 @@ QtNodes::NodeId NodeProgramGraphModel::addNode(std::unique_ptr<QtNodes::NodeDele
     return newId;
 }
 
-bool NodeProgramGraphModel::dataTypeConnectionAllowed(const QtNodes::NodeDataType & outType, const QtNodes::NodeDataType & inType) const
+bool NodeGraph::dataTypeConnectionAllowed(const QtNodes::NodeDataType & outType, const QtNodes::NodeDataType & inType) const
 {
     return outType.id == inType.id;
 }
 
-bool NodeProgramGraphModel::connectionPossible(QtNodes::ConnectionId const connectionId) const
+bool NodeGraph::connectionPossible(QtNodes::ConnectionId const connectionId) const
 {
     // Check if nodes exist
     if (!nodeExists(connectionId.outNodeId) || !nodeExists(connectionId.inNodeId)) {
@@ -210,11 +210,11 @@ bool NodeProgramGraphModel::connectionPossible(QtNodes::ConnectionId const conne
 
 
 NodeProgram &
-NodeProgramGraphModel::getParent(void) const
+NodeGraph::getParent(void) const
 {
     return _parent;
 }
-void NodeProgramGraphModel::addConnection(QtNodes::ConnectionId const connectionId)
+void NodeGraph::addConnection(QtNodes::ConnectionId const connectionId)
 {
     _connectivity.insert(connectionId);
 
@@ -232,7 +232,7 @@ void NodeProgramGraphModel::addConnection(QtNodes::ConnectionId const connection
                 QtNodes::PortRole::Data);
 }
 
-void NodeProgramGraphModel::sendConnectionCreation(QtNodes::ConnectionId const connectionId)
+void NodeGraph::sendConnectionCreation(QtNodes::ConnectionId const connectionId)
 {
     Q_EMIT connectionCreated(connectionId);
 
@@ -246,7 +246,7 @@ void NodeProgramGraphModel::sendConnectionCreation(QtNodes::ConnectionId const c
     }
 }
 
-void NodeProgramGraphModel::sendConnectionDeletion(QtNodes::ConnectionId const connectionId)
+void NodeGraph::sendConnectionDeletion(QtNodes::ConnectionId const connectionId)
 {
     Q_EMIT connectionDeleted(connectionId);
 
@@ -260,12 +260,12 @@ void NodeProgramGraphModel::sendConnectionDeletion(QtNodes::ConnectionId const c
     }
 }
 
-bool NodeProgramGraphModel::nodeExists(QtNodes::NodeId const nodeId) const
+bool NodeGraph::nodeExists(QtNodes::NodeId const nodeId) const
 {
     return (_models.find(nodeId) != _models.end());
 }
 
-QVariant NodeProgramGraphModel::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole role) const
+QVariant NodeGraph::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole role) const
 {
     QVariant result;
 
@@ -356,7 +356,7 @@ QVariant NodeProgramGraphModel::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRo
     return result;
 }
 
-QtNodes::NodeFlags NodeProgramGraphModel::nodeFlags(QtNodes::NodeId nodeId) const
+QtNodes::NodeFlags NodeGraph::nodeFlags(QtNodes::NodeId nodeId) const
 {
     auto it = _models.find(nodeId);
 
@@ -366,7 +366,7 @@ QtNodes::NodeFlags NodeProgramGraphModel::nodeFlags(QtNodes::NodeId nodeId) cons
     return QtNodes::NodeFlag::NoFlags;
 }
 
-bool NodeProgramGraphModel::setNodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole role, QVariant value)
+bool NodeGraph::setNodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole role, QVariant value)
 {
     Q_UNUSED(nodeId);
     Q_UNUSED(role);
@@ -453,7 +453,7 @@ bool NodeProgramGraphModel::setNodeData(QtNodes::NodeId nodeId, QtNodes::NodeRol
     return result;
 }
 
-QVariant NodeProgramGraphModel::portData(QtNodes::NodeId nodeId,
+QVariant NodeGraph::portData(QtNodes::NodeId nodeId,
                                       QtNodes::PortType portType,
                                       QtNodes::PortIndex portIndex,
                                       QtNodes::PortRole role) const
@@ -494,7 +494,7 @@ QVariant NodeProgramGraphModel::portData(QtNodes::NodeId nodeId,
     return result;
 }
 
-bool NodeProgramGraphModel::setPortData(
+bool NodeGraph::setPortData(
     QtNodes::NodeId nodeId, QtNodes::PortType portType, QtNodes::PortIndex portIndex, QVariant const &value, QtNodes::PortRole role)
 {
     Q_UNUSED(nodeId);
@@ -527,7 +527,7 @@ bool NodeProgramGraphModel::setPortData(
     return false;
 }
 
-bool NodeProgramGraphModel::deleteConnection(QtNodes::ConnectionId const connectionId)
+bool NodeGraph::deleteConnection(QtNodes::ConnectionId const connectionId)
 {
     bool disconnected = false;
 
@@ -549,7 +549,7 @@ bool NodeProgramGraphModel::deleteConnection(QtNodes::ConnectionId const connect
     return disconnected;
 }
 
-bool NodeProgramGraphModel::deleteNode(QtNodes::NodeId const nodeId)
+bool NodeGraph::deleteNode(QtNodes::NodeId const nodeId)
 {
     // Delete connections to this node first.
     auto connectionIds = allConnectionIds(nodeId);
@@ -593,7 +593,7 @@ static QSize loadSize(QJsonValue loaded)
     return size;
 }
 
-QJsonObject NodeProgramGraphModel::saveNode(QtNodes::NodeId const nodeId) const
+QJsonObject NodeGraph::saveNode(QtNodes::NodeId const nodeId) const
 {
     QJsonObject nodeJson;
 
@@ -623,7 +623,7 @@ QJsonObject NodeProgramGraphModel::saveNode(QtNodes::NodeId const nodeId) const
 }
 
 QJsonObject
-NodeProgramGraphModel::saveGroup(
+NodeGraph::saveGroup(
     const std::pair<QtNodes::GroupId, std::vector<QtNodes::NodeId>> group
     ) const
 {
@@ -641,7 +641,7 @@ NodeProgramGraphModel::saveGroup(
     return groupObj;
 }
     
-QJsonObject NodeProgramGraphModel::save() const
+QJsonObject NodeGraph::save() const
 {
     QJsonObject sceneJson;
 
@@ -668,7 +668,7 @@ QJsonObject NodeProgramGraphModel::save() const
     return sceneJson;
 }
 
-void NodeProgramGraphModel::loadNode(QJsonObject const &nodeJson)
+void NodeGraph::loadNode(QJsonObject const &nodeJson)
 {
     // Possibility of the id clash when reading it from json and not generating a
     // new value.
@@ -705,7 +705,7 @@ void NodeProgramGraphModel::loadNode(QJsonObject const &nodeJson)
         connect(model.get(),
                 &QtNodes::NodeDelegateModel::portsDeleted,
                 this,
-                &NodeProgramGraphModel::portsDeleted);
+                &NodeGraph::portsDeleted);
 
         connect(model.get(),
                 &QtNodes::NodeDelegateModel::portsAboutToBeInserted,
@@ -718,7 +718,7 @@ void NodeProgramGraphModel::loadNode(QJsonObject const &nodeJson)
         connect(model.get(),
                 &QtNodes::NodeDelegateModel::portsInserted,
                 this,
-                &NodeProgramGraphModel::portsInserted);
+                &NodeGraph::portsInserted);
 
         connect(model.get(), &QtNodes::NodeDelegateModel::requestNodeUpdate, this, [restoredNodeId, this]() {
             Q_EMIT nodeUpdated(restoredNodeId);
@@ -744,7 +744,7 @@ void NodeProgramGraphModel::loadNode(QJsonObject const &nodeJson)
     }
 }
 
-void NodeProgramGraphModel::load(QJsonObject const &jsonDocument)
+void NodeGraph::load(QJsonObject const &jsonDocument)
 {
     QJsonArray nodesJsonArray = jsonDocument["nodes"].toArray();
 
@@ -776,7 +776,7 @@ void NodeProgramGraphModel::load(QJsonObject const &jsonDocument)
     
 }
 
-void NodeProgramGraphModel::onOutPortDataUpdated(QtNodes::NodeId const nodeId, QtNodes::PortIndex const portIndex)
+void NodeGraph::onOutPortDataUpdated(QtNodes::NodeId const nodeId, QtNodes::PortIndex const portIndex)
 {
     std::unordered_set<QtNodes::ConnectionId> const &connected = connections(nodeId,
                                                                     QtNodes::PortType::Out,
@@ -789,26 +789,26 @@ void NodeProgramGraphModel::onOutPortDataUpdated(QtNodes::NodeId const nodeId, Q
     }
 }
 
-void NodeProgramGraphModel::propagateEmptyDataTo(QtNodes::NodeId const nodeId, QtNodes::PortIndex const portIndex)
+void NodeGraph::propagateEmptyDataTo(QtNodes::NodeId const nodeId, QtNodes::PortIndex const portIndex)
 {
     QVariant emptyData{};
 
     setPortData(nodeId, QtNodes::PortType::In, portIndex, emptyData, QtNodes::PortRole::Data);
 }
 
-void NodeProgramGraphModel::setNodeGroup(QtNodes::NodeId const nodeId, QtNodes::GroupId const groupId)
+void NodeGraph::setNodeGroup(QtNodes::NodeId const nodeId, QtNodes::GroupId const groupId)
 {
     _groups[nodeId] = groupId;
 }
 
 void
-NodeProgramGraphModel::unsetNodeGroup(QtNodes::NodeId const nodeId)
+NodeGraph::unsetNodeGroup(QtNodes::NodeId const nodeId)
 {
     _groups.erase(nodeId);
 }
 
 std::map<QtNodes::GroupId, std::vector<QtNodes::NodeId>>
-NodeProgramGraphModel::getGroups() const
+NodeGraph::getGroups() const
 {
     std::map<QtNodes::GroupId, std::vector<QtNodes::NodeId>> groupMap;
     for (const auto & gid : _groups) {

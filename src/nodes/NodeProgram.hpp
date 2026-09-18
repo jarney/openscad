@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NodeProgramGraphModel.hpp"
+#include "NodeGraph.hpp"
 #include "NodeProgramModelRegistry.hpp"
 #include <optional>
 
@@ -28,9 +28,9 @@ public:
     NodeProgram(std::shared_ptr<NodeProgramModelRegistry> _registry);
     ~NodeProgram();
     
-    NodeProgramGraphModel *getGraph(GraphId aId);
+    NodeGraph *getGraph(GraphId aId);
 
-    const NodeProgramGraphModel *getGraph(GraphId aId) const;
+    const NodeGraph *getGraph(GraphId aId) const;
     /**
      * This method returns a vector of node IDs
      * for each of the graphs in this program.
@@ -49,7 +49,7 @@ public:
      * given ID.  If this returns null
      * then the given ID already existed.
      */
-    NodeProgramGraphModel *newGraph(GraphId id);
+    NodeGraph *newGraph(GraphId id);
     
     /**
      * This deletes the graph with the given id.
@@ -64,7 +64,7 @@ public:
 private:
     std::shared_ptr<NodeProgramModelRegistry> _registry;
     int _maxGraphId;
-    std::map<GraphId, NodeProgramGraphModel*> graphs;
+    std::map<GraphId, NodeGraph*> graphs;
 };
     } // End core
 } // End JNodes

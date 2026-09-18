@@ -2,7 +2,7 @@
 #include <QtNodes/ConnectionStyle>
 
 #include "nodes/OpenSCADBuiltinModel.hpp"
-#include "nodes/NodeProgramGraphModel.hpp"
+#include "nodes/NodeGraph.hpp"
 
 #include "nodes/gui/NodeEditorWidget.hpp"
 #include "nodes/gui/GraphicsScene.hpp"
@@ -41,7 +41,7 @@ void
 NodeEditorWidget::prepareProgram()
 {
     for (const auto & graphId : _program.getGraphs()) {
-	const NodeProgramGraphModel *graph = _program.getGraph(graphId);
+	const NodeGraph *graph = _program.getGraph(graphId);
 	for (const auto & nodeId : graph->allNodeIds()) {
 	    OpenSCADBuiltinModel *node = graph->delegateModel<OpenSCADBuiltinModel>(nodeId);
 	    node->setEditor(this);
@@ -49,9 +49,9 @@ NodeEditorWidget::prepareProgram()
 
 	QObject::connect(
 	    graph,
-	    &NodeProgramGraphModel::nodeCreated,
+	    &NodeGraph::nodeCreated,
 	    [graphId, this](QtNodes::NodeId const nodeId) {
-		const NodeProgramGraphModel *graph = this->_program.getGraph(graphId);
+		const NodeGraph *graph = this->_program.getGraph(graphId);
 		OpenSCADBuiltinModel *node = graph->delegateModel<OpenSCADBuiltinModel>(nodeId);
 		node->setEditor(this);
 	    }
@@ -67,7 +67,7 @@ NodeEditorWidget::~NodeEditorWidget()
 void
 NodeEditorWidget::editGraph(std::string editGraph)
 {
-    NodeProgramGraphModel *graph = _program.getGraph(editGraph);
+    NodeGraph *graph = _program.getGraph(editGraph);
     if (graph == nullptr) {
 	return;
     }

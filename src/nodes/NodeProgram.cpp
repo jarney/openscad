@@ -13,7 +13,7 @@ NodeProgram::~NodeProgram()
     }
 }
 
-NodeProgramGraphModel *
+NodeGraph *
 NodeProgram::getGraph(GraphId aId)
 {
     auto it = graphs.find(aId);
@@ -23,7 +23,7 @@ NodeProgram::getGraph(GraphId aId)
     return it->second;
 }
 
-const NodeProgramGraphModel *
+const NodeGraph *
 NodeProgram::getGraph(GraphId aId) const
 {
     auto it = graphs.find(aId);
@@ -47,7 +47,7 @@ NodeProgram::getGraphs() const
 NodeProgram::GraphId
 NodeProgram::newGraphWithPrefix(std::string prefix)
 {
-    NodeProgramGraphModel *newGraphObj = new NodeProgramGraphModel(_registry, *this);
+    NodeGraph *newGraphObj = new NodeGraph(_registry, *this);
     // Need a much better way of doing this.
     while (true) {
 	GraphId newId = prefix + std::string("_") + std::to_string(_maxGraphId++);
@@ -58,13 +58,13 @@ NodeProgram::newGraphWithPrefix(std::string prefix)
     }
 }
 
-NodeProgramGraphModel *
+NodeGraph *
 NodeProgram::newGraph(NodeProgram::GraphId aId)
 {
     if (graphs.find(aId) != graphs.end()) {
 	return nullptr;
     }
-    NodeProgramGraphModel *newGraphObj = new NodeProgramGraphModel(_registry, *this);
+    NodeGraph *newGraphObj = new NodeGraph(_registry, *this);
     graphs[aId] = newGraphObj;
     return newGraphObj;
 }

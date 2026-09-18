@@ -5,8 +5,8 @@
 
 #include <QtCore/QFileInfo>
 #include "nodes/NodeProgramModelRegistry.hpp"
-#include "nodes/NodeProgramGraphModel.hpp"
-#include "nodes/NodeModelType.hpp"
+#include "nodes/NodeGraph.hpp"
+#include "nodes/NodeType.hpp"
 
 #include "nodes/openscad/Builtins.hpp"
 #include "OpenSCADEvaluator.hpp"
@@ -42,7 +42,7 @@ int main_audit_namespace(int argc, char *argv[])
 
     return 0;
 #if 0
-    NodeProgramGraphModel dataFlowGraphModel(registry);
+    NodeGraph dataFlowGraphModel(registry);
 
     QJsonObject object = oscd_loadJson(argv[1]);
     dataFlowGraphModel.load(object);

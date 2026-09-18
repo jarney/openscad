@@ -9,7 +9,7 @@ using namespace JNodes::core;
 
 static void
 findOutputNodes(
-    const NodeProgramGraphModel & model,
+    const NodeGraph & model,
     std::vector<QtNodes::NodeId> & outputNodes
     )
 {
@@ -23,7 +23,7 @@ findOutputNodes(
     }
 }
 
-static std::vector<QtNodes::ConnectionId> inputConnections(const NodeProgramGraphModel & model, QtNodes::NodeId nodeId)
+static std::vector<QtNodes::ConnectionId> inputConnections(const NodeGraph & model, QtNodes::NodeId nodeId)
 {
     auto connections = model.allConnectionIds(nodeId);
     std::vector<QtNodes::ConnectionId> input_connections;
@@ -48,7 +48,7 @@ static std::vector<QtNodes::NodeId> connectedNodes(const std::vector<QtNodes::Co
 // We make the assumption here that the graph is cycle-free.
 // If there are cycles, this will blow up.
 static void processNode(
-    const NodeProgramGraphModel & model,
+    const NodeGraph & model,
     std::set<QtNodes::NodeId> & processed_nodes,    // Set of nodes that has already been processed.
     std::map<QtNodes::NodeId, PortFunctionData> & all_node_data,
     QtNodes::NodeId nodeId,                       // Node to process.
@@ -92,7 +92,7 @@ static void processNode(
 }
 
 
-std::string evaluateToSCAD(const NodeProgramGraphModel & model)
+std::string evaluateToSCAD(const NodeGraph & model)
 {
 //    virtual std::unordered_set<NodeId> allNodeIds() const = 0;
     std::vector<QtNodes::NodeId> outputNodes;

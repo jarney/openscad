@@ -12,7 +12,7 @@ using namespace JNodes::core;
 Builtins::RegistryItemPtr
 Builtins::f_2d_circle()
 {
-    auto model = std::make_unique<NodeModelType>("circle", "Circle", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("circle", "Circle", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -36,7 +36,7 @@ Builtins::f_2d_circle_process(const OpenSCADBuiltinModel & model, const PortFunc
 Builtins::RegistryItemPtr
 Builtins::f_2d_square()
 {
-    auto model = std::make_unique<NodeModelType>("square", "Square", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("square", "Square", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "size"), "size");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -61,7 +61,7 @@ Builtins::f_2d_square_process(const OpenSCADBuiltinModel & model, const PortFunc
 Builtins::RegistryItemPtr
 Builtins::f_2d_polygon()
 {
-    auto model = std::make_unique<NodeModelType>("polygon", "Polygon", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("polygon", "Polygon", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "points"), "points");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "paths"), "paths");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
@@ -88,7 +88,7 @@ Builtins::f_2d_polygon_process(const OpenSCADBuiltinModel & model, const PortFun
 Builtins::RegistryItemPtr
 Builtins::f_2d_text()
 {
-    auto model = std::make_unique<NodeModelType>("text", "Projection", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("text", "Projection", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "text"), "text");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "size"), "size");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "font"), "font");
@@ -131,7 +131,7 @@ Builtins::f_2d_text_process(const OpenSCADBuiltinModel & model, const PortFuncti
 Builtins::RegistryItemPtr
 Builtins::f_2d_projection()
 {
-    auto model = std::make_unique<NodeModelType>("projection", "Projection", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("projection", "Projection", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "cut"), "cut");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_2d_projection_process);

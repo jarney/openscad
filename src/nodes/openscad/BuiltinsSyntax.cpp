@@ -14,7 +14,7 @@ using namespace JNodes::core;
 Builtins::RegistryItemPtr
 Builtins::f_syntax_assign()
 {
-    auto model = std::make_unique<NodeModelType>("assign", "Assign", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("assign", "Assign", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "value"), "value");
     model->setProcessor(f_syntax_assign_process);
     model->setInitializer(f_syntax_assign_initializer);
@@ -61,7 +61,7 @@ Builtins::f_syntax_assign_widget(OpenSCADBuiltinModel & node)
 Builtins::RegistryItemPtr
 Builtins::f_syntax_assign_list()
 {
-    auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -85,7 +85,7 @@ Builtins::f_syntax_assign_list_process(const OpenSCADBuiltinModel & node, const 
 Builtins::RegistryItemPtr
 Builtins::f_syntax_variable()
 {
-    auto model = std::make_unique<NodeModelType>("variable", "Variable", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("variable", "Variable", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "variable"), "variable");
     model->setProcessor(f_syntax_variable_process);
     model->setInitializer(f_syntax_variable_initializer);
@@ -125,7 +125,7 @@ Builtins::f_syntax_variable_widget(OpenSCADBuiltinModel & node)
 Builtins::RegistryItemPtr
 Builtins::f_syntax_module()
 {
-    auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -149,7 +149,7 @@ Builtins::f_syntax_module_process(const OpenSCADBuiltinModel & node, const PortF
 Builtins::RegistryItemPtr
 Builtins::f_syntax_function()
 {
-    auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -173,7 +173,7 @@ Builtins::f_syntax_function_process(const OpenSCADBuiltinModel & node, const Por
 Builtins::RegistryItemPtr
 Builtins::f_syntax_include()
 {
-    auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -197,7 +197,7 @@ Builtins::f_syntax_include_process(const OpenSCADBuiltinModel & node, const Port
 Builtins::RegistryItemPtr
 Builtins::f_syntax_use()
 {
-    auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");

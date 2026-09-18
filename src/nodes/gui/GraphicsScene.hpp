@@ -2,7 +2,7 @@
 
 #include <QtNodes/BasicGraphicsScene>
 #include <QtNodes/internal/ConnectionGraphicsObject.hpp>
-#include "nodes/NodeProgramGraphModel.hpp"
+#include "nodes/NodeGraph.hpp"
 #include <QtNodes/internal/Export.hpp>
 #include <QtNodes/internal/NodeConnectionInteraction.hpp>
 
@@ -19,7 +19,7 @@ class NODE_EDITOR_PUBLIC GraphicsScene : public QtNodes::BasicGraphicsScene
 {
     Q_OBJECT
 public:
-    GraphicsScene(JNodes::core::NodeProgramGraphModel &graphModel, QObject *parent = nullptr);
+    GraphicsScene(JNodes::core::NodeGraph &graphModel, QObject *parent = nullptr);
     ~GraphicsScene() = default;
 
 public:
@@ -37,7 +37,7 @@ Q_SIGNALS:
     void sceneLoaded();
 
 private:
-    JNodes::core::NodeProgramGraphModel &_graphModel;
+    JNodes::core::NodeGraph &_graphModel;
 };
 
     } // End gui

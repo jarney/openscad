@@ -2,7 +2,7 @@
 
 #include <QtNodes/NodeDelegateModel>
 #include <QtNodes/NodeData>
-#include "nodes/NodeModelType.hpp"
+#include "nodes/NodeType.hpp"
 #include "nodes/NodeProgram.hpp"
 
 namespace JNodes {
@@ -12,13 +12,13 @@ namespace JNodes {
 
     namespace core {
 	
-class NodeProgramGraphModel;
+class NodeGraph;
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
 class OpenSCADBuiltinModel : public QtNodes::NodeDelegateModel {
 public:
-    OpenSCADBuiltinModel(const NodeModelType & modelType, NodeProgramGraphModel & graph);
+    OpenSCADBuiltinModel(const NodeType & modelType, NodeGraph & graph);
     virtual ~OpenSCADBuiltinModel() = default;
 
     unsigned int nPorts(QtNodes::PortType portType) const override;
@@ -60,14 +60,14 @@ public:
     QJsonObject save() const;
     void load(QJsonObject const &);
 
-    NodeProgramGraphModel & getGraph() const;
+    NodeGraph & getGraph() const;
     
 protected:
     // Data purely about the abstract node
     // that is the same for each instance.  Factor this out
     // to a node-type class.
-    const NodeModelType & _modelType;
-    NodeProgramGraphModel & _graph;
+    const NodeType & _modelType;
+    NodeGraph & _graph;
     QWidget *_widget;
     JNodes::gui::NodeEditorWidget *_editor;
     std::map<std::string, std::string> _modelData;

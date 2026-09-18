@@ -5,7 +5,7 @@
 
 #include <QtNodes/NodeDelegateModel>
 #include <QtNodes/NodeData>
-#include "nodes/NodeModelType.hpp"
+#include "nodes/NodeType.hpp"
 #include "nodes/NodeProgramModelRegistry.hpp"
 #include "nodes/OpenSCADBuiltinModel.hpp"
 
@@ -32,21 +32,21 @@ namespace JNodes {
  */
 class Builtins {
 public:
-    using RegistryItemPtr = std::unique_ptr<JNodes::core::NodeModelType>;
+    using RegistryItemPtr = std::unique_ptr<JNodes::core::NodeType>;
 
-    static const NodeModelCategory CATEGORY_SYNTAX;
-    static const NodeModelCategory CATEGORY_CONST;
-    static const NodeModelCategory CATEGORY_OPERATOR;
-    static const NodeModelCategory CATEGORY_2D;
-    static const NodeModelCategory CATEGORY_3D;
-    static const NodeModelCategory CATEGORY_XFORM;
-    static const NodeModelCategory CATEGORY_LIST;
-    static const NodeModelCategory CATEGORY_BOOLEAN_OPS;
-    static const NodeModelCategory CATEGORY_FLOW;
-    static const NodeModelCategory CATEGORY_TYPETEST;
-    static const NodeModelCategory CATEGORY_OTHER;
-    static const NodeModelCategory CATEGORY_FUNCTION;
-    static const NodeModelCategory CATEGORY_MATH;
+    static const NodeCategory CATEGORY_SYNTAX;
+    static const NodeCategory CATEGORY_CONST;
+    static const NodeCategory CATEGORY_OPERATOR;
+    static const NodeCategory CATEGORY_2D;
+    static const NodeCategory CATEGORY_3D;
+    static const NodeCategory CATEGORY_XFORM;
+    static const NodeCategory CATEGORY_LIST;
+    static const NodeCategory CATEGORY_BOOLEAN_OPS;
+    static const NodeCategory CATEGORY_FLOW;
+    static const NodeCategory CATEGORY_TYPETEST;
+    static const NodeCategory CATEGORY_OTHER;
+    static const NodeCategory CATEGORY_FUNCTION;
+    static const NodeCategory CATEGORY_MATH;
     
     static std::shared_ptr<JNodes::core::NodeProgramModelRegistry> registerDataModels();
 
@@ -54,7 +54,7 @@ public:
     // because the instances hold no state.  Addition
     // is addition, and no modifiers are needed.
 #define _OPENSCAD_NODE_DECL(name)                                    \
-    static std::unique_ptr<JNodes::core::NodeModelType> f_##name();				\
+    static std::unique_ptr<JNodes::core::NodeType> f_##name();				\
     static void f_##name##_process(const JNodes::core::OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output);
 
     // Some nodes carry state for each instance
@@ -66,7 +66,7 @@ public:
     // and a widget to allow the user to modify
     // things like the name of the variable.
 #define _OPENSCAD_NODE_DECL_FULL(name)                                    \
-    static std::unique_ptr<JNodes::core::NodeModelType> f_##name();                     \
+    static std::unique_ptr<JNodes::core::NodeType> f_##name();                     \
     static void f_##name##_process(const JNodes::core::OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output); \
     static void f_##name##_initializer(JNodes::core::OpenSCADBuiltinModel & node);      \
     static QWidget* f_##name##_widget(JNodes::core::OpenSCADBuiltinModel & node)

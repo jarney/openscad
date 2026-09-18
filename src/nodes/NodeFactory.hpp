@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nodes/NodeModelType.hpp"
+#include "nodes/NodeType.hpp"
 
 namespace QtNodes {
     class NodeDelegateModel;
@@ -9,7 +9,7 @@ namespace QtNodes {
 namespace JNodes {
     namespace core {
 
-class NodeProgramGraphModel;
+class NodeGraph;
 
 class NodeFactory {
 public:
@@ -17,7 +17,7 @@ public:
     virtual std::string getName() const = 0;
     virtual std::string getDescription() const = 0;
     virtual std::string getCategory() const = 0;
-    virtual std::unique_ptr<QtNodes::NodeDelegateModel> create(NodeProgramGraphModel & graph) const = 0;
+    virtual std::unique_ptr<QtNodes::NodeDelegateModel> create(NodeGraph & graph) const = 0;
     virtual std::string getIcon() const = 0;
 };
 
@@ -25,17 +25,17 @@ public:
 class NodeFactoryTyped : public NodeFactory {
 public:
     NodeFactoryTyped(
-	std::unique_ptr<NodeModelType> type
+	std::unique_ptr<NodeType> type
     );
     virtual ~NodeFactoryTyped() = default;
     
     std::string getName() const override;
     std::string getDescription() const override;
     std::string getCategory() const override;
-    std::unique_ptr<QtNodes::NodeDelegateModel> create(NodeProgramGraphModel & model) const;
+    std::unique_ptr<QtNodes::NodeDelegateModel> create(NodeGraph & model) const;
     std::string getIcon(void) const override;
 private:
-    std::unique_ptr<NodeModelType> _type;
+    std::unique_ptr<NodeType> _type;
 };
 
     } // End core

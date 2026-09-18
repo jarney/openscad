@@ -6,7 +6,7 @@
 
 #include "nodes/NodeProgramModelRegistry.hpp"
 #include "nodes/NodeProgram.hpp"
-#include "nodes/NodeModelType.hpp"
+#include "nodes/NodeType.hpp"
 #include "nodes/NodeProgramSerializer.hpp"
 
 #include "nodes/openscad/Builtins.hpp"
@@ -27,7 +27,7 @@ void processSourceFile(NodeProgram & program, SourceFile *sourceFile);
 
 void processLocalScope(
     NodeProgram & program,
-    NodeProgramGraphModel *currentGraph,
+    NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
     std::shared_ptr<LocalScope> localScope,
     int depth
@@ -35,7 +35,7 @@ void processLocalScope(
 
 void processModuleInstantiation(
     NodeProgram & program,
-    NodeProgramGraphModel *currentGraph,
+    NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
     std::shared_ptr<ModuleInstantiation> moduleInstantiation,
     int depth,
@@ -92,7 +92,7 @@ public:
 
     virtual void handle(
 	NodeProgram & program,
-	NodeProgramGraphModel *currentGraph,
+	NodeGraph *currentGraph,
 	QtNodes::NodeId parentNode,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	int depth,
@@ -105,7 +105,7 @@ class ModuleNodeFactorySphere : public ModuleInstantiationASTHandler {
 public:
     virtual void handle(
 	NodeProgram & program,
-	NodeProgramGraphModel *currentGraph,
+	NodeGraph *currentGraph,
 	QtNodes::NodeId parentNode,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	int depth,
@@ -116,7 +116,7 @@ public:
 void
 ModuleNodeFactorySphere::handle(
 	NodeProgram & program,
-	NodeProgramGraphModel *currentGraph,
+	NodeGraph *currentGraph,
 	QtNodes::NodeId parentNode,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	int depth,
@@ -138,7 +138,7 @@ void processSourceFile(NodeProgram & program, SourceFile *sourceFile)
     moduleFactory["cube"] = new ModuleNodeFactorySphere();
     
     ////////////
-    NodeProgramGraphModel *main = program.newGraph("main");
+    NodeGraph *main = program.newGraph("main");
     QtNodes::NodeId outputNode = main->addNode("output");
 
     processLocalScope(program, main, outputNode, sourceFile->scope, 0);
@@ -147,7 +147,7 @@ void processSourceFile(NodeProgram & program, SourceFile *sourceFile)
 void
 processLocalScope(
     NodeProgram & program,
-    NodeProgramGraphModel *currentGraph,
+    NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
     std::shared_ptr<LocalScope> localScope,
     int depth
@@ -163,7 +163,7 @@ processLocalScope(
 void
 processModuleInstantiation(
     NodeProgram & program,
-    NodeProgramGraphModel *currentGraph,
+    NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
     std::shared_ptr<ModuleInstantiation> moduleInstantiation,
     int depth,

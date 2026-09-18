@@ -23,7 +23,7 @@ NodeProgramSerializerJSON::write(const NodeProgram &program, std::ostream & outp
 {
     QJsonObject main;
     for (const NodeProgram::GraphId & id : program.getGraphs()) {
-	const NodeProgramGraphModel *dataFlowGraphModel = program.getGraph(id);
+	const NodeGraph *dataFlowGraphModel = program.getGraph(id);
 	QJsonObject object = dataFlowGraphModel->save();
 	main[QString::fromStdString(id)] = object;
     }
@@ -55,7 +55,7 @@ NodeProgramSerializerJSON::read(NodeProgram & program, std::istream & input_stre
 	
 	// The new ID may not match the old one????
 	// This could be a problem for referencing graphs to one another.
-	NodeProgramGraphModel *dataFlowGraphModel = program.newGraph(key.toStdString());
+	NodeGraph *dataFlowGraphModel = program.newGraph(key.toStdString());
 	dataFlowGraphModel->load(object);
     }
 }

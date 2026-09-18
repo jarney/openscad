@@ -81,7 +81,7 @@ UNARY_NODE(math, exp, _OPENSCAD_NODE_CATEGORY, "Exponential(e)", "x", DATA_VARIA
 Builtins::RegistryItemPtr
 Builtins::f_math_rands()
 {
-    auto model = std::make_unique<NodeModelType>("rands", "Random Vector", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("rands", "Random Vector", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "min"), "max");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "min"), "max");
     model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "n"), "n");

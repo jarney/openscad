@@ -12,7 +12,7 @@ using namespace JNodes::core;
 Builtins::RegistryItemPtr
 Builtins::f_op_union()
 {
-    auto model = std::make_unique<NodeModelType>("union", "Union", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("union", "Union", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_op_union_process);
@@ -34,7 +34,7 @@ Builtins::f_op_union_process(const OpenSCADBuiltinModel & model, const PortFunct
 Builtins::RegistryItemPtr
 Builtins::f_op_difference()
 {
-    auto model = std::make_unique<NodeModelType>("difference", "Difference", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("difference", "Difference", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::One);
     model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "b"), "b", QtNodes::ConnectionPolicy::Many);
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
@@ -62,7 +62,7 @@ Builtins::f_op_difference_process(const OpenSCADBuiltinModel & model, const Port
 Builtins::RegistryItemPtr
 Builtins::f_op_intersection()
 {
-    auto model = std::make_unique<NodeModelType>("intersection", "Intersection", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("intersection", "Intersection", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
     model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_op_intersection_process);

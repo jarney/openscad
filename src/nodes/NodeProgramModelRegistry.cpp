@@ -2,7 +2,7 @@
 
 using namespace JNodes::core;
 
-std::unique_ptr<QtNodes::NodeDelegateModel> NodeProgramModelRegistry::create(QString const &modelName, NodeProgramGraphModel & graph)
+std::unique_ptr<QtNodes::NodeDelegateModel> NodeProgramModelRegistry::create(QString const &modelName, NodeGraph & graph)
 {
     auto it = _registeredItemCreators.find(modelName);
 
@@ -26,25 +26,25 @@ NodeProgramModelRegistry::getModels() const
 }
 
 void
-NodeProgramModelRegistry::registerCategory(const NodeModelCategory & category)
+NodeProgramModelRegistry::registerCategory(const NodeCategory & category)
 {
     _categoryMap.insert(std::make_pair(category.getName(), &category));
 }
 
-const std::map<std::string, const NodeModelCategory *> &
+const std::map<std::string, const NodeCategory *> &
 NodeProgramModelRegistry::getCategories() const
 {
     return _categoryMap;
 }
 
-const NodeModelCategory *
+const NodeCategory *
 NodeProgramModelRegistry::getCategory(std::string category_name) const
 {
     const auto it = _categoryMap.find(category_name);
     if (it == _categoryMap.end()) {
 	return nullptr;
     }
-    const NodeModelCategory *cat = it->second;
+    const NodeCategory *cat = it->second;
     return cat;
 }
 

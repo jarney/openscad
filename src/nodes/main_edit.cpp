@@ -19,7 +19,7 @@
 #include "core/Builtins.h"
 
 #include "nodes/NodeProgram.hpp"
-#include "nodes/NodeProgramGraphModel.hpp"
+#include "nodes/NodeGraph.hpp"
 #include "nodes/NodeProgramSerializer.hpp"
 #include "nodes/NodeProgramModelRegistry.hpp"
 #include "nodes/gui/GraphicsScene.hpp"

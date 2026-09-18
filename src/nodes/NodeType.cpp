@@ -1,8 +1,8 @@
-#include "NodeModelType.hpp"
+#include "NodeType.hpp"
 
 using namespace JNodes::core;
 
-NodeModelType::NodeModelType(std::string name, std::string caption, std::string category)
+NodeType::NodeType(std::string name, std::string caption, std::string category)
     : _name(name)
     , _caption(caption)
     , _category(category)
@@ -14,31 +14,31 @@ NodeModelType::NodeModelType(std::string name, std::string caption, std::string 
 {}
 
 std::string
-NodeModelType::getName() const
+NodeType::getName() const
 { return _name; }
 
 std::string
-NodeModelType::getCaption() const
+NodeType::getCaption() const
 { return _caption; }
 
 std::string
-NodeModelType::getCategory() const
+NodeType::getCategory() const
 { return _category; }
 
 std::string
-NodeModelType::getIcon() const
+NodeType::getIcon() const
 { return _icon; }
 
 bool
-NodeModelType::getResizable() const
+NodeType::getResizable() const
 { return _resizable; }
 
 void
-NodeModelType::setResizable(bool resizable)
+NodeType::setResizable(bool resizable)
 { _resizable = resizable; }
 
 void
-NodeModelType::addInputPort(std::unique_ptr<NodePort> inputPort, std::string inputPortName, QtNodes::ConnectionPolicy policy)
+NodeType::addInputPort(std::unique_ptr<NodePort> inputPort, std::string inputPortName, QtNodes::ConnectionPolicy policy)
 {
     _inputPortNames[_inputPorts.size()] = inputPortName;
     inputPort->setConnectionPolicy(policy);
@@ -46,47 +46,47 @@ NodeModelType::addInputPort(std::unique_ptr<NodePort> inputPort, std::string inp
 }
 
 void
-NodeModelType::addInputPort(std::unique_ptr<NodePort> inputPort, std::string inputPortName)
+NodeType::addInputPort(std::unique_ptr<NodePort> inputPort, std::string inputPortName)
 {
     addInputPort(std::move(inputPort), inputPortName, QtNodes::ConnectionPolicy::One);
 }
 
 unsigned int
-NodeModelType::getInputPortCount() const
+NodeType::getInputPortCount() const
 {
     return _inputPorts.size();
 }
 
 unsigned int
-NodeModelType::getOutputPortCount() const
+NodeType::getOutputPortCount() const
 {
     return _outputPorts.size();
 }
 const NodePort &
-NodeModelType::getInputPort(unsigned int index) const
+NodeType::getInputPort(unsigned int index) const
 {
     return *_inputPorts.at(index);
 }
 const NodePort &
-NodeModelType::getOutputPort(unsigned int index) const
+NodeType::getOutputPort(unsigned int index) const
 {
     return *_outputPorts.at(index);
 }
 
 std::string
-NodeModelType::getInputPortName(unsigned int index) const
+NodeType::getInputPortName(unsigned int index) const
 {
     return _inputPortNames.at(index);
 }
 
 std::string
-NodeModelType::getOutputPortName(unsigned int index) const
+NodeType::getOutputPortName(unsigned int index) const
 {
     return _outputPortNames.at(index);
 }
 
 void
-NodeModelType::addOutputPort(std::unique_ptr<NodePort> outputPort, std::string outputPortName)
+NodeType::addOutputPort(std::unique_ptr<NodePort> outputPort, std::string outputPortName)
 {
     _outputPortNames[_outputPorts.size()] = outputPortName;
     outputPort->setConnectionPolicy(QtNodes::ConnectionPolicy::Many);
@@ -97,58 +97,58 @@ NodeModelType::addOutputPort(std::unique_ptr<NodePort> outputPort, std::string o
 // Processor
 ////////////////////////////////////////
 void
-NodeModelType::setProcessor(NodeModelType::NodeProcessor processor)
+NodeType::setProcessor(NodeType::NodeProcessor processor)
 {
     _processor = processor;
 }
 
-NodeModelType::NodeProcessor
-NodeModelType::getProcessor() const
+NodeType::NodeProcessor
+NodeType::getProcessor() const
 {
     return _processor;
 }
 
 void
-NodeModelType::default_processor(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+NodeType::default_processor(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {}
 
 ////////////////////////////////////////
 // Initializer
 ////////////////////////////////////////
 void
-NodeModelType::setInitializer(NodeModelType::Initializer initializer)
+NodeType::setInitializer(NodeType::Initializer initializer)
 {
     _initializer = initializer;
 }
 
-NodeModelType::Initializer
-NodeModelType::getInitializer() const
+NodeType::Initializer
+NodeType::getInitializer() const
 {
     return _initializer;
 }
 
 void
-NodeModelType::default_initializer(OpenSCADBuiltinModel &model)
+NodeType::default_initializer(OpenSCADBuiltinModel &model)
 {}
 
 ////////////////////////////////////////
 // Widget Factory
 ////////////////////////////////////////
 void
-NodeModelType::setWidgetFactory(NodeModelType::WidgetFactory widgetFactory)
+NodeType::setWidgetFactory(NodeType::WidgetFactory widgetFactory)
 {
     _widgetFactory = widgetFactory;
 }
 
-NodeModelType::WidgetFactory
-NodeModelType::getWidgetFactory() const
+NodeType::WidgetFactory
+NodeType::getWidgetFactory() const
 {
     return _widgetFactory;
 }
 
 
 QWidget*
-NodeModelType::default_widget_factory(OpenSCADBuiltinModel &)
+NodeType::default_widget_factory(OpenSCADBuiltinModel &)
 {
     return nullptr;
 }

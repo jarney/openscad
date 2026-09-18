@@ -37,7 +37,7 @@ BINARY_NODE(function, search, _OPENSCAD_NODE_CATEGORY, "Search for value", "need
 Builtins::RegistryItemPtr
 Builtins::f_function_version()
 {
-    auto model = std::make_unique<NodeModelType>("version", "Version", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("version", "Version", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE), "value");
     model->setProcessor(f_function_version_process);
     return model;
@@ -53,7 +53,7 @@ Builtins::f_function_version_process(const OpenSCADBuiltinModel & model, const P
 Builtins::RegistryItemPtr
 Builtins::f_function_version_num()
 {
-    auto model = std::make_unique<NodeModelType>("version_num", "Version Number", _OPENSCAD_NODE_CATEGORY);
+    auto model = std::make_unique<NodeType>("version_num", "Version Number", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE), "value");
     model->setProcessor(f_function_version_process);
     return model;

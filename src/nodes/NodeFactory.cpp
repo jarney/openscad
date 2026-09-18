@@ -4,7 +4,7 @@
 using namespace JNodes::core;
 
 NodeFactoryTyped::NodeFactoryTyped(
-    std::unique_ptr<NodeModelType> type
+    std::unique_ptr<NodeType> type
     )
     : _type(std::move(type))
 {
@@ -28,7 +28,7 @@ NodeFactoryTyped::getCategory() const
 }
 
 std::unique_ptr<QtNodes::NodeDelegateModel>
-NodeFactoryTyped::create(NodeProgramGraphModel & model) const
+NodeFactoryTyped::create(NodeGraph & model) const
 {
     std::unique_ptr<OpenSCADBuiltinModel> node = std::make_unique<OpenSCADBuiltinModel>(*_type, model);
     return node;
