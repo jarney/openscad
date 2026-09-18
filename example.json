@@ -35,7 +35,7 @@
                 "id": 4,
                 "internal-data": {
                     "data": {
-                        "variable_name": "i"
+                        "variable_name": "a"
                     },
                     "model-name": "variable"
                 },
@@ -64,6 +64,18 @@
     },
     "main": {
         "connections": [
+            {
+                "inNodeId": 5,
+                "inPortIndex": 0,
+                "outNodeId": 6,
+                "outPortIndex": 0
+            },
+            {
+                "inNodeId": 4,
+                "inPortIndex": 0,
+                "outNodeId": 5,
+                "outPortIndex": 0
+            },
             {
                 "inNodeId": 2,
                 "inPortIndex": 0,
@@ -115,15 +127,15 @@
                 "internal-data": {
                     "data": {
                         "graph": "for_0",
-                        "variable": "i"
+                        "variable": "a"
                     },
                     "model-name": "for"
                 },
                 "label": "",
                 "labelVisible": true,
                 "position": {
-                    "x": 555.1785316455698,
-                    "y": 103.19848101265822
+                    "x": 556.1009892790703,
+                    "y": 106.88831154665957
                 }
             },
             {
@@ -138,6 +150,50 @@
                 "position": {
                     "x": 1012.6945837367085,
                     "y": 148.8305139037974
+                }
+            },
+            {
+                "id": 4,
+                "internal-data": {
+                    "data": {
+                        "variable_name": "x"
+                    },
+                    "model-name": "assign"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": 55.11101214969398,
+                    "y": -138.52227378166313
+                }
+            },
+            {
+                "id": 5,
+                "internal-data": {
+                    "data": {
+                    },
+                    "model-name": "__builtin_list_set_range"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -216.8219910710546,
+                    "y": -149.9170758138124
+                }
+            },
+            {
+                "id": 6,
+                "internal-data": {
+                    "data": {
+                        "value": "0"
+                    },
+                    "model-name": "const_int"
+                },
+                "label": "",
+                "labelVisible": true,
+                "position": {
+                    "x": -616.6475413506296,
+                    "y": -196.61225956107023
                 }
             }
         ]

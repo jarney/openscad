@@ -13,7 +13,9 @@ findOutputNodes(
 {
     for (auto nodeId : model.allNodeIds()) {
 	OpenSCADBuiltinModel *delegate = model.delegateModel<OpenSCADBuiltinModel>(nodeId);
-	if (delegate->nPorts(QtNodes::PortType::Out) == 0) {
+	// Output nodes must have one input and no outputs.
+	if ((delegate->nPorts(QtNodes::PortType::In) == 1) &&
+	    (delegate->nPorts(QtNodes::PortType::Out) == 0)) {
 	    outputNodes.push_back(nodeId);
 	}
     }
@@ -114,18 +116,16 @@ std::string evaluateToSCAD(const NodeProgramGraphModel & model)
 
     std::set<QtNodes::NodeId> processed_nodes;
     std::map<QtNodes::NodeId, PortFunctionData> all_node_data;
-    
+
+    std::string output;
     for (auto nodeId : outputNodes) {
-	// Output nodes should have only one
-	// input connection at index 0.
+	// For each output node, wire up all of the input ports upstream.
+	// If a port has no connection, use a default data for that port.
+	// Continue recursively until there are not more ancestor nodes.
 	processNode(model, processed_nodes, all_node_data, nodeId, 0);
-	return all_node_data[nodeId].getValue("out", "");
+	output += all_node_data[nodeId].getValue("out", "");
     }
 
-    // Next, for each output node, wire up all of the input ports upstream.
-    // If a port has no connection, use a default data for that port.
-    
-    // Continue recursively until there are not more ancestor nodes.
 
-    return std::string("");
+    return output;
 }

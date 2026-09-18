@@ -24,7 +24,7 @@ OpenSCADBuiltins::f_3d_sphere_process(const OpenSCADBuiltinModel & model, const 
     std::vector<std::string> args;
     conditionalArg(args, input, model, "r");
     conditionalArg(args, input, model, "d");
-    std::string out = std::string("sphere(") + joinArguments(args) + std::string(")");
+    std::string out = std::string("sphere(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
     
 }
@@ -49,7 +49,7 @@ OpenSCADBuiltins::f_3d_cube_process(const OpenSCADBuiltinModel & model, const Po
     std::vector<std::string> args;
     conditionalArg(args, input, model, "size");
     conditionalArg(args, input, model, "center");
-    std::string out = std::string("cube(") + joinArguments(args) + std::string(")");
+    std::string out = std::string("cube(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
 
@@ -84,7 +84,7 @@ OpenSCADBuiltins::f_3d_cylinder_process(const OpenSCADBuiltinModel & model, cons
     conditionalArg(args, input, model, "d1");
     conditionalArg(args, input, model, "d2");
     conditionalArg(args, input, model, "center");
-    std::string out = std::string("cylinder(") + joinArguments(args) + std::string(")");
+    std::string out = std::string("cylinder(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
 
@@ -109,7 +109,7 @@ OpenSCADBuiltins::f_3d_polyhedron_process(const OpenSCADBuiltinModel & model, co
     conditionalArg(args, input, model, "points");
     conditionalArg(args, input, model, "faces");
     conditionalArg(args, input, model, "convexity");
-    std::string out = std::string("polyhedron(") + joinArguments(args) + std::string(")");
+    std::string out = std::string("polyhedron(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
 
@@ -144,7 +144,7 @@ OpenSCADBuiltins::f_3d_import_process(const OpenSCADBuiltinModel & model, const 
     conditionalArg(args, input, model, "$fn");
     conditionalArg(args, input, model, "$fa");
     conditionalArg(args, input, model, "$fs");
-    std::string out = std::string("import(") + joinArguments(args) + std::string(")");
+    std::string out = std::string("import(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
 
@@ -181,7 +181,7 @@ OpenSCADBuiltins::f_3d_linear_extrude_process(const OpenSCADBuiltinModel & model
     conditionalArg(args, input, model, "segments");
     conditionalArg(args, input, model, "convexity");
     conditionalArg(args, input, model, "$fn");
-    std::string out = std::string("import(") + joinArguments(args) + std::string(")");
+    std::string out = std::string("import(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
 
@@ -209,7 +209,7 @@ OpenSCADBuiltins::f_3d_rotate_extrude_process(const OpenSCADBuiltinModel & model
     conditionalArg(args, input, model, "start");
     conditionalArg(args, input, model, "convexity");
     conditionalArg(args, input, model, "a");
-    std::string out = std::string("import(") + joinArguments(args) + std::string(")");
+    std::string out = std::string("import(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
 ////////////////////////////////////////
@@ -235,7 +235,7 @@ OpenSCADBuiltins::f_3d_surface_process(const OpenSCADBuiltinModel & model, const
     conditionalArg(args, input, model, "center");
     conditionalArg(args, input, model, "invert");
     conditionalArg(args, input, model, "convexity");
-    std::string out = std::string("surface(") + joinArguments(args) + std::string(")");
+    std::string out = std::string("surface(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
 
@@ -265,7 +265,7 @@ OpenSCADBuiltins::f_3d_dxf_dim_process(const OpenSCADBuiltinModel & model, const
     conditionalArg(args, input, model, "layer");
     conditionalArg(args, input, model, "origin");
     conditionalArg(args, input, model, "scale");
-    std::string out = std::string("dxf_dim(") + joinArguments(args) + std::string(")");
+    std::string out = std::string("dxf_dim(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
 
@@ -293,7 +293,7 @@ OpenSCADBuiltins::f_3d_dxf_cross_process(const OpenSCADBuiltinModel & model, con
     conditionalArg(args, input, model, "layer");
     conditionalArg(args, input, model, "origin");
     conditionalArg(args, input, model, "scale");
-    std::string out = std::string("dxf_cross(") + joinArguments(args) + std::string(")");
+    std::string out = std::string("dxf_cross(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
 

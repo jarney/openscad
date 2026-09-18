@@ -83,7 +83,7 @@ OpenSCADBuiltins::f_flow_for_widget(OpenSCADBuiltinModel & node)
     
     // We need a name for the loop iteration variable
     QLineEdit *textEdit = new QLineEdit();
-    textEdit->setText(QString::fromStdString(node.getValue("value")));
+    textEdit->setText(QString::fromStdString(node.getValue("variable")));
     QObject::connect(textEdit, &QLineEdit::textChanged, [&node, textEdit]() {
 	node.setValue("variable", textEdit->text().toStdString());
     });
