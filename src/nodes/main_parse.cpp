@@ -11,6 +11,12 @@
 #include "nodes/NodeModelType.hpp"
 #include "nodes/NodeProgramSerializer.hpp"
 
+#include "core/SourceFile.h"
+#include "core/LocalScope.h"
+#include "core/ModuleInstantiation.h"
+#include "core/Assignment.h"
+#include "core/Expression.h"
+
 #include "openscad.h"
 
 //extern bool parse(class SourceFile *& file, const std::string& text, const std::string& filename,
@@ -50,6 +56,20 @@ int main_parse(int argc, char *argv[])
 	return -1;
     }
     fprintf(stderr, "Got a valid parse tree\n");
+
+    auto localScope = sourceFile->scope;
+    auto mi = localScope->moduleInstantiations.at(0);
+    fprintf(stderr, "Module instantiation name %s\n", mi->name().c_str());
+    auto as = mi->arguments.at(0);
+    Expression *expr = as->getExpr().get();
+    
+    Lookup *lit = dynamic_cast<Lookup*>(expr);
+    if (lit) {
+	fprintf(stderr, "It is a literal %s\n", lit->get_name().c_str());
+    }
+    else {
+	fprintf(stderr, "It is not a literal\n");
+    }
     
     const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
     serializer.write(program, std::cout);
