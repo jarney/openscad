@@ -10,6 +10,9 @@
 #include "nodes/NodeProgramModelRegistry.hpp"
 #include "nodes/OpenSCADBuiltinModel.hpp"
 
+namespace JNodes {
+    namespace openscad {
+
 /**
  * This is a static class that contains all of the OpenSCAD builtins.
  * This is organized the same way as the famous "OpenSCAD Cheat Sheet"
@@ -26,7 +29,7 @@
  * and prefixed so as to minimize the risk of pre-processor
  * namespace collisions.
  */
-class OpenSCADBuiltins {
+class Builtins {
 public:
     using RegistryItemPtr = std::unique_ptr<NodeModelType>;
 
@@ -242,3 +245,8 @@ private:
 	std::string key
     );
 };
+	
+
+    } // End openscad
+} // End JNodes
+

@@ -7,7 +7,9 @@
 #include <QIntValidator>
 #include <QDoubleValidator>
 
-#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_CONST.getName()
+using namespace JNodes::openscad;
+
+#define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_CONST.getName()
 
 NONARY_NODE(const, true, _OPENSCAD_NODE_CATEGORY, "True", "value", DATA_VARIABLE)
 {
@@ -25,8 +27,8 @@ NONARY_NODE(const, undef, _OPENSCAD_NODE_CATEGORY, "Undefined", "value", DATA_VA
 ////////////////////////////////////////
 // Integer Constant
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_const_int()
+Builtins::RegistryItemPtr
+Builtins::f_const_int()
 {
     auto model = std::make_unique<NodeModelType>("const_int", "Integer", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -36,19 +38,19 @@ OpenSCADBuiltins::f_const_int()
     return model;
 }
 void
-OpenSCADBuiltins::f_const_int_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_const_int_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     output.setValue("value", node.getValue("value", "0"));
 }
 void
-OpenSCADBuiltins::f_const_int_initializer(OpenSCADBuiltinModel & node)
+Builtins::f_const_int_initializer(OpenSCADBuiltinModel & node)
 {
     if (!node.hasValue("value")) {
 	node.setValue("value", "0");
     }
 }
 QWidget*
-OpenSCADBuiltins::f_const_int_widget(OpenSCADBuiltinModel & node)
+Builtins::f_const_int_widget(OpenSCADBuiltinModel & node)
 {
     QLineEdit *textEdit = new QLineEdit();
     textEdit->setText(QString::fromStdString(node.getValue("value")));
@@ -65,8 +67,8 @@ OpenSCADBuiltins::f_const_int_widget(OpenSCADBuiltinModel & node)
 ////////////////////////////////////////
 // Float Constant
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_const_float()
+Builtins::RegistryItemPtr
+Builtins::f_const_float()
 {
     auto model = std::make_unique<NodeModelType>("const_float", "Float", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -76,19 +78,19 @@ OpenSCADBuiltins::f_const_float()
     return model;
 }
 void
-OpenSCADBuiltins::f_const_float_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_const_float_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     output.setValue("value", node.getValue("value", "0.0"));
 }
 void
-OpenSCADBuiltins::f_const_float_initializer(OpenSCADBuiltinModel & node)
+Builtins::f_const_float_initializer(OpenSCADBuiltinModel & node)
 {
     if (!node.hasValue("value")) {
 	node.setValue("value", "0.0");
     }
 }
 QWidget*
-OpenSCADBuiltins::f_const_float_widget(OpenSCADBuiltinModel & node)
+Builtins::f_const_float_widget(OpenSCADBuiltinModel & node)
 {
     QLineEdit *textEdit = new QLineEdit();
     textEdit->setText(QString::fromStdString(node.getValue("value")));
@@ -107,8 +109,8 @@ OpenSCADBuiltins::f_const_float_widget(OpenSCADBuiltinModel & node)
 ////////////////////////////////////////
 // String Constant
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_const_string()
+Builtins::RegistryItemPtr
+Builtins::f_const_string()
 {
     auto model = std::make_unique<NodeModelType>("const_string", "String", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -118,7 +120,7 @@ OpenSCADBuiltins::f_const_string()
     return model;
 }
 void
-OpenSCADBuiltins::f_const_string_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_const_string_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     output.setValue(
 	"value",
@@ -129,7 +131,7 @@ OpenSCADBuiltins::f_const_string_process(const OpenSCADBuiltinModel & node, cons
 }
 
 void
-OpenSCADBuiltins::f_const_string_initializer(OpenSCADBuiltinModel & node)
+Builtins::f_const_string_initializer(OpenSCADBuiltinModel & node)
 {
     if (!node.hasValue("value")) {
 	node.setValue("value", "");
@@ -137,7 +139,7 @@ OpenSCADBuiltins::f_const_string_initializer(OpenSCADBuiltinModel & node)
 }
 
 QWidget*
-OpenSCADBuiltins::f_const_string_widget(OpenSCADBuiltinModel & node)
+Builtins::f_const_string_widget(OpenSCADBuiltinModel & node)
 {
     QLineEdit *textEdit = new QLineEdit();
     textEdit->setText(QString::fromStdString(node.getValue("value")));

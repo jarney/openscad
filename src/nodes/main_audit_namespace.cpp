@@ -31,7 +31,7 @@ int main_audit_namespace(int argc, char *argv[])
 	return 2;
     }
 
-    std::shared_ptr<NodeProgramModelRegistry> registry = OpenSCADBuiltins::registerDataModels();
+    std::shared_ptr<NodeProgramModelRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
 
     // Register builtins...
     Builtins::initialize();

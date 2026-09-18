@@ -3,13 +3,15 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_2D.getName()
+using namespace JNodes::openscad;
+
+#define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_2D.getName()
 
 ////////////////////////////////////////
 // Circle
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_2d_circle()
+Builtins::RegistryItemPtr
+Builtins::f_2d_circle()
 {
     auto model = std::make_unique<NodeModelType>("circle", "Circle", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
@@ -20,7 +22,7 @@ OpenSCADBuiltins::f_2d_circle()
 }
 
 void
-OpenSCADBuiltins::f_2d_circle_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_2d_circle_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "r");
@@ -32,8 +34,8 @@ OpenSCADBuiltins::f_2d_circle_process(const OpenSCADBuiltinModel & model, const 
 ////////////////////////////////////////
 // Square
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_2d_square()
+Builtins::RegistryItemPtr
+Builtins::f_2d_square()
 {
     auto model = std::make_unique<NodeModelType>("square", "Square", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "size"), "size");
@@ -44,7 +46,7 @@ OpenSCADBuiltins::f_2d_square()
 }
 
 void
-OpenSCADBuiltins::f_2d_square_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_2d_square_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "size");
@@ -57,8 +59,8 @@ OpenSCADBuiltins::f_2d_square_process(const OpenSCADBuiltinModel & model, const 
 ////////////////////////////////////////
 // Polygon
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_2d_polygon()
+Builtins::RegistryItemPtr
+Builtins::f_2d_polygon()
 {
     auto model = std::make_unique<NodeModelType>("polygon", "Polygon", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "points"), "points");
@@ -70,7 +72,7 @@ OpenSCADBuiltins::f_2d_polygon()
 }
 
 void
-OpenSCADBuiltins::f_2d_polygon_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_2d_polygon_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "points", "[]");
@@ -84,8 +86,8 @@ OpenSCADBuiltins::f_2d_polygon_process(const OpenSCADBuiltinModel & model, const
 ////////////////////////////////////////
 // Text
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_2d_text()
+Builtins::RegistryItemPtr
+Builtins::f_2d_text()
 {
     auto model = std::make_unique<NodeModelType>("text", "Projection", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "text"), "text");
@@ -104,7 +106,7 @@ OpenSCADBuiltins::f_2d_text()
 }
 
 void
-OpenSCADBuiltins::f_2d_text_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_2d_text_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "text");
@@ -127,8 +129,8 @@ OpenSCADBuiltins::f_2d_text_process(const OpenSCADBuiltinModel & model, const Po
 ////////////////////////////////////////
 // Projection
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_2d_projection()
+Builtins::RegistryItemPtr
+Builtins::f_2d_projection()
 {
     auto model = std::make_unique<NodeModelType>("projection", "Projection", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "cut"), "cut");
@@ -138,7 +140,7 @@ OpenSCADBuiltins::f_2d_projection()
 }
 
 void
-OpenSCADBuiltins::f_2d_projection_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_2d_projection_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "cut");

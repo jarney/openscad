@@ -3,13 +3,15 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_LIST.getName()
+using namespace JNodes::openscad;
+
+#define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_LIST.getName()
 
 ////////////////////////////////////////
 // List Index
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_list_index()
+Builtins::RegistryItemPtr
+Builtins::f_list_index()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_index", "List Index", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "list"), "list");
@@ -20,7 +22,7 @@ OpenSCADBuiltins::f_list_index()
 }
 
 void
-OpenSCADBuiltins::f_list_index_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_list_index_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     std::string out;
@@ -32,8 +34,8 @@ OpenSCADBuiltins::f_list_index_process(const OpenSCADBuiltinModel & model, const
 ////////////////////////////////////////
 // List get xyz
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_list_get_xyz()
+Builtins::RegistryItemPtr
+Builtins::f_list_get_xyz()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_get_xyz", "Get XYZ", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "list"), "list");
@@ -45,7 +47,7 @@ OpenSCADBuiltins::f_list_get_xyz()
 }
 
 void
-OpenSCADBuiltins::f_list_get_xyz_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_list_get_xyz_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     std::string x = input.getValue("list", "[0,0,0]") + std::string("[0]");
@@ -59,8 +61,8 @@ OpenSCADBuiltins::f_list_get_xyz_process(const OpenSCADBuiltinModel & model, con
 ////////////////////////////////////////
 // List set xyz
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_list_set_xyz()
+Builtins::RegistryItemPtr
+Builtins::f_list_set_xyz()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_set_xyz", "Set XYZ", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "x"), "x");
@@ -72,7 +74,7 @@ OpenSCADBuiltins::f_list_set_xyz()
 }
 
 void
-OpenSCADBuiltins::f_list_set_xyz_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_list_set_xyz_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out;
     out += std::string("[");
@@ -86,8 +88,8 @@ OpenSCADBuiltins::f_list_set_xyz_process(const OpenSCADBuiltinModel & model, con
 ////////////////////////////////////////
 // List get xyz
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_list_get_xy()
+Builtins::RegistryItemPtr
+Builtins::f_list_get_xy()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_get_xy", "Get XY", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "list"), "list");
@@ -98,7 +100,7 @@ OpenSCADBuiltins::f_list_get_xy()
 }
 
 void
-OpenSCADBuiltins::f_list_get_xy_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_list_get_xy_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     std::string x = input.getValue("list", "[0,0]") + std::string("[0]");
@@ -110,8 +112,8 @@ OpenSCADBuiltins::f_list_get_xy_process(const OpenSCADBuiltinModel & model, cons
 ////////////////////////////////////////
 // List set xy
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_list_set_xy()
+Builtins::RegistryItemPtr
+Builtins::f_list_set_xy()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_set_xy", "Set XY", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "x"), "x");
@@ -122,7 +124,7 @@ OpenSCADBuiltins::f_list_set_xy()
 }
 
 void
-OpenSCADBuiltins::f_list_set_xy_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_list_set_xy_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out;
     out += std::string("[");
@@ -135,8 +137,8 @@ OpenSCADBuiltins::f_list_set_xy_process(const OpenSCADBuiltinModel & model, cons
 ////////////////////////////////////////
 // List get xyz
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_list_get_rgba()
+Builtins::RegistryItemPtr
+Builtins::f_list_get_rgba()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_get_rgba", "Get RGBA", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "list"), "list");
@@ -149,7 +151,7 @@ OpenSCADBuiltins::f_list_get_rgba()
 }
 
 void
-OpenSCADBuiltins::f_list_get_rgba_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_list_get_rgba_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     std::string r = input.getValue("list", "[1,1,1,0]") + std::string("[0]");
@@ -165,8 +167,8 @@ OpenSCADBuiltins::f_list_get_rgba_process(const OpenSCADBuiltinModel & model, co
 ////////////////////////////////////////
 // List set rgba
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_list_set_rgba()
+Builtins::RegistryItemPtr
+Builtins::f_list_set_rgba()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_set_xyz", "Set XYZ", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
@@ -179,7 +181,7 @@ OpenSCADBuiltins::f_list_set_rgba()
 }
 
 void
-OpenSCADBuiltins::f_list_set_rgba_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_list_set_rgba_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out;
     out += std::string("[");
@@ -195,8 +197,8 @@ OpenSCADBuiltins::f_list_set_rgba_process(const OpenSCADBuiltinModel & model, co
 ////////////////////////////////////////
 // List set range
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_list_set_range()
+Builtins::RegistryItemPtr
+Builtins::f_list_set_range()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_set_range", "Range", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "start"), "start");
@@ -208,7 +210,7 @@ OpenSCADBuiltins::f_list_set_range()
 }
 
 void
-OpenSCADBuiltins::f_list_set_range_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_list_set_range_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out;
     out += std::string("[");

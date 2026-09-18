@@ -15,7 +15,7 @@ TEST_CASE("NodeProgramSerializer", "[nodes][NodeProgramSerializer]")
     {
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
 
-	NodeProgram loadedProgram(OpenSCADBuiltins::registerDataModels());
+	NodeProgram loadedProgram(JNodes::openscad::Builtins::registerDataModels());
 	fprintf(stderr, "Going to write an example from a file %s\n",
 		get_test_path(std::string("example.json")).c_str()
 	    );

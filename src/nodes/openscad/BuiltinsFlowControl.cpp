@@ -11,13 +11,15 @@
 #include <QRegularExpressionValidator>
 #include <Qsci/qsciscintilla.h>
 
-#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_FLOW.getName()
+using namespace JNodes::openscad;
+
+#define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_FLOW.getName()
 
 ////////////////////////////////////////
 // For
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_flow_for()
+Builtins::RegistryItemPtr
+Builtins::f_flow_for()
 {
     auto model = std::make_unique<NodeModelType>("for", "For Loop", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "range"), "range");
@@ -32,7 +34,7 @@ OpenSCADBuiltins::f_flow_for()
 }
 
 void
-OpenSCADBuiltins::f_flow_for_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_for_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     out += std::string("for (");
@@ -64,7 +66,7 @@ OpenSCADBuiltins::f_flow_for_process(const OpenSCADBuiltinModel & node, const Po
 }
 
 void
-OpenSCADBuiltins::f_flow_for_initializer(OpenSCADBuiltinModel & node)
+Builtins::f_flow_for_initializer(OpenSCADBuiltinModel & node)
 {
     if (!node.hasValue("graph")) {
 	NodeProgram::GraphId graphId =
@@ -77,7 +79,7 @@ OpenSCADBuiltins::f_flow_for_initializer(OpenSCADBuiltinModel & node)
 }
 
 QWidget*
-OpenSCADBuiltins::f_flow_for_widget(OpenSCADBuiltinModel & node)
+Builtins::f_flow_for_widget(OpenSCADBuiltinModel & node)
 {
     QWidget *w = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout(w);
@@ -107,8 +109,8 @@ OpenSCADBuiltins::f_flow_for_widget(OpenSCADBuiltinModel & node)
 ////////////////////////////////////////
 // Intersection For
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_flow_intersection_for()
+Builtins::RegistryItemPtr
+Builtins::f_flow_intersection_for()
 {
     auto model = std::make_unique<NodeModelType>("intersection_for", "Intersection For", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "var"), "var");
@@ -119,7 +121,7 @@ OpenSCADBuiltins::f_flow_intersection_for()
 }
 
 void
-OpenSCADBuiltins::f_flow_intersection_for_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_intersection_for_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     // TODO: Call/evaluate sub-flow
     std::string out = std::string();
@@ -132,8 +134,8 @@ OpenSCADBuiltins::f_flow_intersection_for_process(const OpenSCADBuiltinModel & n
 ////////////////////////////////////////
 // If
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_flow_if()
+Builtins::RegistryItemPtr
+Builtins::f_flow_if()
 {
     auto model = std::make_unique<NodeModelType>("if", "If", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "condition"), "condition");
@@ -145,7 +147,7 @@ OpenSCADBuiltins::f_flow_if()
 }
 
 void
-OpenSCADBuiltins::f_flow_if_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_if_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     out += std::string("if(");
@@ -161,8 +163,8 @@ OpenSCADBuiltins::f_flow_if_process(const OpenSCADBuiltinModel & node, const Por
 ////////////////////////////////////////
 // Let
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_flow_let()
+Builtins::RegistryItemPtr
+Builtins::f_flow_let()
 {
     auto model = std::make_unique<NodeModelType>("let", "Let", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "var"), "var");
@@ -173,7 +175,7 @@ OpenSCADBuiltins::f_flow_let()
 }
 
 void
-OpenSCADBuiltins::f_flow_let_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_let_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     // TODO: Call/evaluate sub-flow
     std::string out = std::string();
@@ -186,16 +188,16 @@ OpenSCADBuiltins::f_flow_let_process(const OpenSCADBuiltinModel & node, const Po
 ////////////////////////////////////////
 // Comment
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_flow_comment()
+Builtins::RegistryItemPtr
+Builtins::f_flow_comment()
 {
     auto model = std::make_unique<NodeModelType>("comment", "Comment", _OPENSCAD_NODE_CATEGORY);
     model->setResizable(true);
-    model->setWidgetFactory(OpenSCADBuiltins::f_flow_comment_widget);
+    model->setWidgetFactory(Builtins::f_flow_comment_widget);
     return model;
 }
 QWidget*
-OpenSCADBuiltins::f_flow_comment_widget(OpenSCADBuiltinModel & node)
+Builtins::f_flow_comment_widget(OpenSCADBuiltinModel & node)
 {
     // Should we have rich text and markups or perhaps IDE-style
     // input boxes or is plain text enough?
@@ -219,8 +221,8 @@ OpenSCADBuiltins::f_flow_comment_widget(OpenSCADBuiltinModel & node)
 ////////////////////////////////////////
 // Group
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_flow_group()
+Builtins::RegistryItemPtr
+Builtins::f_flow_group()
 {
     auto model = std::make_unique<NodeModelType>("group", "Group", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
@@ -229,7 +231,7 @@ OpenSCADBuiltins::f_flow_group()
     return model;
 }
 void
-OpenSCADBuiltins::f_flow_group_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_group_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     output.setValue("Geometry", std::string("group() {\n") +
         input.getValue("a", "{}") +
@@ -239,8 +241,8 @@ OpenSCADBuiltins::f_flow_group_process(const OpenSCADBuiltinModel & node, const 
 ////////////////////////////////////////
 // Output
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_flow_output()
+Builtins::RegistryItemPtr
+Builtins::f_flow_output()
 {
     auto model = std::make_unique<NodeModelType>("output", "Output", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY), "out", QtNodes::ConnectionPolicy::Many);
@@ -248,7 +250,7 @@ OpenSCADBuiltins::f_flow_output()
     return model;
 }
 void
-OpenSCADBuiltins::f_flow_output_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_output_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string s = input.getValue("out", "//No Geometry Output\n");
     output.setValue("out", s);

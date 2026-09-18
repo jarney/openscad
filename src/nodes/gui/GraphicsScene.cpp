@@ -31,7 +31,9 @@
 #include "nodes/gui/GraphicsScene.hpp"
 #include "nodes/NodeProgramModelRegistry.hpp"
 
-QtNodes::GroupId jsonValueToGroupId(QJsonValue const &value)
+using namespace JNodes::gui;
+
+static QtNodes::GroupId jsonValueToGroupId(QJsonValue const &value)
 {
     if (value.isDouble()) {
         return static_cast<QtNodes::GroupId>(value.toInt());
@@ -61,7 +63,7 @@ QtNodes::GroupId jsonValueToGroupId(QJsonValue const &value)
     return QtNodes::InvalidGroupId;
 }
 
-NodeProgramGraphicsScene::NodeProgramGraphicsScene(NodeProgramGraphModel &graphModel, QObject *parent)
+GraphicsScene::GraphicsScene(NodeProgramGraphModel &graphModel, QObject *parent)
     : BasicGraphicsScene(graphModel, parent)
     , _graphModel(graphModel)
 {
@@ -81,7 +83,7 @@ NodeProgramGraphicsScene::NodeProgramGraphicsScene(NodeProgramGraphModel &graphM
 
 // TODO constructor for an empyt scene?
 
-std::vector<QtNodes::NodeId> NodeProgramGraphicsScene::selectedNodes() const
+std::vector<QtNodes::NodeId> GraphicsScene::selectedNodes() const
 {
     QList<QGraphicsItem *> graphicsItems = selectedItems();
 
@@ -114,7 +116,7 @@ static const QIcon & iconCache(std::string name)
     }
 }
 
-QMenu *NodeProgramGraphicsScene::createSceneMenu(QPointF const scenePos)
+QMenu *GraphicsScene::createSceneMenu(QPointF const scenePos)
 {
     QMenu *modelMenu = new QMenu();
 
@@ -211,7 +213,7 @@ QMenu *NodeProgramGraphicsScene::createSceneMenu(QPointF const scenePos)
     return modelMenu;
 }
 
-bool NodeProgramGraphicsScene::save() const
+bool GraphicsScene::save() const
 {
     QString fileName = QFileDialog::getSaveFileName(nullptr,
                                                     tr("Open Flow Scene"),
@@ -255,7 +257,7 @@ bool NodeProgramGraphicsScene::save() const
     return false;
 }
 
-bool NodeProgramGraphicsScene::load()
+bool GraphicsScene::load()
 {
     QString fileName = QFileDialog::getOpenFileName(nullptr,
                                                     tr("Open Flow Scene"),
@@ -319,7 +321,7 @@ bool NodeProgramGraphicsScene::load()
     return true;
 }
 
-void NodeProgramGraphicsScene::updateConnectionGraphics(
+void GraphicsScene::updateConnectionGraphics(
     const std::unordered_set<QtNodes::ConnectionId> &connections, bool state)
 {
     for (auto const &c : connections) {
@@ -332,5 +334,5 @@ void NodeProgramGraphicsScene::updateConnectionGraphics(
 
 
 QMenu *
-NodeProgramGraphicsScene::createGroupMenu(QPointF const scenePos, QtNodes::GroupGraphicsObject *groupGo)
+GraphicsScene::createGroupMenu(QPointF const scenePos, QtNodes::GroupGraphicsObject *groupGo)
 { return nullptr; }

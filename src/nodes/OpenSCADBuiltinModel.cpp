@@ -121,12 +121,12 @@ OpenSCADBuiltinModel::resizable() const
 }
 
 void
-OpenSCADBuiltinModel::setEditor(JNodeProgramEditor *editor)
+OpenSCADBuiltinModel::setEditor(JNodes::gui::NodeEditorWidget *editor)
 {
     _editor = editor;
 }
 
-JNodeProgramEditor *
+JNodes::gui::NodeEditorWidget *
 OpenSCADBuiltinModel::getEditor() const
 {
     return _editor;

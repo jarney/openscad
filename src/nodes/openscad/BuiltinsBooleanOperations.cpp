@@ -3,13 +3,15 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_BOOLEAN_OPS.getName()
+using namespace JNodes::openscad;
+
+#define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_BOOLEAN_OPS.getName()
 
 ////////////////////////////////////////
 // Union
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_op_union()
+Builtins::RegistryItemPtr
+Builtins::f_op_union()
 {
     auto model = std::make_unique<NodeModelType>("union", "Union", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
@@ -18,7 +20,7 @@ OpenSCADBuiltins::f_op_union()
     return model;
 }
 void
-OpenSCADBuiltins::f_op_union_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_op_union_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out;
     out += std::string("union() {\n");
@@ -30,8 +32,8 @@ OpenSCADBuiltins::f_op_union_process(const OpenSCADBuiltinModel & model, const P
 ////////////////////////////////////////
 // Difference
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_op_difference()
+Builtins::RegistryItemPtr
+Builtins::f_op_difference()
 {
     auto model = std::make_unique<NodeModelType>("difference", "Difference", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::One);
@@ -41,7 +43,7 @@ OpenSCADBuiltins::f_op_difference()
     return model;
 }
 void
-OpenSCADBuiltins::f_op_difference_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_op_difference_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out;
     out += std::string("difference() {\n");
@@ -58,8 +60,8 @@ OpenSCADBuiltins::f_op_difference_process(const OpenSCADBuiltinModel & model, co
 ////////////////////////////////////////
 // Intersection
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_op_intersection()
+Builtins::RegistryItemPtr
+Builtins::f_op_intersection()
 {
     auto model = std::make_unique<NodeModelType>("intersection", "Intersection", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
@@ -68,7 +70,7 @@ OpenSCADBuiltins::f_op_intersection()
     return model;
 }
 void
-OpenSCADBuiltins::f_op_intersection_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_op_intersection_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out;
     out += std::string("intersection() {\n");

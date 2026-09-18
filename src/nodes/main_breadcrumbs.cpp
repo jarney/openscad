@@ -15,6 +15,8 @@
 
 #include "nodes/gui/BreadcrumbsWidget.hpp"
 
+using namespace JNodes::gui;
+
 int main_breadcrumbs(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -30,7 +32,7 @@ int main_breadcrumbs(int argc, char *argv[])
     QVBoxLayout *l = new QVBoxLayout(&mainWidget);
 
     l->addWidget(menuBar);
-    JBreadcrumbs *jw = new JBreadcrumbs();
+    BreadcrumbsWidget *jw = new BreadcrumbsWidget();
     jw->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     l->addWidget(jw);
 

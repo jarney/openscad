@@ -45,7 +45,7 @@ int main_edit(int argc, char *argv[])
 	return 2;
     }
     
-    std::shared_ptr<NodeProgramModelRegistry> registry = OpenSCADBuiltins::registerDataModels();
+    std::shared_ptr<NodeProgramModelRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
     NodeProgram program(registry);
     
     const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
@@ -54,7 +54,7 @@ int main_edit(int argc, char *argv[])
 
     // Register builtins...
     Builtins::initialize();
-    JNodeProgramEditor::initializeStyles();
+    JNodes::gui::NodeEditorWidget::initializeStyles();
 
     QWidget mainWidget;
 
@@ -79,7 +79,7 @@ int main_edit(int argc, char *argv[])
     auto qtabLayout = new QVBoxLayout(qtab);
     l->addWidget(qtab);
 
-    JNodeProgramEditor *jw = new JNodeProgramEditor(program);
+    JNodes::gui::NodeEditorWidget *jw = new JNodes::gui::NodeEditorWidget(program);
     qtab->addTab(jw, "Nodes");
 
     auto qsci = new QsciScintilla(qtab);
@@ -106,7 +106,7 @@ int main_edit(int argc, char *argv[])
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
 	std::ifstream input(argv[1]);
 	serializer.read(program, input);
-	JNodeProgramEditor *jw = new JNodeProgramEditor(program);
+	JNodes::gui::NodeEditorWidget *jw = new JNodes::gui::NodeEditorWidget(program);
 	qtab->insertTab(0, jw, "Nodes-");
 	qtab->setTabVisible(0, true);
     });

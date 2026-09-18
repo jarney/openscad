@@ -3,13 +3,15 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_3D.getName()
+using namespace JNodes::openscad;
+
+#define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_3D.getName()
 
 ////////////////////////////////////////
 // Sphere
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_3d_sphere()
+Builtins::RegistryItemPtr
+Builtins::f_3d_sphere()
 {
     auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
@@ -20,7 +22,7 @@ OpenSCADBuiltins::f_3d_sphere()
 }
 
 void
-OpenSCADBuiltins::f_3d_sphere_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_sphere_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "r");
@@ -33,8 +35,8 @@ OpenSCADBuiltins::f_3d_sphere_process(const OpenSCADBuiltinModel & model, const 
 ////////////////////////////////////////
 // Cube
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_3d_cube()
+Builtins::RegistryItemPtr
+Builtins::f_3d_cube()
 {
     auto model = std::make_unique<NodeModelType>("cube", "Cube", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "size"), "size");
@@ -45,7 +47,7 @@ OpenSCADBuiltins::f_3d_cube()
 }
 
 void
-OpenSCADBuiltins::f_3d_cube_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_cube_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "size");
@@ -57,8 +59,8 @@ OpenSCADBuiltins::f_3d_cube_process(const OpenSCADBuiltinModel & model, const Po
 ////////////////////////////////////////
 // Cylinder
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_3d_cylinder()
+Builtins::RegistryItemPtr
+Builtins::f_3d_cylinder()
 {
     auto model = std::make_unique<NodeModelType>("cylinder", "Cylinder", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "h"), "h");
@@ -74,7 +76,7 @@ OpenSCADBuiltins::f_3d_cylinder()
     return model;
 }
 void
-OpenSCADBuiltins::f_3d_cylinder_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_cylinder_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "h");
@@ -92,8 +94,8 @@ OpenSCADBuiltins::f_3d_cylinder_process(const OpenSCADBuiltinModel & model, cons
 ////////////////////////////////////////
 // Polyhedron
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_3d_polyhedron()
+Builtins::RegistryItemPtr
+Builtins::f_3d_polyhedron()
 {
     auto model = std::make_unique<NodeModelType>("polyhedron", "Polyhedron", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "points"), "points");
@@ -104,7 +106,7 @@ OpenSCADBuiltins::f_3d_polyhedron()
     return model;
 }
 void
-OpenSCADBuiltins::f_3d_polyhedron_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_polyhedron_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "points");
@@ -117,8 +119,8 @@ OpenSCADBuiltins::f_3d_polyhedron_process(const OpenSCADBuiltinModel & model, co
 ////////////////////////////////////////
 // Import
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_3d_import()
+Builtins::RegistryItemPtr
+Builtins::f_3d_import()
 {
     auto model = std::make_unique<NodeModelType>("import", "Import", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
@@ -134,7 +136,7 @@ OpenSCADBuiltins::f_3d_import()
     return model;
 }
 void
-OpenSCADBuiltins::f_3d_import_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_import_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "file");
@@ -152,8 +154,8 @@ OpenSCADBuiltins::f_3d_import_process(const OpenSCADBuiltinModel & model, const 
 ////////////////////////////////////////
 // Linear Extrude
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_3d_linear_extrude()
+Builtins::RegistryItemPtr
+Builtins::f_3d_linear_extrude()
 {
     auto model = std::make_unique<NodeModelType>("linear_extrude", "Linear Extrude", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "height"), "height");
@@ -170,7 +172,7 @@ OpenSCADBuiltins::f_3d_linear_extrude()
     return model;
 }
 void
-OpenSCADBuiltins::f_3d_linear_extrude_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_linear_extrude_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "height");
@@ -190,8 +192,8 @@ OpenSCADBuiltins::f_3d_linear_extrude_process(const OpenSCADBuiltinModel & model
 ////////////////////////////////////////
 // Rotate Extrude
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_3d_rotate_extrude()
+Builtins::RegistryItemPtr
+Builtins::f_3d_rotate_extrude()
 {
     auto model = std::make_unique<NodeModelType>("rotate_extrude", "Rotate Extrude", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "angle"), "angle");
@@ -203,7 +205,7 @@ OpenSCADBuiltins::f_3d_rotate_extrude()
     return model;
 }
 void
-OpenSCADBuiltins::f_3d_rotate_extrude_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_rotate_extrude_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "angle");
@@ -216,8 +218,8 @@ OpenSCADBuiltins::f_3d_rotate_extrude_process(const OpenSCADBuiltinModel & model
 ////////////////////////////////////////
 // Surface
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_3d_surface()
+Builtins::RegistryItemPtr
+Builtins::f_3d_surface()
 {
     auto model = std::make_unique<NodeModelType>("surface", "Heightmap Surface", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
@@ -229,7 +231,7 @@ OpenSCADBuiltins::f_3d_surface()
     return model;
 }
 void
-OpenSCADBuiltins::f_3d_surface_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_surface_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "file");
@@ -243,8 +245,8 @@ OpenSCADBuiltins::f_3d_surface_process(const OpenSCADBuiltinModel & model, const
 ////////////////////////////////////////
 // Import DXF Dimensions
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_3d_dxf_dim()
+Builtins::RegistryItemPtr
+Builtins::f_3d_dxf_dim()
 {
     auto model = std::make_unique<NodeModelType>("dxf_dim", "Read DXF Dimension", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
@@ -258,7 +260,7 @@ OpenSCADBuiltins::f_3d_dxf_dim()
 }
 
 void
-OpenSCADBuiltins::f_3d_dxf_dim_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_dxf_dim_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "file");
@@ -273,8 +275,8 @@ OpenSCADBuiltins::f_3d_dxf_dim_process(const OpenSCADBuiltinModel & model, const
 ////////////////////////////////////////
 // Import DXF Cross (Origin)
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_3d_dxf_cross()
+Builtins::RegistryItemPtr
+Builtins::f_3d_dxf_cross()
 {
     auto model = std::make_unique<NodeModelType>("dxf_cross", "Read DXF Origin", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
@@ -287,7 +289,7 @@ OpenSCADBuiltins::f_3d_dxf_cross()
 }
 
 void
-OpenSCADBuiltins::f_3d_dxf_cross_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_dxf_cross_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "file");

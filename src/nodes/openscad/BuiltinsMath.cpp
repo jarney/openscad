@@ -3,7 +3,9 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_MATH.getName()
+using namespace JNodes::openscad;
+
+#define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_MATH.getName()
 
 UNARY_NODE(math, abs, _OPENSCAD_NODE_CATEGORY, "Absolute Value", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
 {
@@ -77,8 +79,8 @@ UNARY_NODE(math, exp, _OPENSCAD_NODE_CATEGORY, "Exponential(e)", "x", DATA_VARIA
 {
     output.setValue("out", std::string("exp(") + input.getValue("x", "1") + std::string(")"));
 }
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_math_rands()
+Builtins::RegistryItemPtr
+Builtins::f_math_rands()
 {
     auto model = std::make_unique<NodeModelType>("rands", "Random Vector", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "min"), "max");
@@ -90,7 +92,7 @@ OpenSCADBuiltins::f_math_rands()
     return model;
 }
 void
-OpenSCADBuiltins::f_math_rands_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_math_rands_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     auto args = std::string();
 

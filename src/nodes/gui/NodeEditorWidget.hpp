@@ -7,10 +7,13 @@ namespace QtNodes {
     class NodeGraphicsObject;
 }
 
-class JNodeProgramEditor : public QWidget {
+namespace JNodes {
+    namespace gui {
+
+class NodeEditorWidget : public QWidget {
 public:
-    JNodeProgramEditor(NodeProgram & program);
-    ~JNodeProgramEditor();
+    NodeEditorWidget(NodeProgram & program);
+    ~NodeEditorWidget();
     void editGraph(std::string editGraph);
 
     std::vector<QtNodes::NodeGraphicsObject*> selectedNodes();
@@ -26,6 +29,9 @@ private:
     
     NodeProgram &_program;
     std::unique_ptr<QVBoxLayout> layout;
-    JBreadcrumbs *_jbreadcrumbs;
+    BreadcrumbsWidget *_jbreadcrumbs;
 };
 
+
+    } // End gui
+} // End JNodes 

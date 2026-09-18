@@ -5,10 +5,13 @@
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QPushButton>
 
-class JBreadcrumbs : public QWidget {
+namespace JNodes {
+  namespace gui {
+
+class BreadcrumbsWidget : public QWidget {
 public:
-    JBreadcrumbs();
-    ~JBreadcrumbs();
+    BreadcrumbsWidget();
+    ~BreadcrumbsWidget();
     void addPage(QWidget * crumb);
     void removePage(int index);
     QWidget *getPage();
@@ -21,3 +24,6 @@ private:
     std::vector<QWidget *> pages;
     std::vector<QWidget *> buttons;
 };
+
+  } // End gui
+} // End JNodes

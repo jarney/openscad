@@ -27,7 +27,7 @@ int main_process(int argc, char *argv[])
 	return 2;
     }
     
-    std::shared_ptr<NodeProgramModelRegistry> registry = OpenSCADBuiltins::registerDataModels();
+    std::shared_ptr<NodeProgramModelRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
     NodeProgram program(registry);
     
     const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();

@@ -3,24 +3,26 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_SYNTAX("syntax", "Syntax", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_CONST("const", "Constants", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_OPERATOR("operator", "Operators", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_2D("2d", "2D Primitives", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_3D("3d", "3d Primitives", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_BOOLEAN_OPS("op", "Boolean Operations", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_XFORM("xform", "Transformations", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_LIST("list", "List", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_FUNCTION("function", "Functions", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_FLOW("flow", "Flow Control", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_MATH("math", "Mathematical", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_TYPETEST("typetest", "Type Test", "../resources/icons/stopbutton.png");
-const NodeModelCategory OpenSCADBuiltins::CATEGORY_OTHER("other", "Other", "../resources/icons/stopbutton.png");
+using namespace JNodes::openscad;
+
+const NodeModelCategory Builtins::CATEGORY_SYNTAX("syntax", "Syntax", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_CONST("const", "Constants", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_OPERATOR("operator", "Operators", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_2D("2d", "2D Primitives", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_3D("3d", "3d Primitives", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_BOOLEAN_OPS("op", "Boolean Operations", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_XFORM("xform", "Transformations", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_LIST("list", "List", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_FUNCTION("function", "Functions", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_FLOW("flow", "Flow Control", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_MATH("math", "Mathematical", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_TYPETEST("typetest", "Type Test", "../resources/icons/stopbutton.png");
+const NodeModelCategory Builtins::CATEGORY_OTHER("other", "Other", "../resources/icons/stopbutton.png");
 
 #define _OPENSCAD_NODE_REGISTER(name) ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_##name()))
 
 std::shared_ptr<NodeProgramModelRegistry>
-OpenSCADBuiltins::registerDataModels()
+Builtins::registerDataModels()
 {
     auto ret = std::make_shared<NodeProgramModelRegistry>();
 
@@ -182,7 +184,7 @@ OpenSCADBuiltins::registerDataModels()
 }
 
 std::string
-OpenSCADBuiltins::joinArguments(std::vector<std::string> list)
+Builtins::joinArguments(std::vector<std::string> list)
 {
     std::string out;
     bool first = true;
@@ -198,7 +200,7 @@ OpenSCADBuiltins::joinArguments(std::vector<std::string> list)
 }
 
 void
-OpenSCADBuiltins::conditionalArg(
+Builtins::conditionalArg(
     std::vector<std::string> & args,
     const PortFunctionData & input,
     const OpenSCADBuiltinModel & model,
@@ -217,7 +219,7 @@ OpenSCADBuiltins::conditionalArg(
 }
 
 void
-OpenSCADBuiltins::conditionalArg(
+Builtins::conditionalArg(
     std::vector<std::string> & args,
     const PortFunctionData & input,
     const OpenSCADBuiltinModel & model,

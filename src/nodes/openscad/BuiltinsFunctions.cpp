@@ -3,7 +3,9 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_FUNCTION.getName()
+using namespace JNodes::openscad;
+
+#define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_FUNCTION.getName()
 
 BINARY_NODE(function, concat, _OPENSCAD_NODE_CATEGORY, "Concatenate", "a", DATA_VARIABLE, "b", DATA_VARIABLE, "out", DATA_VARIABLE)
 {
@@ -33,8 +35,8 @@ BINARY_NODE(function, search, _OPENSCAD_NODE_CATEGORY, "Search for value", "need
 ////////////////////////////////////////
 // Version
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_function_version()
+Builtins::RegistryItemPtr
+Builtins::f_function_version()
 {
     auto model = std::make_unique<NodeModelType>("version", "Version", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -42,15 +44,15 @@ OpenSCADBuiltins::f_function_version()
     return model;
 }
 void
-OpenSCADBuiltins::f_function_version_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_function_version_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output.setValue("value", std::string("version()"));
 }
 ////////////////////////////////////////
 // Version Number
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_function_version_num()
+Builtins::RegistryItemPtr
+Builtins::f_function_version_num()
 {
     auto model = std::make_unique<NodeModelType>("version_num", "Version Number", _OPENSCAD_NODE_CATEGORY);
     model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
@@ -58,7 +60,7 @@ OpenSCADBuiltins::f_function_version_num()
     return model;
 }
 void
-OpenSCADBuiltins::f_function_version_num_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_function_version_num_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output.setValue("value", std::string("version_num()"));
 }

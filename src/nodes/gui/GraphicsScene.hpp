@@ -6,18 +6,21 @@
 #include <QtNodes/internal/Export.hpp>
 #include <QtNodes/internal/NodeConnectionInteraction.hpp>
 
+namespace JNodes {
+    namespace gui {
+
 /**
  * @brief An advanced scene working with data-propagating graphs.
  *
  * The class represents a scene that existed in v2.x but built wit the
  * new model-view approach in mind.
  */
-class NODE_EDITOR_PUBLIC NodeProgramGraphicsScene : public QtNodes::BasicGraphicsScene
+class NODE_EDITOR_PUBLIC GraphicsScene : public QtNodes::BasicGraphicsScene
 {
     Q_OBJECT
 public:
-    NodeProgramGraphicsScene(NodeProgramGraphModel &graphModel, QObject *parent = nullptr);
-    ~NodeProgramGraphicsScene() = default;
+    GraphicsScene(NodeProgramGraphModel &graphModel, QObject *parent = nullptr);
+    ~GraphicsScene() = default;
 
 public:
     std::vector<QtNodes::NodeId> selectedNodes() const;
@@ -37,3 +40,5 @@ private:
     NodeProgramGraphModel &_graphModel;
 };
 
+    } // End gui
+} // End JNodes 

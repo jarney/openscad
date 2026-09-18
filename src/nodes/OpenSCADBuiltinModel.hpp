@@ -5,7 +5,11 @@
 #include "nodes/NodeModelType.hpp"
 #include "nodes/NodeProgram.hpp"
 
-class JNodeProgramEditor;
+namespace JNodes {
+    namespace gui {
+	class NodeEditorWidget;
+    }
+}
 class NodeProgramGraphModel;
 
 /// The model dictates the number of inputs and outputs for the Node.
@@ -41,8 +45,8 @@ public:
 
     virtual bool resizable() const override;
     
-    void setEditor(JNodeProgramEditor *receiver);
-    JNodeProgramEditor *getEditor() const;
+    void setEditor(JNodes::gui::NodeEditorWidget *receiver);
+    JNodes::gui::NodeEditorWidget *getEditor() const;
 
     bool hasValue(std::string key) const;
     std::string getValue(std::string key, std::string default_value) const;
@@ -63,7 +67,7 @@ protected:
     const NodeModelType & _modelType;
     NodeProgramGraphModel & _graph;
     QWidget *_widget;
-    JNodeProgramEditor *_editor;
+    JNodes::gui::NodeEditorWidget *_editor;
     std::map<std::string, std::string> _modelData;
 };
 

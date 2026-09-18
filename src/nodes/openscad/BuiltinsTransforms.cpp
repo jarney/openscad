@@ -3,13 +3,15 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_XFORM.getName()
+using namespace JNodes::openscad;
+
+#define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_XFORM.getName()
 
 ////////////////////////////////////////
 // Translate
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_xform_translate()
+Builtins::RegistryItemPtr
+Builtins::f_xform_translate()
 {
     auto model = std::make_unique<NodeModelType>("translate", "Translate", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "v"), "v");
@@ -19,7 +21,7 @@ OpenSCADBuiltins::f_xform_translate()
     return model;
 }
 void
-OpenSCADBuiltins::f_xform_translate_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_xform_translate_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "v");
@@ -34,8 +36,8 @@ OpenSCADBuiltins::f_xform_translate_process(const OpenSCADBuiltinModel & model, 
 ////////////////////////////////////////
 // Rotate
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_xform_rotate()
+Builtins::RegistryItemPtr
+Builtins::f_xform_rotate()
 {
     auto model = std::make_unique<NodeModelType>("rotate", "Rotate", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "a"), "a");
@@ -46,7 +48,7 @@ OpenSCADBuiltins::f_xform_rotate()
     return model;
 }
 void
-OpenSCADBuiltins::f_xform_rotate_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_xform_rotate_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "a");
@@ -61,8 +63,8 @@ OpenSCADBuiltins::f_xform_rotate_process(const OpenSCADBuiltinModel & model, con
 ////////////////////////////////////////
 // Scale
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_xform_scale()
+Builtins::RegistryItemPtr
+Builtins::f_xform_scale()
 {
     auto model = std::make_unique<NodeModelType>("scale", "Scale", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "v"), "v");
@@ -72,7 +74,7 @@ OpenSCADBuiltins::f_xform_scale()
     return model;
 }
 void
-OpenSCADBuiltins::f_xform_scale_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_xform_scale_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "v");
@@ -87,8 +89,8 @@ OpenSCADBuiltins::f_xform_scale_process(const OpenSCADBuiltinModel & model, cons
 ////////////////////////////////////////
 // Resize
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_xform_resize()
+Builtins::RegistryItemPtr
+Builtins::f_xform_resize()
 {
     auto model = std::make_unique<NodeModelType>("resize", "Resize", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "newsize"), "newsize");
@@ -100,7 +102,7 @@ OpenSCADBuiltins::f_xform_resize()
     return model;
 }
 void
-OpenSCADBuiltins::f_xform_resize_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_xform_resize_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out = std::string();
     std::vector<std::string> args;
@@ -117,8 +119,8 @@ OpenSCADBuiltins::f_xform_resize_process(const OpenSCADBuiltinModel & model, con
 ////////////////////////////////////////
 // Mirror
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_xform_mirror()
+Builtins::RegistryItemPtr
+Builtins::f_xform_mirror()
 {
     auto model = std::make_unique<NodeModelType>("mirror", "Mirror", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "v"), "v");
@@ -128,7 +130,7 @@ OpenSCADBuiltins::f_xform_mirror()
     return model;
 }
 void
-OpenSCADBuiltins::f_xform_mirror_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_xform_mirror_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "v");
@@ -143,8 +145,8 @@ OpenSCADBuiltins::f_xform_mirror_process(const OpenSCADBuiltinModel & model, con
 ////////////////////////////////////////
 // Multmatrix
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_xform_multmatrix()
+Builtins::RegistryItemPtr
+Builtins::f_xform_multmatrix()
 {
     auto model = std::make_unique<NodeModelType>("multmatrix", "Multiply by Matrix", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "m"), "m");
@@ -154,7 +156,7 @@ OpenSCADBuiltins::f_xform_multmatrix()
     return model;
 }
 void
-OpenSCADBuiltins::f_xform_multmatrix_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_xform_multmatrix_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "m");
@@ -169,8 +171,8 @@ OpenSCADBuiltins::f_xform_multmatrix_process(const OpenSCADBuiltinModel & model,
 ////////////////////////////////////////
 // Color
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_xform_color()
+Builtins::RegistryItemPtr
+Builtins::f_xform_color()
 {
     auto model = std::make_unique<NodeModelType>("color", "Color", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "c"), "color");
@@ -182,7 +184,7 @@ OpenSCADBuiltins::f_xform_color()
 }
 
 void
-OpenSCADBuiltins::f_xform_color_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_xform_color_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "v");
@@ -197,8 +199,8 @@ OpenSCADBuiltins::f_xform_color_process(const OpenSCADBuiltinModel & model, cons
 ////////////////////////////////////////
 // Offset
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_xform_offset()
+Builtins::RegistryItemPtr
+Builtins::f_xform_offset()
 {
     auto model = std::make_unique<NodeModelType>("offset", "Offset", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
@@ -211,7 +213,7 @@ OpenSCADBuiltins::f_xform_offset()
 }
 
 void
-OpenSCADBuiltins::f_xform_offset_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_xform_offset_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "r");
@@ -228,8 +230,8 @@ OpenSCADBuiltins::f_xform_offset_process(const OpenSCADBuiltinModel & model, con
 ////////////////////////////////////////
 // Convex Hull
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_xform_hull()
+Builtins::RegistryItemPtr
+Builtins::f_xform_hull()
 {
     auto model = std::make_unique<NodeModelType>("hull", "Convex Hull", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
@@ -238,7 +240,7 @@ OpenSCADBuiltins::f_xform_hull()
     return model;
 }
 void
-OpenSCADBuiltins::f_xform_hull_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_xform_hull_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::string out;
     out += std::string("hull() {\n");
@@ -252,8 +254,8 @@ OpenSCADBuiltins::f_xform_hull_process(const OpenSCADBuiltinModel & model, const
 ////////////////////////////////////////
 // Fill
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_xform_fill()
+Builtins::RegistryItemPtr
+Builtins::f_xform_fill()
 {
     auto model = std::make_unique<NodeModelType>("fill", "Fill Solid", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
@@ -262,7 +264,7 @@ OpenSCADBuiltins::f_xform_fill()
     return model;
 }
 void
-OpenSCADBuiltins::f_xform_fill_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_xform_fill_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output.setValue("Geometry", std::string("fill() {\n") +
 	std::string("    {\n") + 
@@ -274,8 +276,8 @@ OpenSCADBuiltins::f_xform_fill_process(const OpenSCADBuiltinModel & model, const
 ////////////////////////////////////////
 // Minkowski
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_xform_minkowski()
+Builtins::RegistryItemPtr
+Builtins::f_xform_minkowski()
 {
     auto model = std::make_unique<NodeModelType>("minkowski", "Minkowski", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
@@ -284,7 +286,7 @@ OpenSCADBuiltins::f_xform_minkowski()
     return model;
 }
 void
-OpenSCADBuiltins::f_xform_minkowski_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_xform_minkowski_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     output.setValue("Geometry", std::string("minkowski() {\n") +
 	std::string("    {\n") + 

@@ -53,7 +53,7 @@ int main_parse(int argc, char *argv[])
 	return 2;
     }
 
-    std::shared_ptr<NodeProgramModelRegistry> registry = OpenSCADBuiltins::registerDataModels();
+    std::shared_ptr<NodeProgramModelRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
     NodeProgram program(registry);
     
     if (!QFileInfo::exists(argv[1])) {

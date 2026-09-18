@@ -7,8 +7,9 @@
 #include "nodes/gui/NodeEditorWidget.hpp"
 #include "nodes/gui/GraphicsScene.hpp"
 
+using namespace JNodes::gui;
 
-JNodeProgramEditor::JNodeProgramEditor(NodeProgram & program)
+NodeEditorWidget::NodeEditorWidget(NodeProgram & program)
     : _program(program)
 {
     // Prepare the program by letting it know about
@@ -20,7 +21,7 @@ JNodeProgramEditor::JNodeProgramEditor(NodeProgram & program)
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
-    _jbreadcrumbs = new JBreadcrumbs();
+    _jbreadcrumbs = new BreadcrumbsWidget();
     layout->addWidget(_jbreadcrumbs);
 
     // If the program is non-trivial, we should
@@ -36,7 +37,7 @@ JNodeProgramEditor::JNodeProgramEditor(NodeProgram & program)
 }
 
 void
-JNodeProgramEditor::prepareProgram()
+NodeEditorWidget::prepareProgram()
 {
     for (const auto & graphId : _program.getGraphs()) {
 	const NodeProgramGraphModel *graph = _program.getGraph(graphId);
@@ -58,23 +59,18 @@ JNodeProgramEditor::prepareProgram()
 }
 
 
-JNodeProgramEditor::~JNodeProgramEditor()
+NodeEditorWidget::~NodeEditorWidget()
 {}
 
 
-// So what if, actually, we encode the graph inside the 'for' node
-// and do it recursively instead of making the graphs as peers?
-// For module-call, we would still link to an external module statement,
-// but the module statement itself would contain another flow, so that
-// actually feels pretty natural.  Loading a module node defines the flow...
 void
-JNodeProgramEditor::editGraph(std::string editGraph)
+NodeEditorWidget::editGraph(std::string editGraph)
 {
     NodeProgramGraphModel *graph = _program.getGraph(editGraph);
     if (graph == nullptr) {
 	return;
     }
-    auto scene = new NodeProgramGraphicsScene(*graph);
+    auto scene = new GraphicsScene(*graph);
 
     // Load up the groups.
     
@@ -84,7 +80,7 @@ JNodeProgramEditor::editGraph(std::string editGraph)
 }
 
 std::vector<QtNodes::NodeGraphicsObject*>
-JNodeProgramEditor::selectedNodes()
+NodeEditorWidget::selectedNodes()
 {
     QtNodes::GraphicsView *view = (QtNodes::GraphicsView *)_jbreadcrumbs->getPage();
     QtNodes::BasicGraphicsScene *scene = view->getNodeScene();
@@ -92,7 +88,7 @@ JNodeProgramEditor::selectedNodes()
 }
 
 void
-JNodeProgramEditor::createGroup(std::vector<QtNodes::NodeGraphicsObject*> & groupNodes, QString name)
+NodeEditorWidget::createGroup(std::vector<QtNodes::NodeGraphicsObject*> & groupNodes, QString name)
 {
     QtNodes::GraphicsView *view = (QtNodes::GraphicsView *)_jbreadcrumbs->getPage();
     QtNodes::BasicGraphicsScene *scene = view->getNodeScene();
@@ -101,7 +97,7 @@ JNodeProgramEditor::createGroup(std::vector<QtNodes::NodeGraphicsObject*> & grou
 
 
 void
-JNodeProgramEditor::initializeStyles()
+NodeEditorWidget::initializeStyles()
 {
     QtNodes::ConnectionStyle::setConnectionStyle(
         R"(

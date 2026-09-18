@@ -1,6 +1,8 @@
 #include "nodes/gui/BreadcrumbsWidget.hpp"
 
-JBreadcrumbs::JBreadcrumbs()
+using namespace JNodes::gui;
+
+BreadcrumbsWidget::BreadcrumbsWidget()
 {
     layout = std::make_unique<QVBoxLayout>(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -22,13 +24,13 @@ JBreadcrumbs::JBreadcrumbs()
 }
 
 QWidget *
-JBreadcrumbs::getPage()
+BreadcrumbsWidget::getPage()
 {
     return pages.at(0);
 }
 
 void
-JBreadcrumbs::addPage(QWidget *page)
+BreadcrumbsWidget::addPage(QWidget *page)
 {
     // Add the page
     if (pages.size() > 0) {
@@ -59,7 +61,7 @@ JBreadcrumbs::addPage(QWidget *page)
 }
 
 void
-JBreadcrumbs::removePage(int index)
+BreadcrumbsWidget::removePage(int index)
 {
     // Remove the current (last) page as long as it's not also the first.
     int current_page = pages.size()-1;
@@ -98,6 +100,6 @@ JBreadcrumbs::removePage(int index)
     }
 }
 
-JBreadcrumbs::~JBreadcrumbs()
+BreadcrumbsWidget::~BreadcrumbsWidget()
 {
 }

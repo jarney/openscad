@@ -3,7 +3,9 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_OTHER.getName()
+using namespace JNodes::openscad;
+
+#define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_OTHER.getName()
 
 UNARY_NODE(other, echo, _OPENSCAD_NODE_CATEGORY, "Echo", "value", DATA_VARIABLE, "out", DATA_VARIABLE)
 {
@@ -12,8 +14,8 @@ UNARY_NODE(other, echo, _OPENSCAD_NODE_CATEGORY, "Echo", "value", DATA_VARIABLE,
 ////////////////////////////////////////
 // Render
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_other_render()
+Builtins::RegistryItemPtr
+Builtins::f_other_render()
 {
     auto model = std::make_unique<NodeModelType>("render", "Render", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "convexity"), "convexity");
@@ -24,7 +26,7 @@ OpenSCADBuiltins::f_other_render()
 }
 
 void
-OpenSCADBuiltins::f_other_render_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_other_render_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "convexity");
@@ -38,8 +40,8 @@ OpenSCADBuiltins::f_other_render_process(const OpenSCADBuiltinModel & model, con
 ////////////////////////////////////////
 // Children
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_other_children()
+Builtins::RegistryItemPtr
+Builtins::f_other_children()
 {
     auto model = std::make_unique<NodeModelType>("children", "Children", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "index"), "index");
@@ -49,7 +51,7 @@ OpenSCADBuiltins::f_other_children()
 }
 
 void
-OpenSCADBuiltins::f_other_children_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_other_children_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "index");
@@ -63,8 +65,8 @@ OpenSCADBuiltins::f_other_children_process(const OpenSCADBuiltinModel & model, c
 ////////////////////////////////////////
 // Assert
 ////////////////////////////////////////
-OpenSCADBuiltins::RegistryItemPtr
-OpenSCADBuiltins::f_other_assert()
+Builtins::RegistryItemPtr
+Builtins::f_other_assert()
 {
     auto model = std::make_unique<NodeModelType>("assert", "Assert", _OPENSCAD_NODE_CATEGORY);
     model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "condition"), "condition");
@@ -75,7 +77,7 @@ OpenSCADBuiltins::f_other_assert()
 }
 
 void
-OpenSCADBuiltins::f_other_assert_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_other_assert_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, model, "condition");

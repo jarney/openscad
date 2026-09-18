@@ -3,7 +3,9 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
-#define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_TYPETEST.getName()
+using namespace JNodes::openscad;
+
+#define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_TYPETEST.getName()
 
 UNARY_NODE(typetest, is_bool, _OPENSCAD_NODE_CATEGORY, "Is Boolean", "x", DATA_VARIABLE, "out", DATA_VARIABLE)
 {
