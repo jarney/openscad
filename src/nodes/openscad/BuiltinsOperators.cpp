@@ -1,9 +1,8 @@
-#include "nodes/OpenSCADBuiltinFactory.hpp"
-
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
 using namespace JNodes::openscad;
+using namespace JNodes::core;
 
 #define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_OPERATOR.getName()
 

@@ -1,8 +1,10 @@
 #pragma once
 
-#include "nodes/OpenSCADDataTypes.hpp"
-#include "nodes/NodeModelPort.hpp"
+#include "nodes/NodePort.hpp"
 #include "nodes/PortFunctionData.hpp"
+
+namespace JNodes {
+    namespace core {
 
 class OpenSCADBuiltinModel;
 
@@ -16,17 +18,18 @@ public:
     std::string getName() const;
     std::string getCaption() const;
     std::string getCategory() const;
+    std::string getIcon() const;
     bool getResizable() const;
     void setResizable(bool resizable);
     
-    void addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName, QtNodes::ConnectionPolicy policy);
-    void addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName);
-    void addOutputPort(std::unique_ptr<NodeModelPort> outputPort, std::string outputPortName);
+    void addInputPort(std::unique_ptr<NodePort> inputPort, std::string inputPortName, QtNodes::ConnectionPolicy policy);
+    void addInputPort(std::unique_ptr<NodePort> inputPort, std::string inputPortName);
+    void addOutputPort(std::unique_ptr<NodePort> outputPort, std::string outputPortName);
 
     unsigned int getInputPortCount() const;
     unsigned int getOutputPortCount() const;
-    const NodeModelPort & getInputPort(unsigned int index) const;
-    const NodeModelPort & getOutputPort(unsigned int index) const;
+    const NodePort & getInputPort(unsigned int index) const;
+    const NodePort & getOutputPort(unsigned int index) const;
     std::string getInputPortName(unsigned int index) const;
     std::string getOutputPortName(unsigned int index) const;
 
@@ -47,9 +50,10 @@ private:
     std::string _name;
     std::string _caption;
     std::string _category;
+    std::string _icon;
     bool _resizable;
-    std::vector<std::unique_ptr<NodeModelPort>> _inputPorts;
-    std::vector<std::unique_ptr<NodeModelPort>> _outputPorts;
+    std::vector<std::unique_ptr<NodePort>> _inputPorts;
+    std::vector<std::unique_ptr<NodePort>> _outputPorts;
     std::map<int, std::string> _inputPortNames;
     std::map<int, std::string> _outputPortNames;
     NodeModelType::NodeProcessor _processor;
@@ -57,4 +61,5 @@ private:
     NodeModelType::WidgetFactory _widgetFactory;
 };
 
-
+    }
+}

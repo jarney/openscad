@@ -4,6 +4,9 @@
 #include "NodeProgramModelRegistry.hpp"
 #include <optional>
 
+namespace JNodes {
+    namespace core {
+
 /**
  * A node program consists of a collection of
  * directed acyclic graphs where each node
@@ -63,3 +66,5 @@ private:
     int _maxGraphId;
     std::map<GraphId, NodeProgramGraphModel*> graphs;
 };
+    } // End core
+} // End JNodes

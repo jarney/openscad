@@ -1,12 +1,16 @@
 #pragma once
 
-#include "nodes/OpenSCADDataTypes.hpp"
+#include <QtNodes/NodeData>
+#include <QtNodes/Definitions>
 
-class NodeModelPort {
+namespace JNodes {
+    namespace core {
+
+class NodePort {
 public:
-    NodeModelPort(QtNodes::NodeDataType type, QString portCaption);
-    NodeModelPort(QtNodes::NodeDataType type);
-    virtual ~NodeModelPort();
+    NodePort(QtNodes::NodeDataType type, QString portCaption);
+    NodePort(QtNodes::NodeDataType type);
+    virtual ~NodePort();
 
     QtNodes::NodeDataType nodeDataType() const;
     QtNodes::ConnectionPolicy getConnectionPolicy() const;
@@ -26,3 +30,5 @@ private:
 };
 
 
+    } // End core
+} // End JNodes

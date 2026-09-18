@@ -1,9 +1,8 @@
-#include "nodes/OpenSCADBuiltinFactory.hpp"
-
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
 using namespace JNodes::openscad;
+using namespace JNodes::core;
 
 #define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_MATH.getName()
 
@@ -83,11 +82,11 @@ Builtins::RegistryItemPtr
 Builtins::f_math_rands()
 {
     auto model = std::make_unique<NodeModelType>("rands", "Random Vector", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "min"), "max");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "min"), "max");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "n"), "n");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "seed"), "seed");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "min"), "max");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "min"), "max");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "n"), "n");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "seed"), "seed");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_math_rands_process);
     return model;
 }

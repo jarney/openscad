@@ -12,7 +12,7 @@ namespace JNodes {
 
 class NodeEditorWidget : public QWidget {
 public:
-    NodeEditorWidget(NodeProgram & program);
+    NodeEditorWidget(JNodes::core::NodeProgram & program);
     ~NodeEditorWidget();
     void editGraph(std::string editGraph);
 
@@ -27,7 +27,7 @@ private:
      */
     void prepareProgram();
     
-    NodeProgram &_program;
+    JNodes::core::NodeProgram &_program;
     std::unique_ptr<QVBoxLayout> layout;
     BreadcrumbsWidget *_jbreadcrumbs;
 };

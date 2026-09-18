@@ -1,9 +1,8 @@
-#include "nodes/OpenSCADBuiltinFactory.hpp"
-
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
 using namespace JNodes::openscad;
+using namespace JNodes::core;
 
 #define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_XFORM.getName()
 
@@ -14,9 +13,9 @@ Builtins::RegistryItemPtr
 Builtins::f_xform_translate()
 {
     auto model = std::make_unique<NodeModelType>("translate", "Translate", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "v"), "v");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "v"), "v");
+    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_translate_process);
     return model;
 }
@@ -40,10 +39,10 @@ Builtins::RegistryItemPtr
 Builtins::f_xform_rotate()
 {
     auto model = std::make_unique<NodeModelType>("rotate", "Rotate", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "a"), "a");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "v"), "v");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "a"), "a");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "v"), "v");
+    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_rotate_process);
     return model;
 }
@@ -67,9 +66,9 @@ Builtins::RegistryItemPtr
 Builtins::f_xform_scale()
 {
     auto model = std::make_unique<NodeModelType>("scale", "Scale", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "v"), "v");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "v"), "v");
+    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_scale_process);
     return model;
 }
@@ -93,11 +92,11 @@ Builtins::RegistryItemPtr
 Builtins::f_xform_resize()
 {
     auto model = std::make_unique<NodeModelType>("resize", "Resize", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "newsize"), "newsize");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "auto"), "auto");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "convexity"), "convexity");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "newsize"), "newsize");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "auto"), "auto");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
+    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_resize_process);
     return model;
 }
@@ -123,9 +122,9 @@ Builtins::RegistryItemPtr
 Builtins::f_xform_mirror()
 {
     auto model = std::make_unique<NodeModelType>("mirror", "Mirror", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "v"), "v");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "v"), "v");
+    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_mirror_process);
     return model;
 }
@@ -149,9 +148,9 @@ Builtins::RegistryItemPtr
 Builtins::f_xform_multmatrix()
 {
     auto model = std::make_unique<NodeModelType>("multmatrix", "Multiply by Matrix", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "m"), "m");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "m"), "m");
+    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_multmatrix_process);
     return model;
 }
@@ -175,10 +174,10 @@ Builtins::RegistryItemPtr
 Builtins::f_xform_color()
 {
     auto model = std::make_unique<NodeModelType>("color", "Color", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "c"), "color");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "alpha"), "alpha");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "c"), "color");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "alpha"), "alpha");
+    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_color_process);
     return model;
 }
@@ -203,11 +202,11 @@ Builtins::RegistryItemPtr
 Builtins::f_xform_offset()
 {
     auto model = std::make_unique<NodeModelType>("offset", "Offset", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "delta"), "delta");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "chamfer"), "chamfer");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "delta"), "delta");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "chamfer"), "chamfer");
+    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_color_process);
     return model;
 }
@@ -234,8 +233,8 @@ Builtins::RegistryItemPtr
 Builtins::f_xform_hull()
 {
     auto model = std::make_unique<NodeModelType>("hull", "Convex Hull", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_hull_process);
     return model;
 }
@@ -258,8 +257,8 @@ Builtins::RegistryItemPtr
 Builtins::f_xform_fill()
 {
     auto model = std::make_unique<NodeModelType>("fill", "Fill Solid", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_fill_process);
     return model;
 }
@@ -280,8 +279,8 @@ Builtins::RegistryItemPtr
 Builtins::f_xform_minkowski()
 {
     auto model = std::make_unique<NodeModelType>("minkowski", "Minkowski", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_xform_minkowski_process);
     return model;
 }

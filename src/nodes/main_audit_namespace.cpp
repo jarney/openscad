@@ -13,14 +13,14 @@
 
 #include "nodes/nodes.hpp"
 
+using namespace JNodes::core;
+
 void dumpRegistry(std::shared_ptr<NodeProgramModelRegistry> registry);
 void dumpBuiltins(void);
 void dumpNotImplemented(std::shared_ptr<NodeProgramModelRegistry> registry);
 
 int main_audit_namespace(int argc, char *argv[])
 {
-//    QApplication app(argc, argv);
-    
     if (argc != 2) {
 	fprintf(stderr, "Usage: audit-namespace filename\n");
 	return 1;

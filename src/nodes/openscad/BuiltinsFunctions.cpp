@@ -1,9 +1,8 @@
-#include "nodes/OpenSCADBuiltinFactory.hpp"
-
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
 using namespace JNodes::openscad;
+using namespace JNodes::core;
 
 #define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_FUNCTION.getName()
 
@@ -39,7 +38,7 @@ Builtins::RegistryItemPtr
 Builtins::f_function_version()
 {
     auto model = std::make_unique<NodeModelType>("version", "Version", _OPENSCAD_NODE_CATEGORY);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE), "value");
     model->setProcessor(f_function_version_process);
     return model;
 }
@@ -55,7 +54,7 @@ Builtins::RegistryItemPtr
 Builtins::f_function_version_num()
 {
     auto model = std::make_unique<NodeModelType>("version_num", "Version Number", _OPENSCAD_NODE_CATEGORY);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE), "value");
     model->setProcessor(f_function_version_process);
     return model;
 }

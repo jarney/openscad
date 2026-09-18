@@ -9,7 +9,9 @@ namespace JNodes {
     namespace gui {
 	class NodeEditorWidget;
     }
-}
+
+    namespace core {
+	
 class NodeProgramGraphModel;
 
 /// The model dictates the number of inputs and outputs for the Node.
@@ -36,8 +38,8 @@ public:
 
     QWidget *embeddedWidget() override;
 
-    void addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName);
-    void addOutputPort(std::unique_ptr<NodeModelPort> outputPort, std::string outputPortName);
+    void addInputPort(std::unique_ptr<NodePort> inputPort, std::string inputPortName);
+    void addOutputPort(std::unique_ptr<NodePort> outputPort, std::string outputPortName);
     std::string inputPortName(QtNodes::PortIndex portIndex) const;
     std::string outputPortName(QtNodes::PortIndex portIndex) const;
     
@@ -71,3 +73,5 @@ protected:
     std::map<std::string, std::string> _modelData;
 };
 
+    } // End core
+} // End JNodes

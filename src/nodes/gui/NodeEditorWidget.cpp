@@ -8,6 +8,7 @@
 #include "nodes/gui/GraphicsScene.hpp"
 
 using namespace JNodes::gui;
+using namespace JNodes::core;
 
 NodeEditorWidget::NodeEditorWidget(NodeProgram & program)
     : _program(program)

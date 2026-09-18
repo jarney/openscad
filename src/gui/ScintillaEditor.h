@@ -42,8 +42,8 @@ public:
 
   QTabWidget *qtab;
 
-  std::shared_ptr<NodeProgramModelRegistry> qnode_registry;
-  std::shared_ptr<NodeProgram> qnode_program;
+  std::shared_ptr<JNodes::core::NodeProgramModelRegistry> qnode_registry;
+  std::shared_ptr<JNodes::core::NodeProgram> qnode_program;
 
   QString toPlainText() override;
   void initMargin();

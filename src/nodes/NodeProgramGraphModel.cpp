@@ -8,6 +8,8 @@
 #include <stack>
 #include <stdexcept>
 
+using namespace JNodes::core;
+
 NodeProgramGraphModel::NodeProgramGraphModel(std::shared_ptr<NodeProgramModelRegistry> registry, NodeProgram & parent)
     : _registry(std::move(registry))
     , _nextNodeId{0}

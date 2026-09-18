@@ -15,6 +15,9 @@
 #include <unordered_map>
 #include <QString>
 
+namespace JNodes {
+    namespace core {
+
 class NodeProgram;
 
 class NODE_EDITOR_PUBLIC NodeProgramGraphModel
@@ -181,4 +184,5 @@ private:
     NodeProgram & _parent;
 };
 
-
+    } // End core
+} // End JNodes

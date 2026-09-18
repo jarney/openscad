@@ -1,5 +1,7 @@
 #include "NodeProgramSerializer.hpp"
 
+using namespace JNodes::core;
+
 NodeProgramSerializerJSON::NodeProgramSerializerJSON()
 {}
 

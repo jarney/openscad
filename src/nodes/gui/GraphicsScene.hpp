@@ -19,7 +19,7 @@ class NODE_EDITOR_PUBLIC GraphicsScene : public QtNodes::BasicGraphicsScene
 {
     Q_OBJECT
 public:
-    GraphicsScene(NodeProgramGraphModel &graphModel, QObject *parent = nullptr);
+    GraphicsScene(JNodes::core::NodeProgramGraphModel &graphModel, QObject *parent = nullptr);
     ~GraphicsScene() = default;
 
 public:
@@ -37,7 +37,7 @@ Q_SIGNALS:
     void sceneLoaded();
 
 private:
-    NodeProgramGraphModel &_graphModel;
+    JNodes::core::NodeProgramGraphModel &_graphModel;
 };
 
     } // End gui

@@ -1,9 +1,10 @@
-#include "nodes/OpenSCADBuiltinFactory.hpp"
+#include "nodes/NodeFactory.hpp"
 #include "nodes/gui/NodeEditorWidget.hpp"
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
 using namespace JNodes::openscad;
+using namespace JNodes::core;
 
 const NodeModelCategory Builtins::CATEGORY_SYNTAX("syntax", "Syntax", "../resources/icons/stopbutton.png");
 const NodeModelCategory Builtins::CATEGORY_CONST("const", "Constants", "../resources/icons/stopbutton.png");
@@ -19,7 +20,7 @@ const NodeModelCategory Builtins::CATEGORY_MATH("math", "Mathematical", "../reso
 const NodeModelCategory Builtins::CATEGORY_TYPETEST("typetest", "Type Test", "../resources/icons/stopbutton.png");
 const NodeModelCategory Builtins::CATEGORY_OTHER("other", "Other", "../resources/icons/stopbutton.png");
 
-#define _OPENSCAD_NODE_REGISTER(name) ret->registerModel(std::make_unique<OpenSCADBuiltinFactory>(f_##name()))
+#define _OPENSCAD_NODE_REGISTER(name) ret->registerModel(std::make_unique<NodeFactoryTyped>(f_##name()))
 
 std::shared_ptr<NodeProgramModelRegistry>
 Builtins::registerDataModels()

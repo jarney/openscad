@@ -2,6 +2,8 @@
 #include "nodes/OpenSCADBuiltinModel.hpp"
 #include "nodes/gui/NodeEditorWidget.hpp"
 
+using namespace JNodes::core;
+
 OpenSCADBuiltinModel::OpenSCADBuiltinModel(const NodeModelType & modelType, NodeProgramGraphModel & graph)
     : _modelType(modelType)
     , _graph(graph)

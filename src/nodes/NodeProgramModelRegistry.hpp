@@ -16,24 +16,18 @@
 #include <vector>
 
 #include "nodes/NodeModelCategory.hpp"
+#include "nodes/NodeFactory.hpp"
+
+namespace JNodes {
+    namespace core {
 
 class NodeProgramGraphModel;
-
-class NodeDelegateFactory {
-public:
-    virtual ~NodeDelegateFactory() = default;
-    virtual std::string getName() const = 0;
-    virtual std::string getDescription() const = 0;
-    virtual std::string getCategory() const = 0;
-    virtual std::unique_ptr<QtNodes::NodeDelegateModel> create(NodeProgramGraphModel & graph) const = 0;
-    virtual std::string getIcon() const = 0;
-};
 
 /// Class uses map for storing models (name, model)
 class NodeProgramModelRegistry {
 public:
     using RegistryItemPtr = std::unique_ptr<QtNodes::NodeDelegateModel>;
-    using RegistryItemCreator = std::unique_ptr<NodeDelegateFactory>;
+    using RegistryItemCreator = std::unique_ptr<JNodes::core::NodeFactory>;
     using RegisteredModelCreatorsMap = std::unordered_map<QString, RegistryItemCreator>;
     using CategoriesSet = std::set<QString>;
 
@@ -56,9 +50,9 @@ public:
 
     const NodeModelCategory * getCategory(std::string category_name) const;
     
-    const std::vector<const NodeDelegateFactory *> & getModelsByCategory(std::string category) const;
+    const std::vector<const JNodes::core::NodeFactory *> & getModelsByCategory(std::string category) const;
 
-    void registerModel(std::unique_ptr<NodeDelegateFactory> factory);
+    void registerModel(std::unique_ptr<JNodes::core::NodeFactory> factory);
     
     std::unique_ptr<QtNodes::NodeDelegateModel> create(QString const &modelName, NodeProgramGraphModel & graph);
 
@@ -70,8 +64,11 @@ private:
 
     // Map of category name to  category.
     std::map<std::string, const NodeModelCategory *> _categoryMap;
-    std::map<std::string, std::vector<const NodeDelegateFactory *>> _nodesByCategory;
+    std::map<std::string, std::vector<const JNodes::core::NodeFactory *>> _nodesByCategory;
     
     CategoriesSet _categories;
     RegisteredModelCreatorsMap _registeredItemCreators;
 };
+
+    } // End core
+} // End JNodes

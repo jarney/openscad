@@ -5,6 +5,8 @@
 #include "nodes/OpenSCADBuiltinModel.hpp"
 #include "nodes/OpenSCADEvaluator.hpp"
 
+using namespace JNodes::core;
+
 static void
 findOutputNodes(
     const NodeProgramGraphModel & model,

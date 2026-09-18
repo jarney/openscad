@@ -20,6 +20,9 @@
 
 #include "openscad.h"
 
+using namespace JNodes::core;
+using namespace JNodes::openscad;
+
 void processSourceFile(NodeProgram & program, SourceFile *sourceFile);
 
 void processLocalScope(

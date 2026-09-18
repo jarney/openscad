@@ -1,5 +1,3 @@
-#include "nodes/OpenSCADBuiltinFactory.hpp"
-
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
@@ -8,6 +6,7 @@
 #include <QDoubleValidator>
 
 using namespace JNodes::openscad;
+using namespace JNodes::core;
 
 #define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_CONST.getName()
 
@@ -31,7 +30,7 @@ Builtins::RegistryItemPtr
 Builtins::f_const_int()
 {
     auto model = std::make_unique<NodeModelType>("const_int", "Integer", _OPENSCAD_NODE_CATEGORY);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_int_process);
     model->setInitializer(f_const_int_initializer);
     model->setWidgetFactory(f_const_int_widget);
@@ -71,7 +70,7 @@ Builtins::RegistryItemPtr
 Builtins::f_const_float()
 {
     auto model = std::make_unique<NodeModelType>("const_float", "Float", _OPENSCAD_NODE_CATEGORY);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_float_process);
     model->setInitializer(f_const_float_initializer);
     model->setWidgetFactory(f_const_float_widget);
@@ -113,7 +112,7 @@ Builtins::RegistryItemPtr
 Builtins::f_const_string()
 {
     auto model = std::make_unique<NodeModelType>("const_string", "String", _OPENSCAD_NODE_CATEGORY);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE), "value");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE), "value");
     model->setProcessor(f_const_string_process);
     model->setInitializer(f_const_string_initializer);
     model->setWidgetFactory(f_const_string_widget);

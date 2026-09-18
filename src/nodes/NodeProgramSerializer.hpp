@@ -2,6 +2,9 @@
 
 #include "NodeProgram.hpp"
 
+namespace JNodes {
+    namespace core {
+
 /**
  * This is the base class for serializing node programs
  * to various formats.
@@ -50,3 +53,6 @@ public:
      */
     void read(NodeProgram & program, std::istream & input_stream) const override;
 };
+
+    } // End core
+} // End JNodes

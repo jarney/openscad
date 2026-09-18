@@ -1316,7 +1316,17 @@ set(GUI_SOURCES
 
   src/nodes/OpenSCADEvaluator.cpp
   src/nodes/OpenSCADBuiltinModel.cpp
-  src/nodes/OpenSCADBuiltinFactory.cpp
+  src/nodes/NodeFactory.cpp
+  
+  src/nodes/PortFunctionData.cpp
+  src/nodes/NodeProgram.cpp
+  src/nodes/NodeProgramSerializer.cpp
+  src/nodes/NodePort.cpp
+  src/nodes/NodeModelCategory.cpp
+  src/nodes/NodeModelType.cpp
+  src/nodes/NodeProgramGraphModel.cpp
+  src/nodes/NodeProgramModelRegistry.cpp
+
   src/nodes/openscad/Builtins.cpp
   src/nodes/openscad/BuiltinsSyntax.cpp
   src/nodes/openscad/BuiltinsConstants.cpp
@@ -1331,18 +1341,11 @@ set(GUI_SOURCES
   src/nodes/openscad/BuiltinsOther.cpp
   src/nodes/openscad/BuiltinsFunctions.cpp
   src/nodes/openscad/BuiltinsMath.cpp
+  
   src/nodes/gui/BreadcrumbsWidget.cpp
   src/nodes/gui/NodeEditorWidget.cpp
   src/nodes/gui/GraphicsScene.cpp
-  src/nodes/PortFunctionData.cpp
-  src/nodes/NodeProgram.cpp
-  src/nodes/NodeProgramSerializer.cpp
-  src/nodes/NodeModelPort.cpp
-  src/nodes/NodeModelCategory.cpp
-  src/nodes/NodeModelType.cpp
-  src/nodes/NodeProgramGraphModel.cpp
-  src/nodes/NodeProgramModelRegistry.cpp
-
+  
   src/openscad_gui.cc
   src/gui/AutoUpdater.cc
   src/gui/GeometryWorker.cc

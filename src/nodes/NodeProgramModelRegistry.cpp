@@ -1,5 +1,7 @@
 #include "NodeProgramModelRegistry.hpp"
 
+using namespace JNodes::core;
+
 std::unique_ptr<QtNodes::NodeDelegateModel> NodeProgramModelRegistry::create(QString const &modelName, NodeProgramGraphModel & graph)
 {
     auto it = _registeredItemCreators.find(modelName);
@@ -46,10 +48,10 @@ NodeProgramModelRegistry::getCategory(std::string category_name) const
     return cat;
 }
 
-const std::vector<const NodeDelegateFactory *> &
+const std::vector<const NodeFactory *> &
 NodeProgramModelRegistry::getModelsByCategory(std::string category) const
 {
-    static const std::vector<const NodeDelegateFactory*> emptyList;
+    static const std::vector<const NodeFactory*> emptyList;
     
     const auto it = _nodesByCategory.find(category);
     if (it == _nodesByCategory.end()) {
@@ -59,7 +61,7 @@ NodeProgramModelRegistry::getModelsByCategory(std::string category) const
 }
 
 void
-NodeProgramModelRegistry::registerModel(std::unique_ptr<NodeDelegateFactory> factory)
+NodeProgramModelRegistry::registerModel(std::unique_ptr<NodeFactory> factory)
 {
     QString const name = QString::fromStdString(factory->getName());
     if (!_registeredItemCreators.count(name)) {

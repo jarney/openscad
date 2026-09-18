@@ -12,6 +12,9 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/OpenSCADEvaluator.hpp"
 
+using namespace JNodes::core;
+using namespace JNodes::openscad;
+
 int main_process(int argc, char *argv[])
 {
     QApplication app(argc, argv);

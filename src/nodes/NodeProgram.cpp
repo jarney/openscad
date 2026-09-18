@@ -1,5 +1,7 @@
 #include "NodeProgram.hpp"
 
+using namespace JNodes::core;
+
 NodeProgram::NodeProgram(std::shared_ptr<NodeProgramModelRegistry> registry)
     : _registry(registry)
     , _maxGraphId(0)

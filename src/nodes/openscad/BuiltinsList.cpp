@@ -1,9 +1,8 @@
-#include "nodes/OpenSCADBuiltinFactory.hpp"
-
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
 using namespace JNodes::openscad;
+using namespace JNodes::core;
 
 #define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_LIST.getName()
 
@@ -14,9 +13,9 @@ Builtins::RegistryItemPtr
 Builtins::f_list_index()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_index", "List Index", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "list"), "list");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "index"), "index");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "out"), "out");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "list"), "list");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "index"), "index");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "out"), "out");
     model->setProcessor(f_list_index_process);
     return model;
 }
@@ -38,10 +37,10 @@ Builtins::RegistryItemPtr
 Builtins::f_list_get_xyz()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_get_xyz", "Get XYZ", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "list"), "list");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "x"), "x");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "y"), "y");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "z"), "z");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "list"), "list");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "x"), "x");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "y"), "y");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "z"), "z");
     model->setProcessor(f_list_get_xyz_process);
     return model;
 }
@@ -65,10 +64,10 @@ Builtins::RegistryItemPtr
 Builtins::f_list_set_xyz()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_set_xyz", "Set XYZ", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "x"), "x");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "y"), "y");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "z"), "z");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "list"), "list");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "x"), "x");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "y"), "y");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "z"), "z");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "list"), "list");
     model->setProcessor(f_list_set_xyz_process);
     return model;
 }
@@ -92,9 +91,9 @@ Builtins::RegistryItemPtr
 Builtins::f_list_get_xy()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_get_xy", "Get XY", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "list"), "list");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "x"), "x");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "y"), "y");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "list"), "list");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "x"), "x");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "y"), "y");
     model->setProcessor(f_list_get_xy_process);
     return model;
 }
@@ -116,9 +115,9 @@ Builtins::RegistryItemPtr
 Builtins::f_list_set_xy()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_set_xy", "Set XY", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "x"), "x");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "y"), "y");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "list"), "list");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "x"), "x");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "y"), "y");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "list"), "list");
     model->setProcessor(f_list_set_xy_process);
     return model;
 }
@@ -141,11 +140,11 @@ Builtins::RegistryItemPtr
 Builtins::f_list_get_rgba()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_get_rgba", "Get RGBA", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "list"), "list");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "g"), "g");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "b"), "b");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "a"), "a");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "list"), "list");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "g"), "g");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "b"), "b");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "a"), "a");
     model->setProcessor(f_list_get_rgba_process);
     return model;
 }
@@ -171,11 +170,11 @@ Builtins::RegistryItemPtr
 Builtins::f_list_set_rgba()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_set_xyz", "Set XYZ", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "g"), "g");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "b"), "b");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "a"), "a");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "list"), "list");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "g"), "g");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "b"), "b");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "a"), "a");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "list"), "list");
     model->setProcessor(f_list_set_xyz_process);
     return model;
 }
@@ -201,10 +200,10 @@ Builtins::RegistryItemPtr
 Builtins::f_list_set_range()
 {
     auto model = std::make_unique<NodeModelType>("__builtin_list_set_range", "Range", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "start"), "start");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "end"), "end");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "increment"), "increment");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "range"), "range");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "start"), "start");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "end"), "end");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "increment"), "increment");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "range"), "range");
     model->setProcessor(f_list_set_range_process);
     return model;
 }

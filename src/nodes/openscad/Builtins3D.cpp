@@ -1,9 +1,8 @@
-#include "nodes/OpenSCADBuiltinFactory.hpp"
-
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
 using namespace JNodes::openscad;
+using namespace JNodes::core;
 
 #define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_3D.getName()
 
@@ -14,9 +13,9 @@ Builtins::RegistryItemPtr
 Builtins::f_3d_sphere()
 {
     auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_3d_sphere_process);
     return model;
 }
@@ -39,9 +38,9 @@ Builtins::RegistryItemPtr
 Builtins::f_3d_cube()
 {
     auto model = std::make_unique<NodeModelType>("cube", "Cube", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "size"), "size");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "center"), "center");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "size"), "size");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_3d_cube_process);
     return model;
 }
@@ -63,15 +62,15 @@ Builtins::RegistryItemPtr
 Builtins::f_3d_cylinder()
 {
     auto model = std::make_unique<NodeModelType>("cylinder", "Cylinder", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "h"), "h");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r1"), "r1");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r2"), "r2");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "d"), "d");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "d1"), "d1");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "d2"), "d2");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "center"), "center");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "h"), "h");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r1"), "r1");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r2"), "r2");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d1"), "d1");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d2"), "d2");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_3d_cylinder_process);
     return model;
 }
@@ -98,10 +97,10 @@ Builtins::RegistryItemPtr
 Builtins::f_3d_polyhedron()
 {
     auto model = std::make_unique<NodeModelType>("polyhedron", "Polyhedron", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "points"), "points");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "faces"), "faces");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "convexity"), "convexity");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "points"), "points");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "faces"), "faces");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_3d_polyhedron_process);
     return model;
 }
@@ -123,15 +122,15 @@ Builtins::RegistryItemPtr
 Builtins::f_3d_import()
 {
     auto model = std::make_unique<NodeModelType>("import", "Import", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "center"), "center");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "convexity"), "convexity");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "id"), "id");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "layer"), "layer");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "$fn"), "$fn");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "$fa"), "$fa");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "$fs"), "$fs");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "id"), "id");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "layer"), "layer");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fn"), "$fn");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fa"), "$fa");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fs"), "$fs");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_3d_import_process);
     return model;
 }
@@ -158,16 +157,16 @@ Builtins::RegistryItemPtr
 Builtins::f_3d_linear_extrude()
 {
     auto model = std::make_unique<NodeModelType>("linear_extrude", "Linear Extrude", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "height"), "height");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "v"), "v");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "center"), "center");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "twist"), "twist");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "scale"), "scale");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "slices"), "slices");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "segments"), "segments");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "convexity"), "convexity");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "$fn"), "$fn");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "height"), "height");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "v"), "v");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "twist"), "twist");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "scale"), "scale");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "slices"), "slices");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "segments"), "segments");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fn"), "$fn");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_3d_linear_extrude_process);
     return model;
 }
@@ -196,11 +195,11 @@ Builtins::RegistryItemPtr
 Builtins::f_3d_rotate_extrude()
 {
     auto model = std::make_unique<NodeModelType>("rotate_extrude", "Rotate Extrude", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "angle"), "angle");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "start"), "start");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "convexity"), "convexity");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "a"), "a");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "angle"), "angle");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "start"), "start");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "a"), "a");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_3d_rotate_extrude_process);
     return model;
 }
@@ -222,11 +221,11 @@ Builtins::RegistryItemPtr
 Builtins::f_3d_surface()
 {
     auto model = std::make_unique<NodeModelType>("surface", "Heightmap Surface", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "center"), "center");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "invert"), "invert");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "convexity"), "convexity");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "invert"), "invert");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_3d_surface_process);
     return model;
 }
@@ -249,12 +248,12 @@ Builtins::RegistryItemPtr
 Builtins::f_3d_dxf_dim()
 {
     auto model = std::make_unique<NodeModelType>("dxf_dim", "Read DXF Dimension", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "name"), "name");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "layer"), "layer");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "origin"), "origin");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "scale"), "scale");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "out"), "out");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "name"), "name");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "layer"), "layer");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "origin"), "origin");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "scale"), "scale");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "out"), "out");
     model->setProcessor(f_3d_dxf_dim_process);
     return model;
 }
@@ -279,11 +278,11 @@ Builtins::RegistryItemPtr
 Builtins::f_3d_dxf_cross()
 {
     auto model = std::make_unique<NodeModelType>("dxf_cross", "Read DXF Origin", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "file"), "file");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "layer"), "layer");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "origin"), "origin");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "scale"), "scale");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "out"), "out");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "layer"), "layer");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "origin"), "origin");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "scale"), "scale");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "out"), "out");
     model->setProcessor(f_3d_dxf_cross_process);
     return model;
 }

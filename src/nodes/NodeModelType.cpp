@@ -1,9 +1,12 @@
 #include "NodeModelType.hpp"
 
+using namespace JNodes::core;
+
 NodeModelType::NodeModelType(std::string name, std::string caption, std::string category)
     : _name(name)
     , _caption(caption)
     , _category(category)
+    , _icon("../resources/icons/prefsEditor.png")
     , _resizable(false)
     , _processor(default_processor)
     , _initializer(default_initializer)
@@ -22,6 +25,10 @@ std::string
 NodeModelType::getCategory() const
 { return _category; }
 
+std::string
+NodeModelType::getIcon() const
+{ return _icon; }
+
 bool
 NodeModelType::getResizable() const
 { return _resizable; }
@@ -31,7 +38,7 @@ NodeModelType::setResizable(bool resizable)
 { _resizable = resizable; }
 
 void
-NodeModelType::addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName, QtNodes::ConnectionPolicy policy)
+NodeModelType::addInputPort(std::unique_ptr<NodePort> inputPort, std::string inputPortName, QtNodes::ConnectionPolicy policy)
 {
     _inputPortNames[_inputPorts.size()] = inputPortName;
     inputPort->setConnectionPolicy(policy);
@@ -39,7 +46,7 @@ NodeModelType::addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::strin
 }
 
 void
-NodeModelType::addInputPort(std::unique_ptr<NodeModelPort> inputPort, std::string inputPortName)
+NodeModelType::addInputPort(std::unique_ptr<NodePort> inputPort, std::string inputPortName)
 {
     addInputPort(std::move(inputPort), inputPortName, QtNodes::ConnectionPolicy::One);
 }
@@ -55,12 +62,12 @@ NodeModelType::getOutputPortCount() const
 {
     return _outputPorts.size();
 }
-const NodeModelPort &
+const NodePort &
 NodeModelType::getInputPort(unsigned int index) const
 {
     return *_inputPorts.at(index);
 }
-const NodeModelPort &
+const NodePort &
 NodeModelType::getOutputPort(unsigned int index) const
 {
     return *_outputPorts.at(index);
@@ -79,7 +86,7 @@ NodeModelType::getOutputPortName(unsigned int index) const
 }
 
 void
-NodeModelType::addOutputPort(std::unique_ptr<NodeModelPort> outputPort, std::string outputPortName)
+NodeModelType::addOutputPort(std::unique_ptr<NodePort> outputPort, std::string outputPortName)
 {
     _outputPortNames[_outputPorts.size()] = outputPortName;
     outputPort->setConnectionPolicy(QtNodes::ConnectionPolicy::Many);

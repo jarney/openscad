@@ -32,6 +32,7 @@
 #include "nodes/NodeProgramModelRegistry.hpp"
 
 using namespace JNodes::gui;
+using namespace JNodes::core;
 
 static QtNodes::GroupId jsonValueToGroupId(QJsonValue const &value)
 {
@@ -156,7 +157,7 @@ QMenu *GraphicsScene::createSceneMenu(QPointF const scenePos)
         categoryItem->setFlags(categoryItem->flags() & ~Qt::ItemIsSelectable);
 
 	auto modelsByCategory = registry->getModelsByCategory(categoryObj->getName());
-	for (const NodeDelegateFactory *factory : modelsByCategory) {
+	for (const NodeFactory *factory : modelsByCategory) {
 	    auto item = new QTreeWidgetItem(categoryItem);
 	    item->setText(0, QString::fromStdString(factory->getDescription()));
 	    item->setIcon(0, iconCache(factory->getIcon()));

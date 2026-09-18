@@ -1,41 +1,42 @@
-#include "nodes/OpenSCADBuiltinFactory.hpp"
+#include "nodes/NodeFactory.hpp"
 #include "nodes/OpenSCADBuiltinModel.hpp"
 
-OpenSCADBuiltinFactory::OpenSCADBuiltinFactory(
+using namespace JNodes::core;
+
+NodeFactoryTyped::NodeFactoryTyped(
     std::unique_ptr<NodeModelType> type
     )
     : _type(std::move(type))
-    , _icon("../resources/icons/prefsEditor.png")
 {
 }
 std::string
-OpenSCADBuiltinFactory::getName() const
+NodeFactoryTyped::getName() const
 {
     return _type->getName();
 }
 
 std::string
-OpenSCADBuiltinFactory::getDescription() const
+NodeFactoryTyped::getDescription() const
 {
     return _type->getCaption();
 }
 
 std::string
-OpenSCADBuiltinFactory::getCategory() const
+NodeFactoryTyped::getCategory() const
 {
     return _type->getCategory();
 }
 
 std::unique_ptr<QtNodes::NodeDelegateModel>
-OpenSCADBuiltinFactory::create(NodeProgramGraphModel & model) const
+NodeFactoryTyped::create(NodeProgramGraphModel & model) const
 {
     std::unique_ptr<OpenSCADBuiltinModel> node = std::make_unique<OpenSCADBuiltinModel>(*_type, model);
     return node;
 }
 
 std::string
-OpenSCADBuiltinFactory::getIcon() const
+NodeFactoryTyped::getIcon() const
 {
-    return _icon;
+    return _type->getIcon();
 }
 

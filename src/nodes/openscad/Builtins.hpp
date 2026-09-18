@@ -5,10 +5,11 @@
 
 #include <QtNodes/NodeDelegateModel>
 #include <QtNodes/NodeData>
-#include "nodes/OpenSCADDataTypes.hpp"
 #include "nodes/NodeModelType.hpp"
 #include "nodes/NodeProgramModelRegistry.hpp"
 #include "nodes/OpenSCADBuiltinModel.hpp"
+
+#include "nodes/openscad/DataTypes.hpp"
 
 namespace JNodes {
     namespace openscad {
@@ -31,7 +32,7 @@ namespace JNodes {
  */
 class Builtins {
 public:
-    using RegistryItemPtr = std::unique_ptr<NodeModelType>;
+    using RegistryItemPtr = std::unique_ptr<JNodes::core::NodeModelType>;
 
     static const NodeModelCategory CATEGORY_SYNTAX;
     static const NodeModelCategory CATEGORY_CONST;
@@ -47,14 +48,14 @@ public:
     static const NodeModelCategory CATEGORY_FUNCTION;
     static const NodeModelCategory CATEGORY_MATH;
     
-    static std::shared_ptr<NodeProgramModelRegistry> registerDataModels();
+    static std::shared_ptr<JNodes::core::NodeProgramModelRegistry> registerDataModels();
 
     // Most nodes only need a type and a processor
     // because the instances hold no state.  Addition
     // is addition, and no modifiers are needed.
 #define _OPENSCAD_NODE_DECL(name)                                    \
-    static std::unique_ptr<NodeModelType> f_##name();				\
-    static void f_##name##_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output);
+    static std::unique_ptr<JNodes::core::NodeModelType> f_##name();				\
+    static void f_##name##_process(const JNodes::core::OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output);
 
     // Some nodes carry state for each instance
     // of the node.  For example, nodes
@@ -65,10 +66,10 @@ public:
     // and a widget to allow the user to modify
     // things like the name of the variable.
 #define _OPENSCAD_NODE_DECL_FULL(name)                                    \
-    static std::unique_ptr<NodeModelType> f_##name();                     \
-    static void f_##name##_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output); \
-    static void f_##name##_initializer(OpenSCADBuiltinModel & node);      \
-    static QWidget* f_##name##_widget(OpenSCADBuiltinModel & node)
+    static std::unique_ptr<JNodes::core::NodeModelType> f_##name();                     \
+    static void f_##name##_process(const JNodes::core::OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output); \
+    static void f_##name##_initializer(JNodes::core::OpenSCADBuiltinModel & node);      \
+    static QWidget* f_##name##_widget(JNodes::core::OpenSCADBuiltinModel & node)
 
     // Syntax
     _OPENSCAD_NODE_DECL_FULL(syntax_assign);
@@ -230,7 +231,7 @@ private:
     static void conditionalArg(
 	std::vector<std::string> & args,
 	const PortFunctionData & input,
-	const OpenSCADBuiltinModel & model,
+	const JNodes::core::OpenSCADBuiltinModel & model,
 	std::string key,
 	std::string default_value
     );
@@ -241,7 +242,7 @@ private:
     static void conditionalArg(
 	std::vector<std::string> & args,
 	const PortFunctionData & input,
-	const OpenSCADBuiltinModel & model,
+	const JNodes::core::OpenSCADBuiltinModel & model,
 	std::string key
     );
 };

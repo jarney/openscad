@@ -4,6 +4,8 @@
 #include "NodeProgramSerializer.hpp"
 #include "nodes/openscad/Builtins.hpp"
 
+using namespace JNodes::core;
+
 static std::string get_test_path(const std::string& name)
 {
   return std::string(OPENSCAD_TEST_DATA_DIR) + "/nodes/" + name;

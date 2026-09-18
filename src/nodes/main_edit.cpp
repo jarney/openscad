@@ -30,6 +30,8 @@
 
 using QtNodes::GraphicsView;
 
+using namespace JNodes::core;
+
 int main_edit(int argc, char *argv[])
 {
     QApplication app(argc, argv);

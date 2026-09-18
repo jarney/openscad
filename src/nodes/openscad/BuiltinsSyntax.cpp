@@ -1,11 +1,10 @@
-#include "nodes/OpenSCADBuiltinFactory.hpp"
-
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
 #include <QtWidgets/QLineEdit>
 
 using namespace JNodes::openscad;
+using namespace JNodes::core;
 
 #define _OPENSCAD_NODE_CATEGORY Builtins::CATEGORY_SYNTAX.getName()
 
@@ -16,7 +15,7 @@ Builtins::RegistryItemPtr
 Builtins::f_syntax_assign()
 {
     auto model = std::make_unique<NodeModelType>("assign", "Assign", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "value"), "value");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "value"), "value");
     model->setProcessor(f_syntax_assign_process);
     model->setInitializer(f_syntax_assign_initializer);
     model->setWidgetFactory(f_syntax_assign_widget);
@@ -63,9 +62,9 @@ Builtins::RegistryItemPtr
 Builtins::f_syntax_assign_list()
 {
     auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_syntax_assign_list_process);
     return model;
 }
@@ -87,7 +86,7 @@ Builtins::RegistryItemPtr
 Builtins::f_syntax_variable()
 {
     auto model = std::make_unique<NodeModelType>("variable", "Variable", _OPENSCAD_NODE_CATEGORY);
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "variable"), "variable");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "variable"), "variable");
     model->setProcessor(f_syntax_variable_process);
     model->setInitializer(f_syntax_variable_initializer);
     model->setWidgetFactory(f_syntax_variable_widget);
@@ -127,9 +126,9 @@ Builtins::RegistryItemPtr
 Builtins::f_syntax_module()
 {
     auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_syntax_module_process);
     return model;
 }
@@ -151,9 +150,9 @@ Builtins::RegistryItemPtr
 Builtins::f_syntax_function()
 {
     auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_syntax_function_process);
     return model;
 }
@@ -175,9 +174,9 @@ Builtins::RegistryItemPtr
 Builtins::f_syntax_include()
 {
     auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_syntax_include_process);
     return model;
 }
@@ -199,9 +198,9 @@ Builtins::RegistryItemPtr
 Builtins::f_syntax_use()
 {
     auto model = std::make_unique<NodeModelType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodeModelPort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodeModelPort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
     model->setProcessor(f_syntax_use_process);
     return model;
 }
