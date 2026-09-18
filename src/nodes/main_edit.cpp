@@ -30,7 +30,7 @@
 
 using QtNodes::GraphicsView;
 
-int main(int argc, char *argv[])
+int main_edit(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 

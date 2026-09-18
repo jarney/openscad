@@ -11,16 +11,18 @@
 #include "NodeProgramGraphModel.hpp"
 #include "NodeModelType.hpp"
 
+#include "nodes/nodes.hpp"
+
 void dumpRegistry(std::shared_ptr<NodeProgramModelRegistry> registry);
 void dumpBuiltins(void);
 void dumpNotImplemented(std::shared_ptr<NodeProgramModelRegistry> registry);
 
-int main(int argc, char *argv[])
+int main_audit_namespace(int argc, char *argv[])
 {
 //    QApplication app(argc, argv);
     
     if (argc != 2) {
-	fprintf(stderr, "Usage: processor filename\n");
+	fprintf(stderr, "Usage: audit-namespace filename\n");
 	return 1;
     }
     

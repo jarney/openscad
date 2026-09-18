@@ -135,24 +135,21 @@ else()
 endif()
 
 set(NODE_MAIN_SOURCES
+    src/nodes/nodes.cpp
+    src/nodes/main_audit_namespace.cpp
+    src/nodes/main_process.cpp
     src/nodes/main_breadcrumbs.cpp
-    src/nodes/main_node_editor.cpp
+    src/nodes/main_edit.cpp
     )
 
 add_executable(OpenSCADNodes ${NODE_MAIN_SOURCES})
 set_target_properties(OpenSCADNodes PROPERTIES
   OUTPUT_NAME "nodes"
 )
-add_executable(OpenSCADProcessor src/nodes/processor.cpp)
-set_target_properties(OpenSCADProcessor PROPERTIES
-  OUTPUT_NAME "processor"
-)
-
 
 add_library(OpenSCADLibInternal STATIC)
 target_link_libraries(OpenSCADExe PUBLIC OpenSCADLibInternal)
 target_link_libraries(OpenSCADNodes PUBLIC OpenSCADLibInternal)
-target_link_libraries(OpenSCADProcessor PUBLIC OpenSCADLibInternal)
 set_target_properties(OpenSCADLibInternal PROPERTIES
     OUTPUT_NAME "openscadinternal" # results in `libopenscadinternal`
 )
@@ -160,7 +157,6 @@ set_target_properties(OpenSCADLibInternal PROPERTIES
 add_library(svg STATIC)
 target_link_libraries(OpenSCADExe PUBLIC svg)
 target_link_libraries(OpenSCADNodes PUBLIC svg)
-target_link_libraries(OpenSCADProcessor PUBLIC svg)
 # TODO: https://github.com/openscad/openscad/issues/6369 - Update includes so we don't need this, which also prevents trivially including other parts of OpenSCAD.
 target_include_directories(svg PUBLIC
   "src"
@@ -187,7 +183,6 @@ target_sources(svg PRIVATE
 target_compile_options(OpenSCADLibInternal PRIVATE -DNODE_EDITOR_SHARED)
 target_compile_options(OpenSCADExe PRIVATE -DNODE_EDITOR_SHARED)
 target_compile_options(OpenSCADNodes PRIVATE -DNODE_EDITOR_SHARED)
-target_compile_options(OpenSCADProcessor PRIVATE -DNODE_EDITOR_SHARED)
 
 if (MINGW)
   # Configure Debug flags (MinGW) to keep rich symbols and avoid PE/COFF
