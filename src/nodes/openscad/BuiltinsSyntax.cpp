@@ -14,15 +14,15 @@ using namespace JNodes::core;
 Builtins::RegistryItemPtr
 Builtins::f_syntax_assign()
 {
-    auto model = std::make_unique<NodeType>("assign", "Assign", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "value"), "value");
-    model->setProcessor(f_syntax_assign_process);
-    model->setInitializer(f_syntax_assign_initializer);
-    model->setWidgetFactory(f_syntax_assign_widget);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("assign", "Assign", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "value"), "value");
+    nodeType->setProcessor(f_syntax_assign_process);
+    nodeType->setInitializer(f_syntax_assign_initializer);
+    nodeType->setWidgetFactory(f_syntax_assign_widget);
+    return nodeType;
 }
 void
-Builtins::f_syntax_assign_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_syntax_assign_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::string value;
     if (input.hasValue("value")) {
@@ -36,7 +36,7 @@ Builtins::f_syntax_assign_process(const OpenSCADBuiltinModel & node, const PortF
 }
 
 void
-Builtins::f_syntax_assign_initializer(OpenSCADBuiltinModel & node)
+Builtins::f_syntax_assign_initializer(Node & node)
 {
     if (!node.hasValue("variable_name")) {
 	node.setValue("variable_name", "x");
@@ -44,7 +44,7 @@ Builtins::f_syntax_assign_initializer(OpenSCADBuiltinModel & node)
 }
 
 QWidget*
-Builtins::f_syntax_assign_widget(OpenSCADBuiltinModel & node)
+Builtins::f_syntax_assign_widget(Node & node)
 {
     QLineEdit *textEdit = new QLineEdit();
     textEdit->setText(QString::fromStdString(node.getValue("variable_name")));
@@ -61,16 +61,16 @@ Builtins::f_syntax_assign_widget(OpenSCADBuiltinModel & node)
 Builtins::RegistryItemPtr
 Builtins::f_syntax_assign_list()
 {
-    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_syntax_assign_list_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_syntax_assign_list_process);
+    return nodeType;
 }
 
 void
-Builtins::f_syntax_assign_list_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_syntax_assign_list_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, node, "r");
@@ -85,23 +85,23 @@ Builtins::f_syntax_assign_list_process(const OpenSCADBuiltinModel & node, const 
 Builtins::RegistryItemPtr
 Builtins::f_syntax_variable()
 {
-    auto model = std::make_unique<NodeType>("variable", "Variable", _OPENSCAD_NODE_CATEGORY);
-    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "variable"), "variable");
-    model->setProcessor(f_syntax_variable_process);
-    model->setInitializer(f_syntax_variable_initializer);
-    model->setWidgetFactory(f_syntax_variable_widget);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("variable", "Variable", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "variable"), "variable");
+    nodeType->setProcessor(f_syntax_variable_process);
+    nodeType->setInitializer(f_syntax_variable_initializer);
+    nodeType->setWidgetFactory(f_syntax_variable_widget);
+    return nodeType;
 }
 
 void
-Builtins::f_syntax_variable_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_syntax_variable_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::string out = node.getValue("variable_name");
     output.setValue("variable", out);
 }
 
 void
-Builtins::f_syntax_variable_initializer(OpenSCADBuiltinModel & node)
+Builtins::f_syntax_variable_initializer(Node & node)
 {
     if (!node.hasValue("variable_name")) {
 	node.setValue("variable_name", "x");
@@ -109,7 +109,7 @@ Builtins::f_syntax_variable_initializer(OpenSCADBuiltinModel & node)
 }
 
 QWidget*
-Builtins::f_syntax_variable_widget(OpenSCADBuiltinModel & node)
+Builtins::f_syntax_variable_widget(Node & node)
 {
     QLineEdit *textEdit = new QLineEdit();
     textEdit->setText(QString::fromStdString(node.getValue("variable_name")));
@@ -125,16 +125,16 @@ Builtins::f_syntax_variable_widget(OpenSCADBuiltinModel & node)
 Builtins::RegistryItemPtr
 Builtins::f_syntax_module()
 {
-    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_syntax_module_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_syntax_module_process);
+    return nodeType;
 }
 
 void
-Builtins::f_syntax_module_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_syntax_module_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, node, "r");
@@ -149,16 +149,16 @@ Builtins::f_syntax_module_process(const OpenSCADBuiltinModel & node, const PortF
 Builtins::RegistryItemPtr
 Builtins::f_syntax_function()
 {
-    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_syntax_function_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_syntax_function_process);
+    return nodeType;
 }
 
 void
-Builtins::f_syntax_function_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_syntax_function_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, node, "r");
@@ -173,16 +173,16 @@ Builtins::f_syntax_function_process(const OpenSCADBuiltinModel & node, const Por
 Builtins::RegistryItemPtr
 Builtins::f_syntax_include()
 {
-    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_syntax_include_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_syntax_include_process);
+    return nodeType;
 }
 
 void
-Builtins::f_syntax_include_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_syntax_include_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, node, "r");
@@ -197,16 +197,16 @@ Builtins::f_syntax_include_process(const OpenSCADBuiltinModel & node, const Port
 Builtins::RegistryItemPtr
 Builtins::f_syntax_use()
 {
-    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_syntax_use_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_syntax_use_process);
+    return nodeType;
 }
 
 void
-Builtins::f_syntax_use_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_syntax_use_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
     conditionalArg(args, input, node, "r");

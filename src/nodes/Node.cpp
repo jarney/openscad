@@ -1,10 +1,10 @@
-#include "nodes/NodeProgramModelRegistry.hpp"
-#include "nodes/OpenSCADBuiltinModel.hpp"
+#include "nodes/NodeFactoryRegistry.hpp"
+#include "nodes/Node.hpp"
 #include "nodes/gui/NodeEditorWidget.hpp"
 
 using namespace JNodes::core;
 
-OpenSCADBuiltinModel::OpenSCADBuiltinModel(const NodeType & modelType, NodeGraph & graph)
+Node::Node(const NodeType & modelType, NodeGraph & graph)
     : _modelType(modelType)
     , _graph(graph)
     , _widget(nullptr)
@@ -12,16 +12,16 @@ OpenSCADBuiltinModel::OpenSCADBuiltinModel(const NodeType & modelType, NodeGraph
 {}
 
 QString
-OpenSCADBuiltinModel::name() const
+Node::name() const
 { return QString::fromStdString(_modelType.getName()); }
 
 QString
-OpenSCADBuiltinModel::caption() const
+Node::caption() const
 { return QString::fromStdString(_modelType.getCaption()); }
 
 
 QWidget *
-OpenSCADBuiltinModel::embeddedWidget()
+Node::embeddedWidget()
 {
     if (!_widget) {
 	_widget = _modelType.getWidgetFactory()(*this);
@@ -29,7 +29,7 @@ OpenSCADBuiltinModel::embeddedWidget()
     return _widget;
 }
 
-unsigned int OpenSCADBuiltinModel::nPorts(QtNodes::PortType portType) const
+unsigned int Node::nPorts(QtNodes::PortType portType) const
 {
     if (portType == QtNodes::PortType::In) {
 	return _modelType.getInputPortCount();
@@ -40,7 +40,7 @@ unsigned int OpenSCADBuiltinModel::nPorts(QtNodes::PortType portType) const
 }
 
 QtNodes::NodeDataType
-OpenSCADBuiltinModel::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+Node::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
     if (portType == QtNodes::PortType::In) {
 	return _modelType.getInputPort(portIndex).nodeDataType();
@@ -51,7 +51,7 @@ OpenSCADBuiltinModel::dataType(QtNodes::PortType portType, QtNodes::PortIndex po
 }
 
 QtNodes::ConnectionPolicy
-OpenSCADBuiltinModel::portConnectionPolicy(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+Node::portConnectionPolicy(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
     if (portType == QtNodes::PortType::In) {
 	return _modelType.getInputPort(portIndex).getConnectionPolicy();
@@ -62,7 +62,7 @@ OpenSCADBuiltinModel::portConnectionPolicy(QtNodes::PortType portType, QtNodes::
 }
 
 QString
-OpenSCADBuiltinModel::portCaption(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+Node::portCaption(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
     if (portType == QtNodes::PortType::In) {
 	return _modelType.getInputPort(portIndex).portCaption();
@@ -73,7 +73,7 @@ OpenSCADBuiltinModel::portCaption(QtNodes::PortType portType, QtNodes::PortIndex
 }
 
 bool
-OpenSCADBuiltinModel::portCaptionVisible(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+Node::portCaptionVisible(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
     if (portType == QtNodes::PortType::In) {
 	return _modelType.getInputPort(portIndex).portCaptionVisible();
@@ -83,13 +83,13 @@ OpenSCADBuiltinModel::portCaptionVisible(QtNodes::PortType portType, QtNodes::Po
     }
 }
 
-std::shared_ptr<QtNodes::NodeData> OpenSCADBuiltinModel::outData(QtNodes::PortIndex portIndex)
+std::shared_ptr<QtNodes::NodeData> Node::outData(QtNodes::PortIndex portIndex)
 {
     /* Do nothing, we don't let the UI perform the evaluation */
     return nullptr;
 }
 
-void OpenSCADBuiltinModel::setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex portIndex)
+void Node::setInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex portIndex)
 {
     if (!data) {
         Q_EMIT dataInvalidated(0);
@@ -100,42 +100,42 @@ void OpenSCADBuiltinModel::setInData(std::shared_ptr<QtNodes::NodeData> data, Qt
 
 
 std::string
-OpenSCADBuiltinModel::inputPortName(QtNodes::PortIndex portIndex) const
+Node::inputPortName(QtNodes::PortIndex portIndex) const
 {
     return _modelType.getInputPortName(portIndex);
 }
 std::string
-OpenSCADBuiltinModel::outputPortName(QtNodes::PortIndex portIndex) const
+Node::outputPortName(QtNodes::PortIndex portIndex) const
 {
     return _modelType.getOutputPortName(portIndex);
 }
 
 void
-OpenSCADBuiltinModel::process(const PortFunctionData & input, PortFunctionData & output) const
+Node::process(const NodePortData & input, NodePortData & output) const
 {
     _modelType.getProcessor()(*this, input, output);
 }
 
 bool
-OpenSCADBuiltinModel::resizable() const
+Node::resizable() const
 {
     return _modelType.getResizable();
 }
 
 void
-OpenSCADBuiltinModel::setEditor(JNodes::gui::NodeEditorWidget *editor)
+Node::setEditor(JNodes::gui::NodeEditorWidget *editor)
 {
     _editor = editor;
 }
 
 JNodes::gui::NodeEditorWidget *
-OpenSCADBuiltinModel::getEditor() const
+Node::getEditor() const
 {
     return _editor;
 }
 
 void
-OpenSCADBuiltinModel::editGraph(NodeProgram::GraphId graphId) const
+Node::editGraph(NodeProgram::GraphId graphId) const
 {
     if (_editor) {
 	_editor->editGraph(graphId);
@@ -143,7 +143,7 @@ OpenSCADBuiltinModel::editGraph(NodeProgram::GraphId graphId) const
 }
 
 bool
-OpenSCADBuiltinModel::hasValue(std::string key) const
+Node::hasValue(std::string key) const
 {
     const auto it = _modelData.find(key);
     if (it == _modelData.end()) {
@@ -154,7 +154,7 @@ OpenSCADBuiltinModel::hasValue(std::string key) const
 }
 
 std::string
-OpenSCADBuiltinModel::getValue(std::string key, std::string default_value) const
+Node::getValue(std::string key, std::string default_value) const
 {
     const auto it = _modelData.find(key);
     if (it == _modelData.end()) {
@@ -163,18 +163,18 @@ OpenSCADBuiltinModel::getValue(std::string key, std::string default_value) const
     return it->second;    
 }
 std::string
-OpenSCADBuiltinModel::getValue(std::string key) const
+Node::getValue(std::string key) const
 {
     return getValue(key, "");
 }
 
 void
-OpenSCADBuiltinModel::setValue(std::string key, std::string value)
+Node::setValue(std::string key, std::string value)
 {
     _modelData[key] = value;
 }
 
-QJsonObject OpenSCADBuiltinModel::save() const
+QJsonObject Node::save() const
 {
     QJsonObject modelJson;
 
@@ -188,7 +188,7 @@ QJsonObject OpenSCADBuiltinModel::save() const
     return modelJson;
 }
 
-void OpenSCADBuiltinModel::load(QJsonObject const & obj)
+void Node::load(QJsonObject const & obj)
 {
     if (obj.contains("data")) {
 	QJsonObject data = obj["data"].toObject();
@@ -203,7 +203,7 @@ void OpenSCADBuiltinModel::load(QJsonObject const & obj)
 }
 
 NodeGraph &
-OpenSCADBuiltinModel::getGraph() const
+Node::getGraph() const
 {
     return _graph;
 }

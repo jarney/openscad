@@ -1,7 +1,7 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/Builtins_helpers.hpp"
 
-#include "nodes/OpenSCADEvaluator.hpp"
+#include "nodes/openscad/NodeProgramSerializerOpenSCAD.hpp"
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QPlainTextEdit>
@@ -20,20 +20,20 @@ using namespace JNodes::core;
 Builtins::RegistryItemPtr
 Builtins::f_flow_for()
 {
-    auto model = std::make_unique<NodeType>("for", "For Loop", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "range"), "range");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "start"), "start");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "end"), "end");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "increment"), "increment");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_flow_for_process);
-    model->setInitializer(f_flow_for_initializer);
-    model->setWidgetFactory(f_flow_for_widget);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("for", "For Loop", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "range"), "range");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "start"), "start");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "end"), "end");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "increment"), "increment");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_flow_for_process);
+    nodeType->setInitializer(f_flow_for_initializer);
+    nodeType->setWidgetFactory(f_flow_for_widget);
+    return nodeType;
 }
 
 void
-Builtins::f_flow_for_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_for_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::string out = std::string();
     out += std::string("for (");
@@ -58,14 +58,14 @@ Builtins::f_flow_for_process(const OpenSCADBuiltinModel & node, const PortFuncti
     std::string bodyGraphId = node.getValue("graph");
     const NodeGraph *subgraph =
 	node.getGraph().getParent().getGraph(bodyGraphId);
-    out += evaluateToSCAD(*subgraph);
+    out += NodeProgramSerializerOpenSCAD::toString(*subgraph);
     
     out += std::string("}");
     output.setValue("Geometry", out);
 }
 
 void
-Builtins::f_flow_for_initializer(OpenSCADBuiltinModel & node)
+Builtins::f_flow_for_initializer(Node & node)
 {
     if (!node.hasValue("graph")) {
 	NodeProgram::GraphId graphId =
@@ -78,7 +78,7 @@ Builtins::f_flow_for_initializer(OpenSCADBuiltinModel & node)
 }
 
 QWidget*
-Builtins::f_flow_for_widget(OpenSCADBuiltinModel & node)
+Builtins::f_flow_for_widget(Node & node)
 {
     QWidget *w = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout(w);
@@ -111,16 +111,16 @@ Builtins::f_flow_for_widget(OpenSCADBuiltinModel & node)
 Builtins::RegistryItemPtr
 Builtins::f_flow_intersection_for()
 {
-    auto model = std::make_unique<NodeType>("intersection_for", "Intersection For", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "var"), "var");
-    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_flow_intersection_for_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("intersection_for", "Intersection For", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "var"), "var");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_flow_intersection_for_process);
+    return nodeType;
 }
 
 void
-Builtins::f_flow_intersection_for_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_intersection_for_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     // TODO: Call/evaluate sub-flow
     std::string out = std::string();
@@ -136,17 +136,17 @@ Builtins::f_flow_intersection_for_process(const OpenSCADBuiltinModel & node, con
 Builtins::RegistryItemPtr
 Builtins::f_flow_if()
 {
-    auto model = std::make_unique<NodeType>("if", "If", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "condition"), "condition");
-    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
-    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "b"), "b", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_flow_if_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("if", "If", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "condition"), "condition");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "b"), "b", QtNodes::ConnectionPolicy::Many);
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_flow_if_process);
+    return nodeType;
 }
 
 void
-Builtins::f_flow_if_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_if_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::string out = std::string();
     out += std::string("if(");
@@ -165,16 +165,16 @@ Builtins::f_flow_if_process(const OpenSCADBuiltinModel & node, const PortFunctio
 Builtins::RegistryItemPtr
 Builtins::f_flow_let()
 {
-    auto model = std::make_unique<NodeType>("let", "Let", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "var"), "var");
-    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_flow_let_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("let", "Let", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "var"), "var");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry", QtNodes::ConnectionPolicy::Many);
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_flow_let_process);
+    return nodeType;
 }
 
 void
-Builtins::f_flow_let_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_let_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     // TODO: Call/evaluate sub-flow
     std::string out = std::string();
@@ -190,13 +190,13 @@ Builtins::f_flow_let_process(const OpenSCADBuiltinModel & node, const PortFuncti
 Builtins::RegistryItemPtr
 Builtins::f_flow_comment()
 {
-    auto model = std::make_unique<NodeType>("comment", "Comment", _OPENSCAD_NODE_CATEGORY);
-    model->setResizable(true);
-    model->setWidgetFactory(Builtins::f_flow_comment_widget);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("comment", "Comment", _OPENSCAD_NODE_CATEGORY);
+    nodeType->setResizable(true);
+    nodeType->setWidgetFactory(Builtins::f_flow_comment_widget);
+    return nodeType;
 }
 QWidget*
-Builtins::f_flow_comment_widget(OpenSCADBuiltinModel & node)
+Builtins::f_flow_comment_widget(Node & node)
 {
     // Should we have rich text and markups or perhaps IDE-style
     // input boxes or is plain text enough?
@@ -223,14 +223,14 @@ Builtins::f_flow_comment_widget(OpenSCADBuiltinModel & node)
 Builtins::RegistryItemPtr
 Builtins::f_flow_group()
 {
-    auto model = std::make_unique<NodeType>("group", "Group", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_flow_group_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("group", "Group", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "a"), "a", QtNodes::ConnectionPolicy::Many);
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_flow_group_process);
+    return nodeType;
 }
 void
-Builtins::f_flow_group_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_group_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     output.setValue("Geometry", std::string("group() {\n") +
         input.getValue("a", "{}") +
@@ -243,13 +243,13 @@ Builtins::f_flow_group_process(const OpenSCADBuiltinModel & node, const PortFunc
 Builtins::RegistryItemPtr
 Builtins::f_flow_output()
 {
-    auto model = std::make_unique<NodeType>("output", "Output", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY), "out", QtNodes::ConnectionPolicy::Many);
-    model->setProcessor(f_flow_output_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("output", "Output", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY), "out", QtNodes::ConnectionPolicy::Many);
+    nodeType->setProcessor(f_flow_output_process);
+    return nodeType;
 }
 void
-Builtins::f_flow_output_process(const OpenSCADBuiltinModel & node, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_flow_output_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::string s = input.getValue("out", "//No Geometry Output\n");
     output.setValue("out", s);

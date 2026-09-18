@@ -4,20 +4,19 @@
 #include "core/Builtins.h"
 
 #include <QtCore/QFileInfo>
-#include "nodes/NodeProgramModelRegistry.hpp"
+#include "nodes/NodeFactoryRegistry.hpp"
 #include "nodes/NodeGraph.hpp"
 #include "nodes/NodeType.hpp"
 
 #include "nodes/openscad/Builtins.hpp"
-#include "OpenSCADEvaluator.hpp"
 
 #include "nodes/nodes.hpp"
 
 using namespace JNodes::core;
 
-void dumpRegistry(std::shared_ptr<NodeProgramModelRegistry> registry);
+void dumpRegistry(std::shared_ptr<NodeFactoryRegistry> registry);
 void dumpBuiltins(void);
-void dumpNotImplemented(std::shared_ptr<NodeProgramModelRegistry> registry);
+void dumpNotImplemented(std::shared_ptr<NodeFactoryRegistry> registry);
 
 int main_audit_namespace(int argc, char *argv[])
 {
@@ -31,7 +30,7 @@ int main_audit_namespace(int argc, char *argv[])
 	return 2;
     }
 
-    std::shared_ptr<NodeProgramModelRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
+    std::shared_ptr<NodeFactoryRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
 
     // Register builtins...
     Builtins::initialize();
@@ -40,15 +39,6 @@ int main_audit_namespace(int argc, char *argv[])
 
     dumpNotImplemented(registry);
 
-    return 0;
-#if 0
-    NodeGraph dataFlowGraphModel(registry);
-
-    QJsonObject object = oscd_loadJson(argv[1]);
-    dataFlowGraphModel.load(object);
-    
-    evaluateToSCAD(dataFlowGraphModel);
-#endif
     return 0;
 }
 
@@ -59,9 +49,9 @@ void dumpBuiltins(void)
     }
 }
 
-void dumpNotImplemented(std::shared_ptr<NodeProgramModelRegistry> registry)
+void dumpNotImplemented(std::shared_ptr<NodeFactoryRegistry> registry)
 {
-    const NodeProgramModelRegistry::RegisteredModelCreatorsMap & registered
+    const NodeFactoryRegistry::RegisteredModelCreatorsMap & registered
 	= registry->getModels();
 
     for (const auto & builtin_it : Builtins::instance().getModules()) {
@@ -88,7 +78,7 @@ void dumpNotImplemented(std::shared_ptr<NodeProgramModelRegistry> registry)
     }
 }
 
-void dumpRegistry(std::shared_ptr<NodeProgramModelRegistry> registry)
+void dumpRegistry(std::shared_ptr<NodeFactoryRegistry> registry)
 {
     for (const auto & it : registry->getModels()) {
 	fprintf(stderr, "%s : %s\n",

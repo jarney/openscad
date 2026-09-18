@@ -1,18 +1,18 @@
 #pragma once
 
 #include "nodes/NodePort.hpp"
-#include "nodes/PortFunctionData.hpp"
+#include "nodes/NodePortData.hpp"
 
 namespace JNodes {
     namespace core {
 
-class OpenSCADBuiltinModel;
+class Node;
 
 class NodeType {
 public:
-    typedef std::function<void(const OpenSCADBuiltinModel & model, const PortFunctionData &, PortFunctionData & )> NodeProcessor;
-    typedef std::function<QWidget*(OpenSCADBuiltinModel &)> WidgetFactory;
-    typedef std::function<void(OpenSCADBuiltinModel &)> Initializer;
+    typedef std::function<void(const Node & node, const NodePortData &, NodePortData & )> NodeProcessor;
+    typedef std::function<QWidget*(Node &)> WidgetFactory;
+    typedef std::function<void(Node &)> Initializer;
     
     NodeType(std::string name, std::string caption, std::string category);
     std::string getName() const;
@@ -35,15 +35,15 @@ public:
 
     void setProcessor(NodeProcessor processor);
     NodeProcessor getProcessor() const;
-    static void default_processor(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output);
+    static void default_processor(const Node & node, const NodePortData & input, NodePortData & output);
     
     void setInitializer(Initializer initializer);
     Initializer getInitializer() const;
-    static void default_initializer(OpenSCADBuiltinModel &model);
+    static void default_initializer(Node &model);
     
     void setWidgetFactory(WidgetFactory widgetFactory);
     WidgetFactory getWidgetFactory() const;
-    static QWidget *default_widget_factory(OpenSCADBuiltinModel &model);
+    static QWidget *default_widget_factory(Node &model);
     
     void dump();
 private:

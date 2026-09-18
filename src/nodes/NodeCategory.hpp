@@ -2,6 +2,9 @@
 
 #include <string>
 
+namespace JNodes {
+    namespace core {
+
 class NodeCategory {
 public:
     NodeCategory(std::string name, std::string description, std::string icon);
@@ -17,3 +20,5 @@ private:
     std::string _icon;
 };
 
+    } // End core
+} // End JNodes

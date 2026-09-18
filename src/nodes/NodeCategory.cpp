@@ -1,5 +1,7 @@
 #include "nodes/NodeCategory.hpp"
 
+using namespace JNodes::core;
+
 NodeCategory::NodeCategory(std::string name, std::string description, std::string icon)
     : _name(name)
     , _description(description)

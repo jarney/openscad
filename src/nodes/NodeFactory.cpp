@@ -1,5 +1,5 @@
 #include "nodes/NodeFactory.hpp"
-#include "nodes/OpenSCADBuiltinModel.hpp"
+#include "nodes/Node.hpp"
 
 using namespace JNodes::core;
 
@@ -30,7 +30,7 @@ NodeFactoryTyped::getCategory() const
 std::unique_ptr<QtNodes::NodeDelegateModel>
 NodeFactoryTyped::create(NodeGraph & model) const
 {
-    std::unique_ptr<OpenSCADBuiltinModel> node = std::make_unique<OpenSCADBuiltinModel>(*_type, model);
+    std::unique_ptr<Node> node = std::make_unique<Node>(*_type, model);
     return node;
 }
 

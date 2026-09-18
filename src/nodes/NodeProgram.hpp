@@ -1,7 +1,7 @@
 #pragma once
 
 #include "NodeGraph.hpp"
-#include "NodeProgramModelRegistry.hpp"
+#include "NodeFactoryRegistry.hpp"
 #include <optional>
 
 namespace JNodes {
@@ -25,7 +25,7 @@ class NodeProgram {
 public:
     typedef std::string GraphId;
 
-    NodeProgram(std::shared_ptr<NodeProgramModelRegistry> _registry);
+    NodeProgram(std::shared_ptr<NodeFactoryRegistry> _registry);
     ~NodeProgram();
     
     NodeGraph *getGraph(GraphId aId);
@@ -62,7 +62,7 @@ public:
     void clear();
     
 private:
-    std::shared_ptr<NodeProgramModelRegistry> _registry;
+    std::shared_ptr<NodeFactoryRegistry> _registry;
     int _maxGraphId;
     std::map<GraphId, NodeGraph*> graphs;
 };

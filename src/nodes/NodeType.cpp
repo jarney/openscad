@@ -109,7 +109,7 @@ NodeType::getProcessor() const
 }
 
 void
-NodeType::default_processor(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+NodeType::default_processor(const Node & node, const NodePortData & input, NodePortData & output)
 {}
 
 ////////////////////////////////////////
@@ -128,7 +128,7 @@ NodeType::getInitializer() const
 }
 
 void
-NodeType::default_initializer(OpenSCADBuiltinModel &model)
+NodeType::default_initializer(Node &model)
 {}
 
 ////////////////////////////////////////
@@ -148,7 +148,7 @@ NodeType::getWidgetFactory() const
 
 
 QWidget*
-NodeType::default_widget_factory(OpenSCADBuiltinModel &)
+NodeType::default_widget_factory(Node &)
 {
     return nullptr;
 }

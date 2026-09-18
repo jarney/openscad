@@ -2,30 +2,31 @@
 #include <QString>
 #include <QtNodes/Definitions>
 
-#include "nodes/OpenSCADBuiltinModel.hpp"
-#include "nodes/OpenSCADEvaluator.hpp"
+#include "nodes/Node.hpp"
+#include "nodes/openscad/NodeProgramSerializerOpenSCAD.hpp"
 
 using namespace JNodes::core;
+using namespace JNodes::openscad;
 
 static void
 findOutputNodes(
-    const NodeGraph & model,
+    const NodeGraph & graph,
     std::vector<QtNodes::NodeId> & outputNodes
     )
 {
-    for (auto nodeId : model.allNodeIds()) {
-	OpenSCADBuiltinModel *delegate = model.delegateModel<OpenSCADBuiltinModel>(nodeId);
+    for (auto nodeId : graph.allNodeIds()) {
+	Node *node = graph.delegateModel<Node>(nodeId);
 	// Output nodes must have one input and no outputs.
-	if ((delegate->nPorts(QtNodes::PortType::In) == 1) &&
-	    (delegate->nPorts(QtNodes::PortType::Out) == 0)) {
+	if ((node->nPorts(QtNodes::PortType::In) == 1) &&
+	    (node->nPorts(QtNodes::PortType::Out) == 0)) {
 	    outputNodes.push_back(nodeId);
 	}
     }
 }
 
-static std::vector<QtNodes::ConnectionId> inputConnections(const NodeGraph & model, QtNodes::NodeId nodeId)
+static std::vector<QtNodes::ConnectionId> inputConnections(const NodeGraph & graph, QtNodes::NodeId nodeId)
 {
-    auto connections = model.allConnectionIds(nodeId);
+    auto connections = graph.allConnectionIds(nodeId);
     std::vector<QtNodes::ConnectionId> input_connections;
     for (auto connection : connections) {
 	if (nodeId == connection.outNodeId) continue;
@@ -48,9 +49,9 @@ static std::vector<QtNodes::NodeId> connectedNodes(const std::vector<QtNodes::Co
 // We make the assumption here that the graph is cycle-free.
 // If there are cycles, this will blow up.
 static void processNode(
-    const NodeGraph & model,
+    const NodeGraph & graph,
     std::set<QtNodes::NodeId> & processed_nodes,    // Set of nodes that has already been processed.
-    std::map<QtNodes::NodeId, PortFunctionData> & all_node_data,
+    std::map<QtNodes::NodeId, NodePortData> & all_node_data,
     QtNodes::NodeId nodeId,                       // Node to process.
     int depth                                     // Exit early if we reach maximum stack depth.
     )
@@ -64,22 +65,22 @@ static void processNode(
     fprintf(stderr, "Processing node %d\n", nodeId);
     processed_nodes.insert(nodeId);
 
-    std::vector<QtNodes::ConnectionId> input_connections = inputConnections(model, nodeId);
+    std::vector<QtNodes::ConnectionId> input_connections = inputConnections(graph, nodeId);
     std::vector<QtNodes::NodeId> connected_nodes = connectedNodes(input_connections);
 
     for (auto pred : connected_nodes) {
-	processNode(model, processed_nodes, all_node_data, pred, depth+1);
+	processNode(graph, processed_nodes, all_node_data, pred, depth+1);
     }
-    OpenSCADBuiltinModel *nodeData = model.delegateModel<OpenSCADBuiltinModel>(nodeId);
+    Node *node = graph.delegateModel<Node>(nodeId);
 
-    PortFunctionData input_data;
+    NodePortData input_data;
     fprintf(stderr, "Processing input connections %ld\n", input_connections.size());
     for (auto & connection : input_connections) {
-	OpenSCADBuiltinModel *upstreamNode = model.delegateModel<OpenSCADBuiltinModel>(connection.outNodeId);
+	Node *upstreamNode = graph.delegateModel<Node>(connection.outNodeId);
 	std::string outputPortName = upstreamNode->outputPortName(connection.outPortIndex);
 	
-	std::string inputPortName = nodeData->inputPortName(connection.inPortIndex);
-	const PortFunctionData & connected_node_data = all_node_data[connection.outNodeId];
+	std::string inputPortName = node->inputPortName(connection.inPortIndex);
+	const NodePortData & connected_node_data = all_node_data[connection.outNodeId];
 	if (connected_node_data.hasValue(outputPortName)) {
 	    std::string outputValue = connected_node_data.getValue(outputPortName, "");
 	    input_data.setValue(inputPortName, outputValue);
@@ -88,17 +89,18 @@ static void processNode(
     }
     // Create a new entry and pass it by reference.
     auto & node_data = all_node_data[nodeId];
-    nodeData->process(input_data, node_data);
+    node->process(input_data, node_data);
 }
 
 
-std::string evaluateToSCAD(const NodeGraph & model)
+std::string
+NodeProgramSerializerOpenSCAD::toString(const NodeGraph & graph)
 {
 //    virtual std::unordered_set<NodeId> allNodeIds() const = 0;
     std::vector<QtNodes::NodeId> outputNodes;
 
     // First, find all of the 'output' nodes.
-    findOutputNodes(model, outputNodes);
+    findOutputNodes(graph, outputNodes);
 
     // Here's now this needs to work.
     // Each node gets 'process' called on it
@@ -117,17 +119,55 @@ std::string evaluateToSCAD(const NodeGraph & model)
 //                                                 PortIndex portIndex) const override;
 
     std::set<QtNodes::NodeId> processed_nodes;
-    std::map<QtNodes::NodeId, PortFunctionData> all_node_data;
+    std::map<QtNodes::NodeId, NodePortData> all_node_data;
 
     std::string output;
     for (auto nodeId : outputNodes) {
 	// For each output node, wire up all of the input ports upstream.
 	// If a port has no connection, use a default data for that port.
 	// Continue recursively until there are not more ancestor nodes.
-	processNode(model, processed_nodes, all_node_data, nodeId, 0);
+	processNode(graph, processed_nodes, all_node_data, nodeId, 0);
 	output += all_node_data[nodeId].getValue("out", "");
     }
 
 
     return output;
+}
+
+
+NodeProgramSerializerOpenSCAD::NodeProgramSerializerOpenSCAD()
+{}
+
+const NodeProgramSerializer &
+NodeProgramSerializerOpenSCAD::instance()
+{
+    static NodeProgramSerializerOpenSCAD instance;
+    return instance;
+}
+    
+
+/**
+ * Writes the given node program to
+ * the given stream using the serialization
+ * method of JSON output.
+ */
+void
+NodeProgramSerializerOpenSCAD::write(const NodeProgram &program, std::ostream & output_stream) const
+{
+    const NodeGraph *graph = program.getGraph("main");
+    if (!graph) {
+	fprintf(stderr, "Cannot find main\n");
+	return;
+    }
+    std::string scadOutput = toString(*graph);
+    output_stream << scadOutput;
+}
+/**
+ * Reads the input stream and fills in the (assumed empty)
+ * node program based on the file content.
+ */
+void
+NodeProgramSerializerOpenSCAD::read(NodeProgram & program, std::istream & input_stream) const
+{
+    fprintf(stderr, "Nothing done, this doesn't work yet.  The parse entrypoint will go here...\n");
 }

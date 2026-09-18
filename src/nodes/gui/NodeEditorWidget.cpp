@@ -1,7 +1,7 @@
 #include <QtNodes/GraphicsView>
 #include <QtNodes/ConnectionStyle>
 
-#include "nodes/OpenSCADBuiltinModel.hpp"
+#include "nodes/Node.hpp"
 #include "nodes/NodeGraph.hpp"
 
 #include "nodes/gui/NodeEditorWidget.hpp"
@@ -43,7 +43,7 @@ NodeEditorWidget::prepareProgram()
     for (const auto & graphId : _program.getGraphs()) {
 	const NodeGraph *graph = _program.getGraph(graphId);
 	for (const auto & nodeId : graph->allNodeIds()) {
-	    OpenSCADBuiltinModel *node = graph->delegateModel<OpenSCADBuiltinModel>(nodeId);
+	    Node *node = graph->delegateModel<Node>(nodeId);
 	    node->setEditor(this);
 	}
 
@@ -52,7 +52,7 @@ NodeEditorWidget::prepareProgram()
 	    &NodeGraph::nodeCreated,
 	    [graphId, this](QtNodes::NodeId const nodeId) {
 		const NodeGraph *graph = this->_program.getGraph(graphId);
-		OpenSCADBuiltinModel *node = graph->delegateModel<OpenSCADBuiltinModel>(nodeId);
+		Node *node = graph->delegateModel<Node>(nodeId);
 		node->setEditor(this);
 	    }
 	);

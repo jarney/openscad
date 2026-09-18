@@ -81,17 +81,17 @@ UNARY_NODE(math, exp, _OPENSCAD_NODE_CATEGORY, "Exponential(e)", "x", DATA_VARIA
 Builtins::RegistryItemPtr
 Builtins::f_math_rands()
 {
-    auto model = std::make_unique<NodeType>("rands", "Random Vector", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "min"), "max");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "min"), "max");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "n"), "n");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "seed"), "seed");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_math_rands_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("rands", "Random Vector", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "min"), "max");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "min"), "max");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "n"), "n");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "seed"), "seed");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_math_rands_process);
+    return nodeType;
 }
 void
-Builtins::f_math_rands_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_math_rands_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     auto args = std::string();
 

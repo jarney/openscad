@@ -24,7 +24,7 @@ namespace JNodes {
 class NodeGraph;
 
 /// Class uses map for storing models (name, model)
-class NodeProgramModelRegistry {
+class NodeFactoryRegistry {
 public:
     using RegistryItemPtr = std::unique_ptr<QtNodes::NodeDelegateModel>;
     using RegistryItemCreator = std::unique_ptr<JNodes::core::NodeFactory>;
@@ -33,15 +33,15 @@ public:
 
     //using RegisteredTypeConvertersMap = std::map<TypeConverterId, TypeConverter>;
 
-    NodeProgramModelRegistry() = default;
-    ~NodeProgramModelRegistry() = default;
+    NodeFactoryRegistry() = default;
+    ~NodeFactoryRegistry() = default;
 
-    NodeProgramModelRegistry(NodeProgramModelRegistry const &) = delete;
-    NodeProgramModelRegistry(NodeProgramModelRegistry &&) = default;
+    NodeFactoryRegistry(NodeFactoryRegistry const &) = delete;
+    NodeFactoryRegistry(NodeFactoryRegistry &&) = default;
 
-    NodeProgramModelRegistry &operator=(NodeProgramModelRegistry const &) = delete;
+    NodeFactoryRegistry &operator=(NodeFactoryRegistry const &) = delete;
 
-    NodeProgramModelRegistry &operator=(NodeProgramModelRegistry &&) = default;
+    NodeFactoryRegistry &operator=(NodeFactoryRegistry &&) = default;
 
 public:
     void registerCategory(const NodeCategory & category);

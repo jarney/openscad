@@ -22,10 +22,10 @@ const NodeCategory Builtins::CATEGORY_OTHER("other", "Other", "../resources/icon
 
 #define _OPENSCAD_NODE_REGISTER(name) ret->registerModel(std::make_unique<NodeFactoryTyped>(f_##name()))
 
-std::shared_ptr<NodeProgramModelRegistry>
+std::shared_ptr<NodeFactoryRegistry>
 Builtins::registerDataModels()
 {
-    auto ret = std::make_shared<NodeProgramModelRegistry>();
+    auto ret = std::make_shared<NodeFactoryRegistry>();
 
     ret->registerCategory(CATEGORY_SYNTAX);
     ret->registerCategory(CATEGORY_CONST);
@@ -203,16 +203,16 @@ Builtins::joinArguments(std::vector<std::string> list)
 void
 Builtins::conditionalArg(
     std::vector<std::string> & args,
-    const PortFunctionData & input,
-    const OpenSCADBuiltinModel & model,
+    const NodePortData & input,
+    const Node & node,
     std::string key,
     std::string default_value)
 {
     if (input.hasValue(key)) {
 	args.push_back(key + std::string("=") + input.getValue(key, ""));
     }
-    else if (model.hasValue(key)) {
-	args.push_back(key + std::string("=") + model.getValue(key, ""));
+    else if (node.hasValue(key)) {
+	args.push_back(key + std::string("=") + node.getValue(key, ""));
     }
     else {
 	args.push_back(key + std::string("=") + default_value);
@@ -222,15 +222,15 @@ Builtins::conditionalArg(
 void
 Builtins::conditionalArg(
     std::vector<std::string> & args,
-    const PortFunctionData & input,
-    const OpenSCADBuiltinModel & model,
+    const NodePortData & input,
+    const Node & node,
     std::string key
     )
 {
     if (input.hasValue(key)) {
 	args.push_back(key + std::string("=") + input.getValue(key, ""));
     }
-    else if (model.hasValue(key)) {
-	args.push_back(key + std::string("=") + model.getValue(key, ""));
+    else if (node.hasValue(key)) {
+	args.push_back(key + std::string("=") + node.getValue(key, ""));
     }
 }

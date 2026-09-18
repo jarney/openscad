@@ -16,10 +16,10 @@ class NodeGraph;
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
-class OpenSCADBuiltinModel : public QtNodes::NodeDelegateModel {
+class Node : public QtNodes::NodeDelegateModel {
 public:
-    OpenSCADBuiltinModel(const NodeType & modelType, NodeGraph & graph);
-    virtual ~OpenSCADBuiltinModel() = default;
+    Node(const NodeType & modelType, NodeGraph & graph);
+    virtual ~Node() = default;
 
     unsigned int nPorts(QtNodes::PortType portType) const override;
 
@@ -43,7 +43,7 @@ public:
     std::string inputPortName(QtNodes::PortIndex portIndex) const;
     std::string outputPortName(QtNodes::PortIndex portIndex) const;
     
-    void process(const PortFunctionData & input, PortFunctionData & output) const;
+    void process(const NodePortData & input, NodePortData & output) const;
 
     virtual bool resizable() const override;
     

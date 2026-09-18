@@ -2,7 +2,7 @@
 
 #include <QtNodes/AbstractGraphModel>
 #include <QtNodes/ConnectionIdUtils>
-#include "NodeProgramModelRegistry.hpp"
+#include "NodeFactoryRegistry.hpp"
 #include <QtNodes/internal/Serializable.hpp>
 #include <QtNodes/StyleCollection>
 #include <QtNodes/NodeGroup>
@@ -34,9 +34,9 @@ public:
     };
 
 public:
-    NodeGraph(std::shared_ptr<NodeProgramModelRegistry> registry, NodeProgram & parent);
+    NodeGraph(std::shared_ptr<NodeFactoryRegistry> registry, NodeProgram & parent);
 
-    std::shared_ptr<NodeProgramModelRegistry> dataModelRegistry() { return _registry; }
+    std::shared_ptr<NodeFactoryRegistry> dataModelRegistry() { return _registry; }
 
 public:
     std::unordered_set<QtNodes::NodeId> allNodeIds() const override;
@@ -166,7 +166,7 @@ private Q_SLOTS:
     void propagateEmptyDataTo(QtNodes::NodeId const nodeId, QtNodes::PortIndex const portIndex);
 
 private:
-    std::shared_ptr<NodeProgramModelRegistry> _registry;
+    std::shared_ptr<NodeFactoryRegistry> _registry;
 
     QtNodes::NodeId _nextNodeId;
 

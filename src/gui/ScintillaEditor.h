@@ -24,7 +24,7 @@
 #include <QtNodes/GraphicsView>
 #include "nodes/gui/GraphicsScene.hpp"
 #include "nodes/NodeProgram.hpp"
-#include "nodes/NodeProgramModelRegistry.hpp"
+#include "nodes/NodeFactoryRegistry.hpp"
 
 // don't need the full definition, because it confuses Qt
 class ScadLexer;
@@ -42,7 +42,7 @@ public:
 
   QTabWidget *qtab;
 
-  std::shared_ptr<JNodes::core::NodeProgramModelRegistry> qnode_registry;
+  std::shared_ptr<JNodes::core::NodeFactoryRegistry> qnode_registry;
   std::shared_ptr<JNodes::core::NodeProgram> qnode_program;
 
   QString toPlainText() override;

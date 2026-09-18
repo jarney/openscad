@@ -4,13 +4,13 @@
 #include <QtCore/QFileInfo>
 #include <QApplication>
 
-#include "nodes/NodeProgramModelRegistry.hpp"
+#include "nodes/NodeFactoryRegistry.hpp"
 #include "nodes/NodeProgram.hpp"
 #include "nodes/NodeType.hpp"
 #include "nodes/NodeProgramSerializer.hpp"
 
 #include "nodes/openscad/Builtins.hpp"
-#include "nodes/OpenSCADEvaluator.hpp"
+#include "nodes/openscad/NodeProgramSerializerOpenSCAD.hpp"
 
 using namespace JNodes::core;
 using namespace JNodes::openscad;
@@ -30,7 +30,7 @@ int main_process(int argc, char *argv[])
 	return 2;
     }
     
-    std::shared_ptr<NodeProgramModelRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
+    std::shared_ptr<NodeFactoryRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
     NodeProgram program(registry);
     
     const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
@@ -43,8 +43,9 @@ int main_process(int argc, char *argv[])
 	fprintf(stderr, "File %s does not contain a 'main' graph\n", argv[1]);
 	return 3;
     }
-    
-    std::cout << evaluateToSCAD(*graph);
+
+    NodeProgramSerializerOpenSCAD::instance().write(program, std::cout);
+//    std::cout << evaluateToSCAD(*graph);
 
     return 0;
 }

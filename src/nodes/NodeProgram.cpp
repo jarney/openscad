@@ -2,7 +2,7 @@
 
 using namespace JNodes::core;
 
-NodeProgram::NodeProgram(std::shared_ptr<NodeProgramModelRegistry> registry)
+NodeProgram::NodeProgram(std::shared_ptr<NodeFactoryRegistry> registry)
     : _registry(registry)
     , _maxGraphId(0)
 {}

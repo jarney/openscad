@@ -11,6 +11,7 @@ namespace JNodes {
  */
 class NodeProgramSerializer {
 public:
+    virtual ~NodeProgramSerializer() = default;
     virtual void write(const NodeProgram &program, std::ostream & output_stream) const = 0;
     virtual void read(NodeProgram & program, std::istream & input_stream) const = 0;
 };
@@ -27,6 +28,7 @@ private:
      * Constructor is private because we are a singleton.
      */
     NodeProgramSerializerJSON();
+    ~NodeProgramSerializerJSON() = default;
 public:
     /**
      * No copy because we are a singleton.

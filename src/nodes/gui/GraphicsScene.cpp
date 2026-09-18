@@ -29,7 +29,7 @@
 #include <vector>
 
 #include "nodes/gui/GraphicsScene.hpp"
-#include "nodes/NodeProgramModelRegistry.hpp"
+#include "nodes/NodeFactoryRegistry.hpp"
 
 using namespace JNodes::gui;
 using namespace JNodes::core;

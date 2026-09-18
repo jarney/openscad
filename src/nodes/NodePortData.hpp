@@ -3,12 +3,15 @@
 #include <string>
 #include <map>
 
-class PortFunctionData {
+namespace JNodes {
+    namespace core {
+
+class NodePortData {
 public:
-    PortFunctionData();
-    PortFunctionData(const PortFunctionData & other);
-    PortFunctionData & operator=(const PortFunctionData & ) = delete;
-    ~PortFunctionData() = default;
+    NodePortData();
+    NodePortData(const NodePortData & other);
+    NodePortData & operator=(const NodePortData & ) = delete;
+    ~NodePortData() = default;
     
     void setValue(std::string key, std::string value);
     std::string getValue(std::string key, std::string default_value) const;
@@ -18,3 +21,5 @@ private:
     std::map<std::string, std::string> _data;
 };
 
+    } // End core
+} // End JNodes

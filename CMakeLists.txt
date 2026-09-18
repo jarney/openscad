@@ -1314,18 +1314,17 @@ set(INPUT_DRIVER_SOURCES
 set(GUI_SOURCES
   ${GUI_SOURCES}
 
-  src/nodes/OpenSCADEvaluator.cpp
   
-  src/nodes/PortFunctionData.cpp
-  src/nodes/OpenSCADBuiltinModel.cpp
-  src/nodes/NodeFactory.cpp
   src/nodes/NodeProgram.cpp
-  src/nodes/NodeProgramSerializer.cpp
   src/nodes/NodeGraph.cpp
+  src/nodes/Node.cpp
   src/nodes/NodePort.cpp
-  src/nodes/NodeCategory.cpp
+  src/nodes/NodePortData.cpp
   src/nodes/NodeType.cpp
-  src/nodes/NodeProgramModelRegistry.cpp
+  src/nodes/NodeCategory.cpp
+  src/nodes/NodeFactory.cpp
+  src/nodes/NodeFactoryRegistry.cpp
+  src/nodes/NodeProgramSerializer.cpp
 
   src/nodes/openscad/Builtins.cpp
   src/nodes/openscad/BuiltinsSyntax.cpp
@@ -1341,6 +1340,7 @@ set(GUI_SOURCES
   src/nodes/openscad/BuiltinsOther.cpp
   src/nodes/openscad/BuiltinsFunctions.cpp
   src/nodes/openscad/BuiltinsMath.cpp
+  src/nodes/openscad/NodeProgramSerializerOpenSCAD.cpp
   
   src/nodes/gui/BreadcrumbsWidget.cpp
   src/nodes/gui/NodeEditorWidget.cpp

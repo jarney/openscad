@@ -21,12 +21,11 @@
 #include "nodes/NodeProgram.hpp"
 #include "nodes/NodeGraph.hpp"
 #include "nodes/NodeProgramSerializer.hpp"
-#include "nodes/NodeProgramModelRegistry.hpp"
+#include "nodes/NodeFactoryRegistry.hpp"
 #include "nodes/gui/GraphicsScene.hpp"
 #include "nodes/gui/NodeEditorWidget.hpp"
 
 #include "nodes/openscad/Builtins.hpp"
-#include "nodes/OpenSCADEvaluator.hpp"
 
 using QtNodes::GraphicsView;
 
@@ -47,7 +46,7 @@ int main_edit(int argc, char *argv[])
 	return 2;
     }
     
-    std::shared_ptr<NodeProgramModelRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
+    std::shared_ptr<NodeFactoryRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
     NodeProgram program(registry);
     
     const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();

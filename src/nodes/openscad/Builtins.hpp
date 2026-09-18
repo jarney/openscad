@@ -6,8 +6,8 @@
 #include <QtNodes/NodeDelegateModel>
 #include <QtNodes/NodeData>
 #include "nodes/NodeType.hpp"
-#include "nodes/NodeProgramModelRegistry.hpp"
-#include "nodes/OpenSCADBuiltinModel.hpp"
+#include "nodes/NodeFactoryRegistry.hpp"
+#include "nodes/Node.hpp"
 
 #include "nodes/openscad/DataTypes.hpp"
 
@@ -34,28 +34,28 @@ class Builtins {
 public:
     using RegistryItemPtr = std::unique_ptr<JNodes::core::NodeType>;
 
-    static const NodeCategory CATEGORY_SYNTAX;
-    static const NodeCategory CATEGORY_CONST;
-    static const NodeCategory CATEGORY_OPERATOR;
-    static const NodeCategory CATEGORY_2D;
-    static const NodeCategory CATEGORY_3D;
-    static const NodeCategory CATEGORY_XFORM;
-    static const NodeCategory CATEGORY_LIST;
-    static const NodeCategory CATEGORY_BOOLEAN_OPS;
-    static const NodeCategory CATEGORY_FLOW;
-    static const NodeCategory CATEGORY_TYPETEST;
-    static const NodeCategory CATEGORY_OTHER;
-    static const NodeCategory CATEGORY_FUNCTION;
-    static const NodeCategory CATEGORY_MATH;
+    static const JNodes::core::NodeCategory CATEGORY_SYNTAX;
+    static const JNodes::core::NodeCategory CATEGORY_CONST;
+    static const JNodes::core::NodeCategory CATEGORY_OPERATOR;
+    static const JNodes::core::NodeCategory CATEGORY_2D;
+    static const JNodes::core::NodeCategory CATEGORY_3D;
+    static const JNodes::core::NodeCategory CATEGORY_XFORM;
+    static const JNodes::core::NodeCategory CATEGORY_LIST;
+    static const JNodes::core::NodeCategory CATEGORY_BOOLEAN_OPS;
+    static const JNodes::core::NodeCategory CATEGORY_FLOW;
+    static const JNodes::core::NodeCategory CATEGORY_TYPETEST;
+    static const JNodes::core::NodeCategory CATEGORY_OTHER;
+    static const JNodes::core::NodeCategory CATEGORY_FUNCTION;
+    static const JNodes::core::NodeCategory CATEGORY_MATH;
     
-    static std::shared_ptr<JNodes::core::NodeProgramModelRegistry> registerDataModels();
+    static std::shared_ptr<JNodes::core::NodeFactoryRegistry> registerDataModels();
 
     // Most nodes only need a type and a processor
     // because the instances hold no state.  Addition
     // is addition, and no modifiers are needed.
 #define _OPENSCAD_NODE_DECL(name)                                    \
     static std::unique_ptr<JNodes::core::NodeType> f_##name();				\
-    static void f_##name##_process(const JNodes::core::OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output);
+    static void f_##name##_process(const JNodes::core::Node & node, const JNodes::core::NodePortData & input, JNodes::core::NodePortData & output);
 
     // Some nodes carry state for each instance
     // of the node.  For example, nodes
@@ -67,9 +67,9 @@ public:
     // things like the name of the variable.
 #define _OPENSCAD_NODE_DECL_FULL(name)                                    \
     static std::unique_ptr<JNodes::core::NodeType> f_##name();                     \
-    static void f_##name##_process(const JNodes::core::OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output); \
-    static void f_##name##_initializer(JNodes::core::OpenSCADBuiltinModel & node);      \
-    static QWidget* f_##name##_widget(JNodes::core::OpenSCADBuiltinModel & node)
+    static void f_##name##_process(const JNodes::core::Node & node, const JNodes::core::NodePortData & input, JNodes::core::NodePortData & output); \
+    static void f_##name##_initializer(JNodes::core::Node & node);      \
+    static QWidget* f_##name##_widget(JNodes::core::Node & node)
 
     // Syntax
     _OPENSCAD_NODE_DECL_FULL(syntax_assign);
@@ -230,8 +230,8 @@ private:
      */
     static void conditionalArg(
 	std::vector<std::string> & args,
-	const PortFunctionData & input,
-	const JNodes::core::OpenSCADBuiltinModel & model,
+	const JNodes::core::NodePortData & input,
+	const JNodes::core::Node & node,
 	std::string key,
 	std::string default_value
     );
@@ -241,8 +241,8 @@ private:
      */
     static void conditionalArg(
 	std::vector<std::string> & args,
-	const PortFunctionData & input,
-	const JNodes::core::OpenSCADBuiltinModel & model,
+	const JNodes::core::NodePortData & input,
+	const JNodes::core::Node & node,
 	std::string key
     );
 };

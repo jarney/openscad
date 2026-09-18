@@ -10,7 +10,7 @@
 
 using namespace JNodes::core;
 
-NodeGraph::NodeGraph(std::shared_ptr<NodeProgramModelRegistry> registry, NodeProgram & parent)
+NodeGraph::NodeGraph(std::shared_ptr<NodeFactoryRegistry> registry, NodeProgram & parent)
     : _registry(std::move(registry))
     , _nextNodeId{0}
     , _parent(parent)

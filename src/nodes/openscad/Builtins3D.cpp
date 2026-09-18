@@ -12,20 +12,20 @@ using namespace JNodes::core;
 Builtins::RegistryItemPtr
 Builtins::f_3d_sphere()
 {
-    auto model = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_3d_sphere_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("sphere", "Sphere", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_3d_sphere_process);
+    return nodeType;
 }
 
 void
-Builtins::f_3d_sphere_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_sphere_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
-    conditionalArg(args, input, model, "r");
-    conditionalArg(args, input, model, "d");
+    conditionalArg(args, input, node, "r");
+    conditionalArg(args, input, node, "d");
     std::string out = std::string("sphere(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
     
@@ -37,20 +37,20 @@ Builtins::f_3d_sphere_process(const OpenSCADBuiltinModel & model, const PortFunc
 Builtins::RegistryItemPtr
 Builtins::f_3d_cube()
 {
-    auto model = std::make_unique<NodeType>("cube", "Cube", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "size"), "size");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_3d_cube_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("cube", "Cube", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "size"), "size");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_3d_cube_process);
+    return nodeType;
 }
 
 void
-Builtins::f_3d_cube_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_cube_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
-    conditionalArg(args, input, model, "size");
-    conditionalArg(args, input, model, "center");
+    conditionalArg(args, input, node, "size");
+    conditionalArg(args, input, node, "center");
     std::string out = std::string("cube(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
@@ -61,31 +61,31 @@ Builtins::f_3d_cube_process(const OpenSCADBuiltinModel & model, const PortFuncti
 Builtins::RegistryItemPtr
 Builtins::f_3d_cylinder()
 {
-    auto model = std::make_unique<NodeType>("cylinder", "Cylinder", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "h"), "h");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r1"), "r1");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r2"), "r2");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d1"), "d1");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d2"), "d2");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_3d_cylinder_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("cylinder", "Cylinder", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "h"), "h");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r"), "r");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r1"), "r1");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "r2"), "r2");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d"), "d");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d1"), "d1");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "d2"), "d2");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_3d_cylinder_process);
+    return nodeType;
 }
 void
-Builtins::f_3d_cylinder_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_cylinder_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
-    conditionalArg(args, input, model, "h");
-    conditionalArg(args, input, model, "r");
-    conditionalArg(args, input, model, "r1");
-    conditionalArg(args, input, model, "r2");
-    conditionalArg(args, input, model, "d");
-    conditionalArg(args, input, model, "d1");
-    conditionalArg(args, input, model, "d2");
-    conditionalArg(args, input, model, "center");
+    conditionalArg(args, input, node, "h");
+    conditionalArg(args, input, node, "r");
+    conditionalArg(args, input, node, "r1");
+    conditionalArg(args, input, node, "r2");
+    conditionalArg(args, input, node, "d");
+    conditionalArg(args, input, node, "d1");
+    conditionalArg(args, input, node, "d2");
+    conditionalArg(args, input, node, "center");
     std::string out = std::string("cylinder(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
@@ -96,21 +96,21 @@ Builtins::f_3d_cylinder_process(const OpenSCADBuiltinModel & model, const PortFu
 Builtins::RegistryItemPtr
 Builtins::f_3d_polyhedron()
 {
-    auto model = std::make_unique<NodeType>("polyhedron", "Polyhedron", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "points"), "points");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "faces"), "faces");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_3d_polyhedron_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("polyhedron", "Polyhedron", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "points"), "points");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "faces"), "faces");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_3d_polyhedron_process);
+    return nodeType;
 }
 void
-Builtins::f_3d_polyhedron_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_polyhedron_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
-    conditionalArg(args, input, model, "points");
-    conditionalArg(args, input, model, "faces");
-    conditionalArg(args, input, model, "convexity");
+    conditionalArg(args, input, node, "points");
+    conditionalArg(args, input, node, "faces");
+    conditionalArg(args, input, node, "convexity");
     std::string out = std::string("polyhedron(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
@@ -121,31 +121,31 @@ Builtins::f_3d_polyhedron_process(const OpenSCADBuiltinModel & model, const Port
 Builtins::RegistryItemPtr
 Builtins::f_3d_import()
 {
-    auto model = std::make_unique<NodeType>("import", "Import", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "id"), "id");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "layer"), "layer");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fn"), "$fn");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fa"), "$fa");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fs"), "$fs");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_3d_import_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("import", "Import", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "id"), "id");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "layer"), "layer");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fn"), "$fn");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fa"), "$fa");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fs"), "$fs");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_3d_import_process);
+    return nodeType;
 }
 void
-Builtins::f_3d_import_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_import_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
-    conditionalArg(args, input, model, "file");
-    conditionalArg(args, input, model, "center");
-    conditionalArg(args, input, model, "convexity");
-    conditionalArg(args, input, model, "id");
-    conditionalArg(args, input, model, "layer");
-    conditionalArg(args, input, model, "$fn");
-    conditionalArg(args, input, model, "$fa");
-    conditionalArg(args, input, model, "$fs");
+    conditionalArg(args, input, node, "file");
+    conditionalArg(args, input, node, "center");
+    conditionalArg(args, input, node, "convexity");
+    conditionalArg(args, input, node, "id");
+    conditionalArg(args, input, node, "layer");
+    conditionalArg(args, input, node, "$fn");
+    conditionalArg(args, input, node, "$fa");
+    conditionalArg(args, input, node, "$fs");
     std::string out = std::string("import(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
@@ -156,33 +156,33 @@ Builtins::f_3d_import_process(const OpenSCADBuiltinModel & model, const PortFunc
 Builtins::RegistryItemPtr
 Builtins::f_3d_linear_extrude()
 {
-    auto model = std::make_unique<NodeType>("linear_extrude", "Linear Extrude", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "height"), "height");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "v"), "v");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "twist"), "twist");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "scale"), "scale");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "slices"), "slices");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "segments"), "segments");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fn"), "$fn");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_3d_linear_extrude_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("linear_extrude", "Linear Extrude", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "height"), "height");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "v"), "v");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "twist"), "twist");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "scale"), "scale");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "slices"), "slices");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "segments"), "segments");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "$fn"), "$fn");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_3d_linear_extrude_process);
+    return nodeType;
 }
 void
-Builtins::f_3d_linear_extrude_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_linear_extrude_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
-    conditionalArg(args, input, model, "height");
-    conditionalArg(args, input, model, "v");
-    conditionalArg(args, input, model, "center");
-    conditionalArg(args, input, model, "twist");
-    conditionalArg(args, input, model, "scale");
-    conditionalArg(args, input, model, "slices");
-    conditionalArg(args, input, model, "segments");
-    conditionalArg(args, input, model, "convexity");
-    conditionalArg(args, input, model, "$fn");
+    conditionalArg(args, input, node, "height");
+    conditionalArg(args, input, node, "v");
+    conditionalArg(args, input, node, "center");
+    conditionalArg(args, input, node, "twist");
+    conditionalArg(args, input, node, "scale");
+    conditionalArg(args, input, node, "slices");
+    conditionalArg(args, input, node, "segments");
+    conditionalArg(args, input, node, "convexity");
+    conditionalArg(args, input, node, "$fn");
     std::string out = std::string("import(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
@@ -194,23 +194,23 @@ Builtins::f_3d_linear_extrude_process(const OpenSCADBuiltinModel & model, const 
 Builtins::RegistryItemPtr
 Builtins::f_3d_rotate_extrude()
 {
-    auto model = std::make_unique<NodeType>("rotate_extrude", "Rotate Extrude", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "angle"), "angle");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "start"), "start");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "a"), "a");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_3d_rotate_extrude_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("rotate_extrude", "Rotate Extrude", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "angle"), "angle");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "start"), "start");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "a"), "a");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_3d_rotate_extrude_process);
+    return nodeType;
 }
 void
-Builtins::f_3d_rotate_extrude_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_rotate_extrude_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
-    conditionalArg(args, input, model, "angle");
-    conditionalArg(args, input, model, "start");
-    conditionalArg(args, input, model, "convexity");
-    conditionalArg(args, input, model, "a");
+    conditionalArg(args, input, node, "angle");
+    conditionalArg(args, input, node, "start");
+    conditionalArg(args, input, node, "convexity");
+    conditionalArg(args, input, node, "a");
     std::string out = std::string("import(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
@@ -220,23 +220,23 @@ Builtins::f_3d_rotate_extrude_process(const OpenSCADBuiltinModel & model, const 
 Builtins::RegistryItemPtr
 Builtins::f_3d_surface()
 {
-    auto model = std::make_unique<NodeType>("surface", "Heightmap Surface", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "invert"), "invert");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
-    model->setProcessor(f_3d_surface_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("surface", "Heightmap Surface", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "center"), "center");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "invert"), "invert");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "convexity"), "convexity");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_SOLID_GEOMETRY, "Geometry"), "Geometry");
+    nodeType->setProcessor(f_3d_surface_process);
+    return nodeType;
 }
 void
-Builtins::f_3d_surface_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_surface_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
-    conditionalArg(args, input, model, "file");
-    conditionalArg(args, input, model, "center");
-    conditionalArg(args, input, model, "invert");
-    conditionalArg(args, input, model, "convexity");
+    conditionalArg(args, input, node, "file");
+    conditionalArg(args, input, node, "center");
+    conditionalArg(args, input, node, "invert");
+    conditionalArg(args, input, node, "convexity");
     std::string out = std::string("surface(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
@@ -247,26 +247,26 @@ Builtins::f_3d_surface_process(const OpenSCADBuiltinModel & model, const PortFun
 Builtins::RegistryItemPtr
 Builtins::f_3d_dxf_dim()
 {
-    auto model = std::make_unique<NodeType>("dxf_dim", "Read DXF Dimension", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "name"), "name");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "layer"), "layer");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "origin"), "origin");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "scale"), "scale");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "out"), "out");
-    model->setProcessor(f_3d_dxf_dim_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("dxf_dim", "Read DXF Dimension", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "name"), "name");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "layer"), "layer");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "origin"), "origin");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "scale"), "scale");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "out"), "out");
+    nodeType->setProcessor(f_3d_dxf_dim_process);
+    return nodeType;
 }
 
 void
-Builtins::f_3d_dxf_dim_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_dxf_dim_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
-    conditionalArg(args, input, model, "file");
-    conditionalArg(args, input, model, "name");
-    conditionalArg(args, input, model, "layer");
-    conditionalArg(args, input, model, "origin");
-    conditionalArg(args, input, model, "scale");
+    conditionalArg(args, input, node, "file");
+    conditionalArg(args, input, node, "name");
+    conditionalArg(args, input, node, "layer");
+    conditionalArg(args, input, node, "origin");
+    conditionalArg(args, input, node, "scale");
     std::string out = std::string("dxf_dim(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }
@@ -277,24 +277,24 @@ Builtins::f_3d_dxf_dim_process(const OpenSCADBuiltinModel & model, const PortFun
 Builtins::RegistryItemPtr
 Builtins::f_3d_dxf_cross()
 {
-    auto model = std::make_unique<NodeType>("dxf_cross", "Read DXF Origin", _OPENSCAD_NODE_CATEGORY);
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "layer"), "layer");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "origin"), "origin");
-    model->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "scale"), "scale");
-    model->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "out"), "out");
-    model->setProcessor(f_3d_dxf_cross_process);
-    return model;
+    auto nodeType = std::make_unique<NodeType>("dxf_cross", "Read DXF Origin", _OPENSCAD_NODE_CATEGORY);
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "file"), "file");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "layer"), "layer");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "origin"), "origin");
+    nodeType->addInputPort(std::make_unique<NodePort>(DATA_VARIABLE, "scale"), "scale");
+    nodeType->addOutputPort(std::make_unique<NodePort>(DATA_VARIABLE, "out"), "out");
+    nodeType->setProcessor(f_3d_dxf_cross_process);
+    return nodeType;
 }
 
 void
-Builtins::f_3d_dxf_cross_process(const OpenSCADBuiltinModel & model, const PortFunctionData & input, PortFunctionData & output)
+Builtins::f_3d_dxf_cross_process(const Node & node, const NodePortData & input, NodePortData & output)
 {
     std::vector<std::string> args;
-    conditionalArg(args, input, model, "file");
-    conditionalArg(args, input, model, "layer");
-    conditionalArg(args, input, model, "origin");
-    conditionalArg(args, input, model, "scale");
+    conditionalArg(args, input, node, "file");
+    conditionalArg(args, input, node, "layer");
+    conditionalArg(args, input, node, "origin");
+    conditionalArg(args, input, node, "scale");
     std::string out = std::string("dxf_cross(") + joinArguments(args) + std::string(");");
     output.setValue("Geometry", out);
 }

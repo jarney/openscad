@@ -33,7 +33,7 @@
 #include <vector>
 
 #include "nodes/NodeProgram.hpp"
-#include "nodes/OpenSCADEvaluator.hpp"
+#include "nodes/openscad/NodeProgramSerializerOpenSCAD.hpp"
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/gui/NodeEditorWidget.hpp"
 
@@ -135,7 +135,7 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
       // * Remove all nodes and connections and re-load them based
       //   on the parse tree, placing them in the same places where possible.
       
-//      std::string val = evaluateToSCAD(*this->qnode_dataFlowGraphModel);
+//      std::string val = NodeProgramSerializerOpenSCAD::toString(*this->qnode_dataFlowGraphModel);
 //      this->qsci->setText(QString::fromStdString(val));
   });
 

@@ -2,15 +2,13 @@
 #include <fstream>
 
 #include <QtCore/QFileInfo>
-#include <QApplication>
 
-#include "nodes/NodeProgramModelRegistry.hpp"
+#include "nodes/NodeFactoryRegistry.hpp"
 #include "nodes/NodeProgram.hpp"
 #include "nodes/NodeType.hpp"
 #include "nodes/NodeProgramSerializer.hpp"
 
 #include "nodes/openscad/Builtins.hpp"
-#include "nodes/OpenSCADEvaluator.hpp"
 
 #include "core/SourceFile.h"
 #include "core/LocalScope.h"
@@ -44,7 +42,6 @@ void processModuleInstantiation(
 
 int main_parse(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
     
     if (argc != 2) {
 	fprintf(stderr, "Usage: process filename\n");
@@ -56,7 +53,7 @@ int main_parse(int argc, char *argv[])
 	return 2;
     }
 
-    std::shared_ptr<NodeProgramModelRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
+    std::shared_ptr<NodeFactoryRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
     NodeProgram program(registry);
     
     if (!QFileInfo::exists(argv[1])) {

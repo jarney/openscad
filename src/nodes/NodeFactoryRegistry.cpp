@@ -1,8 +1,8 @@
-#include "NodeProgramModelRegistry.hpp"
+#include "NodeFactoryRegistry.hpp"
 
 using namespace JNodes::core;
 
-std::unique_ptr<QtNodes::NodeDelegateModel> NodeProgramModelRegistry::create(QString const &modelName, NodeGraph & graph)
+std::unique_ptr<QtNodes::NodeDelegateModel> NodeFactoryRegistry::create(QString const &modelName, NodeGraph & graph)
 {
     auto it = _registeredItemCreators.find(modelName);
 
@@ -13,32 +13,32 @@ std::unique_ptr<QtNodes::NodeDelegateModel> NodeProgramModelRegistry::create(QSt
     return nullptr;
 }
 
-NodeProgramModelRegistry::CategoriesSet const &
-NodeProgramModelRegistry::categories() const
+NodeFactoryRegistry::CategoriesSet const &
+NodeFactoryRegistry::categories() const
 {
     return _categories;
 }
 
-const NodeProgramModelRegistry::RegisteredModelCreatorsMap &
-NodeProgramModelRegistry::getModels() const
+const NodeFactoryRegistry::RegisteredModelCreatorsMap &
+NodeFactoryRegistry::getModels() const
 {
     return _registeredItemCreators;
 }
 
 void
-NodeProgramModelRegistry::registerCategory(const NodeCategory & category)
+NodeFactoryRegistry::registerCategory(const NodeCategory & category)
 {
     _categoryMap.insert(std::make_pair(category.getName(), &category));
 }
 
 const std::map<std::string, const NodeCategory *> &
-NodeProgramModelRegistry::getCategories() const
+NodeFactoryRegistry::getCategories() const
 {
     return _categoryMap;
 }
 
 const NodeCategory *
-NodeProgramModelRegistry::getCategory(std::string category_name) const
+NodeFactoryRegistry::getCategory(std::string category_name) const
 {
     const auto it = _categoryMap.find(category_name);
     if (it == _categoryMap.end()) {
@@ -49,7 +49,7 @@ NodeProgramModelRegistry::getCategory(std::string category_name) const
 }
 
 const std::vector<const NodeFactory *> &
-NodeProgramModelRegistry::getModelsByCategory(std::string category) const
+NodeFactoryRegistry::getModelsByCategory(std::string category) const
 {
     static const std::vector<const NodeFactory*> emptyList;
     
@@ -61,7 +61,7 @@ NodeProgramModelRegistry::getModelsByCategory(std::string category) const
 }
 
 void
-NodeProgramModelRegistry::registerModel(std::unique_ptr<NodeFactory> factory)
+NodeFactoryRegistry::registerModel(std::unique_ptr<NodeFactory> factory)
 {
     QString const name = QString::fromStdString(factory->getName());
     if (!_registeredItemCreators.count(name)) {
