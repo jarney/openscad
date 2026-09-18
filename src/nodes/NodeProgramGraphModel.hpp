@@ -85,6 +85,9 @@ public:
     bool deleteNode(QtNodes::NodeId const nodeId) override;
 
     QJsonObject saveNode(QtNodes::NodeId const) const override;
+    QJsonObject saveGroup(
+	const std::pair<QtNodes::GroupId, std::vector<QtNodes::NodeId>> group
+	) const;
 
     void loadNode(QJsonObject const &nodeJson) override;
 

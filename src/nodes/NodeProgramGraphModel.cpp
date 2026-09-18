@@ -620,6 +620,25 @@ QJsonObject NodeProgramGraphModel::saveNode(QtNodes::NodeId const nodeId) const
     return nodeJson;
 }
 
+QJsonObject
+NodeProgramGraphModel::saveGroup(
+    const std::pair<QtNodes::GroupId, std::vector<QtNodes::NodeId>> group
+    ) const
+{
+    QJsonObject groupObj;
+
+    QJsonValue gidJson((qint64)group.first);
+    groupObj["id"] = gidJson;
+    QJsonArray nodesJsonArray;
+    for (const auto & nodeid : group.second) {
+	QJsonValue nidJson((qint64)nodeid);
+	nodesJsonArray.append(nidJson);
+    }
+    groupObj["nodes"] = nodesJsonArray;
+
+    return groupObj;
+}
+    
 QJsonObject NodeProgramGraphModel::save() const
 {
     QJsonObject sceneJson;
@@ -639,21 +658,9 @@ QJsonObject NodeProgramGraphModel::save() const
     // Take the 'transpose' of this map:
     auto groupMap = getGroups();
     QJsonArray groupJsonArray;
-    for (const auto & gid : groupMap) {
-	QJsonObject groupObj;
-
-	QJsonValue gidJson((qint64)gid.first);
-	groupObj["id"] = gidJson;
-	QJsonArray nodesJsonArray;
-	for (const auto & nodeid : gid.second) {
-	    QJsonValue nidJson((qint64)nodeid);
-	    nodesJsonArray.append(nidJson);
-	}
-	groupObj["nodes"] = nodesJsonArray;
-	
-	groupJsonArray.append(groupObj);
+    for (const auto & group : groupMap) {
+	groupJsonArray.append(saveGroup(group));
     }
-    
     sceneJson["groups"] = groupJsonArray;
     
     return sceneJson;

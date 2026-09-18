@@ -22,8 +22,6 @@ int usage()
     return -1;
 }
 
-#include <QApplication>
-
 int main(int argc, char **argv)
 {
     if (argc < 1) {
@@ -36,8 +34,7 @@ int main(int argc, char **argv)
 	return main_process(--argc, ++argv);
     }
     else if (!strcmp(argv[1], "parse")) {
-	fprintf(stderr, "TODO: parser not yet implemented\n");
-	return usage();
+	return main_parse(--argc, ++argv);
     }
     else if (!strcmp(argv[1], "edit")) {
 	return main_edit(--argc, ++argv);

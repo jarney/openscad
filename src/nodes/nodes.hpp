@@ -8,6 +8,9 @@ int main_audit_namespace(int argc, char *argv[]);
 // Process a node file into different output.
 int main_process(int argc, char *argv[]);
 
+// Parse openscad into nodes.
+int main_parse(int argc, char *argv[]);
+
 // Invoke the standalone node editor.
 int main_edit(int argc, char *argv[]);
 
