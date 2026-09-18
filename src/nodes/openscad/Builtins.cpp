@@ -1,8 +1,7 @@
-#include "nodes/OpenSCADBuiltins.hpp"
 #include "nodes/OpenSCADBuiltinFactory.hpp"
-
-#include "nodes/JNodeProgramEditor.hpp"
-#include "nodes/OpenSCADBuiltins_helpers.hpp"
+#include "nodes/gui/NodeEditorWidget.hpp"
+#include "nodes/openscad/Builtins.hpp"
+#include "nodes/openscad/Builtins_helpers.hpp"
 
 const NodeModelCategory OpenSCADBuiltins::CATEGORY_SYNTAX("syntax", "Syntax", "../resources/icons/stopbutton.png");
 const NodeModelCategory OpenSCADBuiltins::CATEGORY_CONST("const", "Constants", "../resources/icons/stopbutton.png");

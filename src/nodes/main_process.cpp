@@ -5,11 +5,12 @@
 #include <QApplication>
 
 #include "nodes/NodeProgramModelRegistry.hpp"
-#include "nodes/OpenSCADBuiltins.hpp"
-#include "nodes/OpenSCADEvaluator.hpp"
 #include "nodes/NodeProgram.hpp"
 #include "nodes/NodeModelType.hpp"
 #include "nodes/NodeProgramSerializer.hpp"
+
+#include "nodes/openscad/Builtins.hpp"
+#include "nodes/OpenSCADEvaluator.hpp"
 
 int main_process(int argc, char *argv[])
 {

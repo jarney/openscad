@@ -1,7 +1,7 @@
 #pragma once
 
-#include "JBreadcrumbs.hpp"
-#include "NodeProgram.hpp"
+#include "nodes/gui/BreadcrumbsWidget.hpp"
+#include "nodes/NodeProgram.hpp"
 
 namespace QtNodes {
     class NodeGraphicsObject;

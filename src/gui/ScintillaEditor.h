@@ -22,7 +22,7 @@
 #include "gui/ScadApi.h"
 
 #include <QtNodes/GraphicsView>
-#include "nodes/NodeProgramGraphicsScene.hpp"
+#include "nodes/gui/GraphicsScene.hpp"
 #include "nodes/NodeProgram.hpp"
 #include "nodes/NodeProgramModelRegistry.hpp"
 

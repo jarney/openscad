@@ -1,6 +1,7 @@
-#include "nodes/OpenSCADBuiltins.hpp"
 #include "nodes/OpenSCADBuiltinFactory.hpp"
-#include "nodes/OpenSCADBuiltins_helpers.hpp"
+
+#include "nodes/openscad/Builtins.hpp"
+#include "nodes/openscad/Builtins_helpers.hpp"
 
 #define _OPENSCAD_NODE_CATEGORY OpenSCADBuiltins::CATEGORY_OTHER.getName()
 

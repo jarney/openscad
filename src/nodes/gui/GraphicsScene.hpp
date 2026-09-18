@@ -2,7 +2,7 @@
 
 #include <QtNodes/BasicGraphicsScene>
 #include <QtNodes/internal/ConnectionGraphicsObject.hpp>
-#include "NodeProgramGraphModel.hpp"
+#include "nodes/NodeProgramGraphModel.hpp"
 #include <QtNodes/internal/Export.hpp>
 #include <QtNodes/internal/NodeConnectionInteraction.hpp>
 

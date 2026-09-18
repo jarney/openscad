@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include "NodeProgramSerializer.hpp"
-#include "OpenSCADBuiltins.hpp"
+#include "nodes/openscad/Builtins.hpp"
 
 static std::string get_test_path(const std::string& name)
 {

@@ -13,7 +13,7 @@
 
 #include <QtGui/QScreen>
 
-#include "JBreadcrumbs.hpp"
+#include "nodes/gui/BreadcrumbsWidget.hpp"
 
 int main_breadcrumbs(int argc, char *argv[])
 {

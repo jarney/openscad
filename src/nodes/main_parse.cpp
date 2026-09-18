@@ -5,11 +5,12 @@
 #include <QApplication>
 
 #include "nodes/NodeProgramModelRegistry.hpp"
-#include "nodes/OpenSCADBuiltins.hpp"
-#include "nodes/OpenSCADEvaluator.hpp"
 #include "nodes/NodeProgram.hpp"
 #include "nodes/NodeModelType.hpp"
 #include "nodes/NodeProgramSerializer.hpp"
+
+#include "nodes/openscad/Builtins.hpp"
+#include "nodes/OpenSCADEvaluator.hpp"
 
 #include "core/SourceFile.h"
 #include "core/LocalScope.h"
@@ -19,8 +20,6 @@
 
 #include "openscad.h"
 
-//extern bool parse(class SourceFile *& file, const std::string& text, const std::string& filename,
-//                  const std::string& mainFile, int debug);
 void processSourceFile(NodeProgram & program, SourceFile *sourceFile);
 
 void processLocalScope(
@@ -39,7 +38,6 @@ void processModuleInstantiation(
     int depth,
     int i
     );
-
 
 int main_parse(int argc, char *argv[])
 {
@@ -84,9 +82,59 @@ int main_parse(int argc, char *argv[])
     return 0;
 }
 
+class ModuleInstantiationASTHandler {
+public:
+    ModuleInstantiationASTHandler() = default;
+    ~ModuleInstantiationASTHandler() = default;
+
+    virtual void handle(
+	NodeProgram & program,
+	NodeProgramGraphModel *currentGraph,
+	QtNodes::NodeId parentNode,
+	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
+	int depth,
+	int i
+	) const = 0;
+    
+};
+
+class ModuleNodeFactorySphere : public ModuleInstantiationASTHandler {
+public:
+    virtual void handle(
+	NodeProgram & program,
+	NodeProgramGraphModel *currentGraph,
+	QtNodes::NodeId parentNode,
+	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
+	int depth,
+	int i
+	) const;
+};
+
+void
+ModuleNodeFactorySphere::handle(
+	NodeProgram & program,
+	NodeProgramGraphModel *currentGraph,
+	QtNodes::NodeId parentNode,
+	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
+	int depth,
+	int i
+	) const
+{
+    fprintf(stderr, "Handling module instantiation\n");
+}
+
+static std::map<std::string, ModuleInstantiationASTHandler *> moduleFactory;
+
 
 void processSourceFile(NodeProgram & program, SourceFile *sourceFile)
 {
+
+    //////////// Initialization
+
+    moduleFactory["sphere"] = new ModuleNodeFactorySphere();
+    moduleFactory["cube"] = new ModuleNodeFactorySphere();
+    
+    ////////////
     NodeProgramGraphModel *main = program.newGraph("main");
     QtNodes::NodeId outputNode = main->addNode("output");
 
@@ -120,6 +168,12 @@ processModuleInstantiation(
     )
 {
     fprintf(stderr, "Module instantiation name %s\n", moduleInstantiation->name().c_str());
+
+    const auto it = moduleFactory.find(moduleInstantiation->name());
+    if (it != moduleFactory.end()) {
+	it->second->handle(program, currentGraph, parentNode, moduleInstantiation, depth, i);
+    }
+    
     QtNodes::NodeId childNode = currentGraph->addNode(QString::fromStdString(moduleInstantiation->name()));
     QPointF pos(-depth * 400, -i * 400);
     currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);

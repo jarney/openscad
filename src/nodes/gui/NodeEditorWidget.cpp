@@ -1,10 +1,12 @@
-#include "JNodeProgramEditor.hpp"
-#include "nodes/OpenSCADBuiltinModel.hpp"
-
-#include "NodeProgramGraphicsScene.hpp"
-#include "NodeProgramGraphModel.hpp"
 #include <QtNodes/GraphicsView>
 #include <QtNodes/ConnectionStyle>
+
+#include "nodes/OpenSCADBuiltinModel.hpp"
+#include "nodes/NodeProgramGraphModel.hpp"
+
+#include "nodes/gui/NodeEditorWidget.hpp"
+#include "nodes/gui/GraphicsScene.hpp"
+
 
 JNodeProgramEditor::JNodeProgramEditor(NodeProgram & program)
     : _program(program)

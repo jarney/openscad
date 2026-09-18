@@ -1317,22 +1317,23 @@ set(GUI_SOURCES
   src/nodes/OpenSCADEvaluator.cpp
   src/nodes/OpenSCADBuiltinModel.cpp
   src/nodes/OpenSCADBuiltinFactory.cpp
-  src/nodes/OpenSCADBuiltins.cpp
-  src/nodes/OpenSCADBuiltinsSyntax.cpp
-  src/nodes/OpenSCADBuiltinsConstants.cpp
-  src/nodes/OpenSCADBuiltinsOperators.cpp
-  src/nodes/OpenSCADBuiltins2D.cpp
-  src/nodes/OpenSCADBuiltins3D.cpp
-  src/nodes/OpenSCADBuiltinsTransforms.cpp
-  src/nodes/OpenSCADBuiltinsList.cpp
-  src/nodes/OpenSCADBuiltinsBooleanOperations.cpp
-  src/nodes/OpenSCADBuiltinsFlowControl.cpp
-  src/nodes/OpenSCADBuiltinsTypeTest.cpp
-  src/nodes/OpenSCADBuiltinsOther.cpp
-  src/nodes/OpenSCADBuiltinsFunctions.cpp
-  src/nodes/OpenSCADBuiltinsMath.cpp
-  src/nodes/JBreadcrumbs.cpp
-  src/nodes/JNodeProgramEditor.cpp
+  src/nodes/openscad/Builtins.cpp
+  src/nodes/openscad/BuiltinsSyntax.cpp
+  src/nodes/openscad/BuiltinsConstants.cpp
+  src/nodes/openscad/BuiltinsOperators.cpp
+  src/nodes/openscad/Builtins2D.cpp
+  src/nodes/openscad/Builtins3D.cpp
+  src/nodes/openscad/BuiltinsTransforms.cpp
+  src/nodes/openscad/BuiltinsList.cpp
+  src/nodes/openscad/BuiltinsBooleanOperations.cpp
+  src/nodes/openscad/BuiltinsFlowControl.cpp
+  src/nodes/openscad/BuiltinsTypeTest.cpp
+  src/nodes/openscad/BuiltinsOther.cpp
+  src/nodes/openscad/BuiltinsFunctions.cpp
+  src/nodes/openscad/BuiltinsMath.cpp
+  src/nodes/gui/BreadcrumbsWidget.cpp
+  src/nodes/gui/NodeEditorWidget.cpp
+  src/nodes/gui/GraphicsScene.cpp
   src/nodes/PortFunctionData.cpp
   src/nodes/NodeProgram.cpp
   src/nodes/NodeProgramSerializer.cpp
@@ -1341,7 +1342,6 @@ set(GUI_SOURCES
   src/nodes/NodeModelType.cpp
   src/nodes/NodeProgramGraphModel.cpp
   src/nodes/NodeProgramModelRegistry.cpp
-  src/nodes/NodeProgramGraphicsScene.cpp
 
   src/openscad_gui.cc
   src/gui/AutoUpdater.cc

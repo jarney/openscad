@@ -18,15 +18,15 @@
 
 #include "core/Builtins.h"
 
-#include "OpenSCADBuiltins.hpp"
-#include "OpenSCADEvaluator.hpp"
-#include "NodeProgramGraphModel.hpp"
-#include "JBreadcrumbs.hpp"
-#include "JNodeProgramEditor.hpp"
-#include "NodeProgram.hpp"
-#include "NodeProgramSerializer.hpp"
-#include "NodeProgramModelRegistry.hpp"
-#include "NodeProgramGraphicsScene.hpp"
+#include "nodes/NodeProgram.hpp"
+#include "nodes/NodeProgramGraphModel.hpp"
+#include "nodes/NodeProgramSerializer.hpp"
+#include "nodes/NodeProgramModelRegistry.hpp"
+#include "nodes/gui/GraphicsScene.hpp"
+#include "nodes/gui/NodeEditorWidget.hpp"
+
+#include "nodes/openscad/Builtins.hpp"
+#include "nodes/OpenSCADEvaluator.hpp"
 
 using QtNodes::GraphicsView;
 
@@ -113,40 +113,8 @@ int main_edit(int argc, char *argv[])
 
     QObject::connect(groupAction, &QAction::triggered, [jw]() {
 	std::vector<QtNodes::NodeGraphicsObject*> groupNodes = jw->selectedNodes();
-#if 0
-	// We will need a few of this type.
-	// A function (input parameters, output return-value)
-	// A module (input parameters, output geometry)
-	// A scope (group of nodes with 'let' statements to hold variable context)
-	// A 'for' loop with a variable to indicate loop state and values, output geometry.
-
-	// This is effectively a "function".
-	auto arguments = std::make_unique<BaseSCADModel>("for", "Loop");
-	arguments->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "range"), "range");
-	arguments->addOutputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "index"), "index");
-	arguments->setProcessor(OpenSCADBuiltins::f_prim_sphere_process);
-
-	auto ret = std::make_unique<BaseSCADModel>("Return", "Return");
-	ret->addInputPort(std::make_unique<BaseSCADPort>(DATA_VARIABLE, "return"), "return");
-	ret->setProcessor(OpenSCADBuiltins::f_prim_sphere_process);
-
-	groupNodes.push_back(scene->nodeGraphicsObject(dataFlowGraphModel.addNode(std::move(arguments))));
-	groupNodes.push_back(scene->nodeGraphicsObject(dataFlowGraphModel.addNode(std::move(ret))));
-#endif
 	jw->createGroup(groupNodes, QString("Some Group"));
     });
-#if 0
-    QObject::connect(scene, &NodeProgramGraphicsScene::sceneLoaded, view, &GraphicsView::centerScene);
-
-    QObject::connect(scene, &NodeProgramGraphicsScene::modified, &mainWidget, [&mainWidget]() {
-        mainWidget.setWindowModified(true);
-    });
-
-    if (scene->groupingEnabled()) {
-        auto loadGroupAction = menu->addAction("Load Group...");
-        QObject::connect(loadGroupAction, &QAction::triggered, [scene] { scene->loadGroupFile(); });
-    }
-#endif
     
     mainWidget.setWindowTitle("[*]Data Flow: simplest calculator");
     mainWidget.resize(800, 600);

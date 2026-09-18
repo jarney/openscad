@@ -1,4 +1,4 @@
-#include "JBreadcrumbs.hpp"
+#include "nodes/gui/BreadcrumbsWidget.hpp"
 
 JBreadcrumbs::JBreadcrumbs()
 {

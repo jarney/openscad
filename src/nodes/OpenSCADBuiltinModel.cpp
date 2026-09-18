@@ -1,6 +1,6 @@
 #include "nodes/NodeProgramModelRegistry.hpp"
 #include "nodes/OpenSCADBuiltinModel.hpp"
-#include "nodes/JNodeProgramEditor.hpp"
+#include "nodes/gui/NodeEditorWidget.hpp"
 
 OpenSCADBuiltinModel::OpenSCADBuiltinModel(const NodeModelType & modelType, NodeProgramGraphModel & graph)
     : _modelType(modelType)

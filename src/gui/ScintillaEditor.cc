@@ -33,10 +33,10 @@
 #include <vector>
 
 #include "nodes/NodeProgramModelRegistry.hpp"
-#include "nodes/OpenSCADBuiltins.hpp"
+#include "nodes/openscad/Builtins.hpp"
 #include "nodes/OpenSCADEvaluator.hpp"
 #include "nodes/NodeProgram.hpp"
-#include "nodes/JNodeProgramEditor.hpp"
+#include "nodes/gui/NodeEditorWidget.hpp"
 
 #include "core/Settings.h"
 #include "gui/Preferences.h"

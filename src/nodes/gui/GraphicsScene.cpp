@@ -1,8 +1,5 @@
-#include "NodeProgramGraphicsScene.hpp"
-
 #include <QtNodes/internal/ConnectionGraphicsObject.hpp>
 #include <QtNodes/GraphicsView>
-#include "NodeProgramModelRegistry.hpp"
 #include <QtNodes/internal/NodeGraphicsObject.hpp>
 #include <QtNodes/UndoCommands>
 
@@ -30,6 +27,9 @@
 #include <stdexcept>
 #include <utility>
 #include <vector>
+
+#include "nodes/gui/GraphicsScene.hpp"
+#include "nodes/NodeProgramModelRegistry.hpp"
 
 QtNodes::GroupId jsonValueToGroupId(QJsonValue const &value)
 {

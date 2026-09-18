@@ -5,11 +5,11 @@
 
 #include <QtCore/QFileInfo>
 #include "nodes/NodeProgramModelRegistry.hpp"
+#include "nodes/NodeProgramGraphModel.hpp"
+#include "nodes/NodeModelType.hpp"
 
-#include "OpenSCADBuiltins.hpp"
+#include "nodes/openscad/Builtins.hpp"
 #include "OpenSCADEvaluator.hpp"
-#include "NodeProgramGraphModel.hpp"
-#include "NodeModelType.hpp"
 
 #include "nodes/nodes.hpp"
 
