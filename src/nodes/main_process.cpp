@@ -21,18 +21,13 @@ int main_process(int argc, char *argv[])
     }
     
     if (!QFileInfo::exists(argv[1])) {
-	fprintf(stderr, "Cannot process file, it does not exist\n");
-	return 2;
-    }
-
-    std::shared_ptr<NodeProgramModelRegistry> registry = OpenSCADBuiltins::registerDataModels();
-    NodeProgram program(registry);
-    
-    if (!QFileInfo::exists(argv[1])) {
 	fprintf(stderr, "File %s does not exist\n", argv[1]);
 	fprintf(stderr, "Usage: process filename\n");
-	return 3;
+	return 2;
     }
+    
+    std::shared_ptr<NodeProgramModelRegistry> registry = OpenSCADBuiltins::registerDataModels();
+    NodeProgram program(registry);
     
     const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
     std::string filename(argv[1]);
@@ -42,7 +37,7 @@ int main_process(int argc, char *argv[])
     NodeProgramGraphModel *graph = program.getGraph("main");
     if (!graph) {
 	fprintf(stderr, "File %s does not contain a 'main' graph\n", argv[1]);
-	return 4;
+	return 3;
     }
     
     std::cout << evaluateToSCAD(*graph);

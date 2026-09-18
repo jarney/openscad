@@ -21,6 +21,25 @@
 
 //extern bool parse(class SourceFile *& file, const std::string& text, const std::string& filename,
 //                  const std::string& mainFile, int debug);
+void processSourceFile(NodeProgram & program, SourceFile *sourceFile);
+
+void processLocalScope(
+    NodeProgram & program,
+    NodeProgramGraphModel *currentGraph,
+    QtNodes::NodeId parentNode,
+    std::shared_ptr<LocalScope> localScope,
+    int depth
+    );
+
+void processModuleInstantiation(
+    NodeProgram & program,
+    NodeProgramGraphModel *currentGraph,
+    QtNodes::NodeId parentNode,
+    std::shared_ptr<ModuleInstantiation> moduleInstantiation,
+    int depth,
+    int i
+    );
+
 
 int main_parse(int argc, char *argv[])
 {
@@ -57,9 +76,64 @@ int main_parse(int argc, char *argv[])
     }
     fprintf(stderr, "Got a valid parse tree\n");
 
-    auto localScope = sourceFile->scope;
-    auto mi = localScope->moduleInstantiations.at(0);
-    fprintf(stderr, "Module instantiation name %s\n", mi->name().c_str());
+    processSourceFile(program, sourceFile);
+    
+    const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
+    serializer.write(program, std::cout);
+
+    return 0;
+}
+
+
+void processSourceFile(NodeProgram & program, SourceFile *sourceFile)
+{
+    NodeProgramGraphModel *main = program.newGraph("main");
+    QtNodes::NodeId outputNode = main->addNode("output");
+
+    processLocalScope(program, main, outputNode, sourceFile->scope, 0);
+}
+
+void
+processLocalScope(
+    NodeProgram & program,
+    NodeProgramGraphModel *currentGraph,
+    QtNodes::NodeId parentNode,
+    std::shared_ptr<LocalScope> localScope,
+    int depth
+    )
+{
+    int i = 0;
+    for (const auto moduleInstantiation : localScope->moduleInstantiations) {
+	processModuleInstantiation(program, currentGraph, parentNode, moduleInstantiation, depth+1, i);
+	i++;
+    }
+}
+
+void
+processModuleInstantiation(
+    NodeProgram & program,
+    NodeProgramGraphModel *currentGraph,
+    QtNodes::NodeId parentNode,
+    std::shared_ptr<ModuleInstantiation> moduleInstantiation,
+    int depth,
+    int i
+    )
+{
+    fprintf(stderr, "Module instantiation name %s\n", moduleInstantiation->name().c_str());
+    QtNodes::NodeId childNode = currentGraph->addNode(QString::fromStdString(moduleInstantiation->name()));
+    QPointF pos(-depth * 400, -i * 400);
+    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+
+    QtNodes::ConnectionId connection;
+    connection.inNodeId = parentNode;
+    connection.inPortIndex = 0;
+    connection.outNodeId = childNode;
+    connection.outPortIndex = 0;
+    currentGraph->addConnection(connection);
+    
+    processLocalScope(program, currentGraph, childNode, moduleInstantiation->scope, depth);
+	
+#if 0
     auto as = mi->arguments.at(0);
     Expression *expr = as->getExpr().get();
     
@@ -70,9 +144,5 @@ int main_parse(int argc, char *argv[])
     else {
 	fprintf(stderr, "It is not a literal\n");
     }
-    
-    const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
-    serializer.write(program, std::cout);
-
-    return 0;
+#endif
 }

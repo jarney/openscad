@@ -34,15 +34,23 @@ int main_edit(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    std::shared_ptr<NodeProgramModelRegistry> registry = OpenSCADBuiltins::registerDataModels();
+    if (argc != 2) {
+	fprintf(stderr, "Usage: edit filename\n");
+	return 1;
+    }
+
+    if (!QFileInfo::exists(argv[1])) {
+	fprintf(stderr, "File %s does not exist\n", argv[1]);
+	fprintf(stderr, "Usage: edit filename\n");
+	return 2;
+    }
     
+    std::shared_ptr<NodeProgramModelRegistry> registry = OpenSCADBuiltins::registerDataModels();
     NodeProgram program(registry);
     
-    if (QFileInfo::exists("../example.json")) {
-	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
-	std::ifstream exampleInputFile("../example.json");
-	serializer.read(program, exampleInputFile);
-    }
+    const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
+    std::ifstream exampleInputFile(argv[1]);
+    serializer.read(program, exampleInputFile);
 
     // Register builtins...
     Builtins::initialize();
@@ -85,18 +93,18 @@ int main_edit(int argc, char *argv[])
     });
 
 
-    QObject::connect(saveAction, &QAction::triggered, [&program]() {
+    QObject::connect(saveAction, &QAction::triggered, [&program, argv]() {
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
-	std::ofstream output("../example.json");
+	std::ofstream output(argv[1]);
 	serializer.write(program, output);
     });
 
     // This is a hot mess, but fortunately we should not really
     // need to do this in the final product.
-    QObject::connect(loadAction, &QAction::triggered, [qtab, &program]() {
+    QObject::connect(loadAction, &QAction::triggered, [qtab, &program, argv]() {
 	qtab->removeTab(0);
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
-	std::ifstream input("../example.json");
+	std::ifstream input(argv[1]);
 	serializer.read(program, input);
 	JNodeProgramEditor *jw = new JNodeProgramEditor(program);
 	qtab->insertTab(0, jw, "Nodes-");
