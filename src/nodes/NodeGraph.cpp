@@ -1,4 +1,5 @@
 #include "NodeGraph.hpp"
+#include "Node.hpp"
 
 #include <QtNodes/internal/ConnectionIdHash.hpp>
 #include <QtNodes/Definitions>
@@ -22,6 +23,12 @@ std::unordered_set<QtNodes::NodeId> NodeGraph::allNodeIds() const
     for_each(_models.begin(), _models.end(), [&nodeIds](const auto &p) { nodeIds.insert(p.first); });
 
     return nodeIds;
+}
+
+Node *
+NodeGraph::getNode(QtNodes::NodeId const nodeId) const
+{
+    return delegateModel<Node>(nodeId);
 }
 
 std::unordered_set<QtNodes::ConnectionId> NodeGraph::allConnectionIds(QtNodes::NodeId const nodeId) const

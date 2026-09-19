@@ -41,6 +41,7 @@ Builtins::f_const_int_process(const Node & node, const NodePortData & input, Nod
 {
     output.setValue("value", node.getValue("value", "0"));
 }
+
 void
 Builtins::f_const_int_initializer(Node & node)
 {
@@ -149,11 +150,4 @@ Builtins::f_const_string_widget(Node & node)
     return textEdit;
 }
 
-////////////////////////////////////////
-// PI Constant
-////////////////////////////////////////
-NONARY_NODE(const, pi, _OPENSCAD_NODE_CATEGORY, "PI", "value", DATA_VARIABLE)
-{
-    output.setValue("value", std::string("PI"));
-}
 

@@ -115,7 +115,8 @@ public:
 
         return model;
     }
-
+    Node *getNode(QtNodes::NodeId const nodeId) const;
+    
     /// Loops do not make any sense in uni-direction data propagation
     bool loopsEnabled() const override { return false; }
 

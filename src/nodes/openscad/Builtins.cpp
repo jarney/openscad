@@ -51,13 +51,12 @@ Builtins::registerDataModels()
 //    _OPENSCAD_NODE_REGISTER(syntax_use);
     
     // Constants
-    _OPENSCAD_NODE_REGISTER(const_true);
-    _OPENSCAD_NODE_REGISTER(const_false);
-    _OPENSCAD_NODE_REGISTER(const_int);
-    _OPENSCAD_NODE_REGISTER(const_float);
-    _OPENSCAD_NODE_REGISTER(const_string);
-    _OPENSCAD_NODE_REGISTER(const_undef);
-    _OPENSCAD_NODE_REGISTER(const_pi);
+    _OPENSCAD_NODE_REGISTER(const_true);    // parsed
+    _OPENSCAD_NODE_REGISTER(const_false);   // parsed
+    _OPENSCAD_NODE_REGISTER(const_int);     // parsed
+    _OPENSCAD_NODE_REGISTER(const_float);   // parsed
+    _OPENSCAD_NODE_REGISTER(const_string);  // parsed
+    _OPENSCAD_NODE_REGISTER(const_undef);   // parsed
 
     // Operators
     _OPENSCAD_NODE_REGISTER(operator_add);

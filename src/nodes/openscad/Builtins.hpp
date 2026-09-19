@@ -87,7 +87,6 @@ public:
     _OPENSCAD_NODE_DECL_FULL(const_float);
     _OPENSCAD_NODE_DECL_FULL(const_string);
     _OPENSCAD_NODE_DECL(const_undef);
-    _OPENSCAD_NODE_DECL(const_pi);
 
     // Operators
     _OPENSCAD_NODE_DECL(operator_add);
