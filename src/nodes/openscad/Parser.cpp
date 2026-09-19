@@ -115,9 +115,49 @@ processAssignment(
     QPointF pos(-depth * 400, 0);
     currentGraph->setNodeData(assignmentNode, QtNodes::NodeRole::Position, pos);
     Node *node = currentGraph->getNode(assignmentNode);
-    node->setValue("variable", assignment->getName().c_str());
+    node->setValue("variable_name", assignment->getName().c_str());
 
     processExpression(program, currentGraph, assignmentNode, assignment->getExpr(), context, depth+1);
+}
+
+void
+processExpressionUnaryOp(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    const UnaryOp *operation,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    )
+{
+    QtNodes::NodeId childNode;
+    
+    switch (operation->op) {
+    case (UnaryOp::Op::Not):
+	childNode = currentGraph->addNode("not");
+	break;
+    case (UnaryOp::Op::Negate):
+	childNode = currentGraph->addNode("negate");
+	break;
+    case (UnaryOp::Op::BinaryNot):
+	childNode = currentGraph->addNode("tilde");
+	break;
+    default:
+	throw std::string("Invalid literal type found parsing openscad file\n");
+    }
+
+    QPointF pos(-depth * 400, 0);
+    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+    
+    QtNodes::ConnectionId connection;
+    connection.inNodeId = parentNode;
+    connection.inPortIndex = 0;
+    connection.outNodeId = childNode;
+    connection.outPortIndex = 0;
+    currentGraph->addConnection(connection);
+
+    processExpression(program, currentGraph, childNode, operation->expr, context, depth+1);
+    
 }
 
 void
@@ -173,6 +213,33 @@ processExpressionLiteral(
 }
 
 void
+processExpressionLookup(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    const Lookup *lookup,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    )
+{
+    QtNodes::NodeId childNode;
+
+    childNode = currentGraph->addNode("variable");
+    Node *node = currentGraph->getNode(childNode);
+    node->setValue("variable_name", lookup->get_name());
+    
+    QPointF pos(-depth * 400, 0);
+    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+    
+    QtNodes::ConnectionId connection;
+    connection.inNodeId = parentNode;
+    connection.inPortIndex = 0;
+    connection.outNodeId = childNode;
+    connection.outPortIndex = 0;
+    currentGraph->addConnection(connection);    
+}
+
+void
 processExpression(
     NodeProgram & program,
     NodeGraph *currentGraph,
@@ -185,12 +252,11 @@ processExpression(
     // TODO: Switch based on expression type and recursively handle expressions by their type...
     Expression *e = expression.get();
     if (dynamic_cast<UnaryOp*>(e)) {
+	processExpressionUnaryOp(program, currentGraph, parentNode, dynamic_cast<UnaryOp*>(e), context, depth);
     }
     else if (dynamic_cast<BinaryOp*>(e)) {
     }
     else if (dynamic_cast<TernaryOp*>(e)) {
-    }
-    else if (dynamic_cast<ArrayLookup*>(e)) {
     }
     else if (dynamic_cast<ArrayLookup*>(e)) {
     }
@@ -200,6 +266,7 @@ processExpression(
     else if (dynamic_cast<Vector*>(e)) {
     }
     else if (dynamic_cast<Lookup*>(e)) {
+	processExpressionLookup(program, currentGraph, parentNode, dynamic_cast<Lookup*>(e), context, depth);
     }
     else if (dynamic_cast<MemberLookup*>(e)) {
     }

@@ -103,6 +103,8 @@ public:
     _OPENSCAD_NODE_DECL(operator_and);
     _OPENSCAD_NODE_DECL(operator_or);
     _OPENSCAD_NODE_DECL(operator_not);
+    _OPENSCAD_NODE_DECL(operator_negate);
+    _OPENSCAD_NODE_DECL(operator_tilde);
 
     // Modifiers (TODO)
     // How should these be handled from a graph/UI perspective?

@@ -44,19 +44,19 @@ Builtins::registerDataModels()
     // Syntax
     _OPENSCAD_NODE_REGISTER(syntax_assign);
 //    _OPENSCAD_NODE_REGISTER(syntax_assign_list);
-    _OPENSCAD_NODE_REGISTER(syntax_variable);
+    _OPENSCAD_NODE_REGISTER(syntax_variable);      // parsed
 //    _OPENSCAD_NODE_REGISTER(syntax_module);
 //    _OPENSCAD_NODE_REGISTER(syntax_function);
 //    _OPENSCAD_NODE_REGISTER(syntax_include);
 //    _OPENSCAD_NODE_REGISTER(syntax_use);
     
     // Constants
-    _OPENSCAD_NODE_REGISTER(const_true);    // parsed
-    _OPENSCAD_NODE_REGISTER(const_false);   // parsed
-    _OPENSCAD_NODE_REGISTER(const_int);     // parsed
-    _OPENSCAD_NODE_REGISTER(const_float);   // parsed
-    _OPENSCAD_NODE_REGISTER(const_string);  // parsed
-    _OPENSCAD_NODE_REGISTER(const_undef);   // parsed
+    _OPENSCAD_NODE_REGISTER(const_true);           // parsed
+    _OPENSCAD_NODE_REGISTER(const_false);          // parsed
+    _OPENSCAD_NODE_REGISTER(const_int);            // parsed
+    _OPENSCAD_NODE_REGISTER(const_float);          // parsed
+    _OPENSCAD_NODE_REGISTER(const_string);         // parsed
+    _OPENSCAD_NODE_REGISTER(const_undef);          // parsed
 
     // Operators
     _OPENSCAD_NODE_REGISTER(operator_add);
@@ -72,7 +72,9 @@ Builtins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(operator_gt);
     _OPENSCAD_NODE_REGISTER(operator_and);
     _OPENSCAD_NODE_REGISTER(operator_or);
-    _OPENSCAD_NODE_REGISTER(operator_not);
+    _OPENSCAD_NODE_REGISTER(operator_not);         // parsed
+    _OPENSCAD_NODE_REGISTER(operator_negate);      // parsed
+    _OPENSCAD_NODE_REGISTER(operator_tilde);       // parsed
     
     // 2D
     _OPENSCAD_NODE_REGISTER(2d_circle);

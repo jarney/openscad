@@ -58,7 +58,15 @@ BINARY_NODE(operator, or, _OPENSCAD_NODE_CATEGORY, "Or", "a", DATA_VARIABLE, "b"
 {
     output.setValue("out", std::string("(") + input.getValue("a", "0") + ")||(" + input.getValue("b", "0") + std::string(")"));
 }
-UNARY_NODE(operator, not, _OPENSCAD_NODE_CATEGORY, "Greater Than", "a", DATA_VARIABLE, "out", DATA_VARIABLE)
+UNARY_NODE(operator, not, _OPENSCAD_NODE_CATEGORY, "Not", "a", DATA_VARIABLE, "out", DATA_VARIABLE)
 {
     output.setValue("out", std::string("!(") + input.getValue("a", "0") + std::string(")"));
+}
+UNARY_NODE(operator, negate, _OPENSCAD_NODE_CATEGORY, "Negate", "a", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("-(") + input.getValue("a", "0") + std::string(")"));
+}
+UNARY_NODE(operator, tilde, _OPENSCAD_NODE_CATEGORY, "Binary Not", "a", DATA_VARIABLE, "out", DATA_VARIABLE)
+{
+    output.setValue("out", std::string("~(") + input.getValue("a", "0") + std::string(")"));
 }

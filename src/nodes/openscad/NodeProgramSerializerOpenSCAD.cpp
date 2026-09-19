@@ -66,8 +66,6 @@ NodeProgramSerializerOpenSCAD::read(NodeProgram & program, std::istream & input_
 	fprintf(stderr, "Unsuccessful parse\n");
 	return -1;
     }
-    fprintf(stderr, "Got a valid parse tree\n");
-
     EvaluationSession session{sourceFile->getFullpath()};
     ContextHandle<BuiltinContext> builtin_context{Context::create<BuiltinContext>(&session)};
     
