@@ -22,7 +22,30 @@ processExpression(
     NodeProgram & program,
     NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
     const std::shared_ptr<Expression> & expression,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    );
+
+void
+processExpressionUnaryOp(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
+    const UnaryOp *operation,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    );
+
+void
+processExpressionBinaryOp(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
+    const BinaryOp *operation,
     const std::shared_ptr<const Context>& context,
     int depth
     );
@@ -37,6 +60,7 @@ void processLocalScope(
     NodeProgram & program,
     NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
     std::shared_ptr<LocalScope> localScope,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -46,6 +70,7 @@ void processModuleInstantiation(
     NodeProgram & program,
     NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
     std::shared_ptr<ModuleInstantiation> moduleInstantiation,
     const std::shared_ptr<const Context>& context,
     int depth,

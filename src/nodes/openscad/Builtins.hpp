@@ -101,7 +101,11 @@ public:
     _OPENSCAD_NODE_DECL(operator_geq);
     _OPENSCAD_NODE_DECL(operator_gt);
     _OPENSCAD_NODE_DECL(operator_and);
+    _OPENSCAD_NODE_DECL(operator_binary_and);
     _OPENSCAD_NODE_DECL(operator_or);
+    _OPENSCAD_NODE_DECL(operator_binary_or);
+    _OPENSCAD_NODE_DECL(operator_binary_shl);
+    _OPENSCAD_NODE_DECL(operator_binary_shr);
     _OPENSCAD_NODE_DECL(operator_not);
     _OPENSCAD_NODE_DECL(operator_negate);
     _OPENSCAD_NODE_DECL(operator_tilde);

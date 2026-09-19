@@ -42,7 +42,7 @@ Builtins::registerDataModels()
     ret->registerCategory(CATEGORY_MATH);
     
     // Syntax
-    _OPENSCAD_NODE_REGISTER(syntax_assign);
+    _OPENSCAD_NODE_REGISTER(syntax_assign);        // parsed
 //    _OPENSCAD_NODE_REGISTER(syntax_assign_list);
     _OPENSCAD_NODE_REGISTER(syntax_variable);      // parsed
 //    _OPENSCAD_NODE_REGISTER(syntax_module);
@@ -59,19 +59,23 @@ Builtins::registerDataModels()
     _OPENSCAD_NODE_REGISTER(const_undef);          // parsed
 
     // Operators
-    _OPENSCAD_NODE_REGISTER(operator_add);
-    _OPENSCAD_NODE_REGISTER(operator_subtract);
-    _OPENSCAD_NODE_REGISTER(operator_multiply);
-    _OPENSCAD_NODE_REGISTER(operator_divide);
-    _OPENSCAD_NODE_REGISTER(operator_modulo);
-    _OPENSCAD_NODE_REGISTER(operator_exponentiate);
-    _OPENSCAD_NODE_REGISTER(operator_lt);
-    _OPENSCAD_NODE_REGISTER(operator_leq);
-    _OPENSCAD_NODE_REGISTER(operator_eq);
-    _OPENSCAD_NODE_REGISTER(operator_geq);
-    _OPENSCAD_NODE_REGISTER(operator_gt);
-    _OPENSCAD_NODE_REGISTER(operator_and);
-    _OPENSCAD_NODE_REGISTER(operator_or);
+    _OPENSCAD_NODE_REGISTER(operator_add);         // parsed
+    _OPENSCAD_NODE_REGISTER(operator_subtract);    // parsed
+    _OPENSCAD_NODE_REGISTER(operator_multiply);    // parsed
+    _OPENSCAD_NODE_REGISTER(operator_divide);      // parsed
+    _OPENSCAD_NODE_REGISTER(operator_modulo);      // parsed
+    _OPENSCAD_NODE_REGISTER(operator_exponentiate);// parsed
+    _OPENSCAD_NODE_REGISTER(operator_lt);          // parsed
+    _OPENSCAD_NODE_REGISTER(operator_leq);         // parsed
+    _OPENSCAD_NODE_REGISTER(operator_eq);          // parsed
+    _OPENSCAD_NODE_REGISTER(operator_geq);         // parsed
+    _OPENSCAD_NODE_REGISTER(operator_gt);          // parsed
+    _OPENSCAD_NODE_REGISTER(operator_and);         // parsed
+    _OPENSCAD_NODE_REGISTER(operator_binary_and);  // parsed
+    _OPENSCAD_NODE_REGISTER(operator_or);          // parsed
+    _OPENSCAD_NODE_REGISTER(operator_binary_or);   // parsed
+    _OPENSCAD_NODE_REGISTER(operator_binary_shl);  // parsed
+    _OPENSCAD_NODE_REGISTER(operator_binary_shr);  // parsed
     _OPENSCAD_NODE_REGISTER(operator_not);         // parsed
     _OPENSCAD_NODE_REGISTER(operator_negate);      // parsed
     _OPENSCAD_NODE_REGISTER(operator_tilde);       // parsed

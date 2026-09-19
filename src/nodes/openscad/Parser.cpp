@@ -9,6 +9,7 @@ public:
 	NodeProgram & program,
 	NodeGraph *currentGraph,
 	QtNodes::NodeId parentNode,
+	QtNodes::PortIndex parentPort,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	const std::shared_ptr<const Context>& context,
 	int depth,
@@ -23,6 +24,7 @@ public:
 	NodeProgram & program,
 	NodeGraph *currentGraph,
 	QtNodes::NodeId parentNode,
+	QtNodes::PortIndex parentPort,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	const std::shared_ptr<const Context>& context,
 	int depth,
@@ -35,6 +37,7 @@ ModuleNodeFactorySphere::handle(
 	NodeProgram & program,
 	NodeGraph *currentGraph,
 	QtNodes::NodeId parentNode,
+	QtNodes::PortIndex parentPort,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	const std::shared_ptr<const Context>& context,
 	int depth,
@@ -50,7 +53,7 @@ ModuleNodeFactorySphere::handle(
 
     QtNodes::ConnectionId connection;
     connection.inNodeId = parentNode;
-    connection.inPortIndex = 0;
+    connection.inPortIndex = parentPort;
     connection.outNodeId = childNode;
     connection.outPortIndex = 0;
     currentGraph->addConnection(connection);
@@ -73,7 +76,7 @@ ModuleNodeFactorySphere::handle(
     
     // Next, we handle the suff in the curly-braces
     // that is the body of the node.
-    processLocalScope(program, currentGraph, childNode, moduleInstantiation->scope, context, depth);
+    processLocalScope(program, currentGraph, childNode, 0, moduleInstantiation->scope, context, depth);
 	
 }
 
@@ -99,7 +102,7 @@ processSourceFile(
     QtNodes::NodeId outputNode = main->addNode("output");
 
     // A source file is just a single large scope.
-    processLocalScope(program, main, outputNode, sourceFile->scope, *file_context, 0);
+    processLocalScope(program, main, outputNode, 0, sourceFile->scope, *file_context, 0);
 }
 
 void
@@ -117,7 +120,7 @@ processAssignment(
     Node *node = currentGraph->getNode(assignmentNode);
     node->setValue("variable_name", assignment->getName().c_str());
 
-    processExpression(program, currentGraph, assignmentNode, assignment->getExpr(), context, depth+1);
+    processExpression(program, currentGraph, assignmentNode, 0, assignment->getExpr(), context, depth+1);
 }
 
 void
@@ -125,39 +128,88 @@ processExpressionUnaryOp(
     NodeProgram & program,
     NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
     const UnaryOp *operation,
     const std::shared_ptr<const Context>& context,
     int depth
     )
 {
-    QtNodes::NodeId childNode;
-    
-    switch (operation->op) {
-    case (UnaryOp::Op::Not):
-	childNode = currentGraph->addNode("not");
-	break;
-    case (UnaryOp::Op::Negate):
-	childNode = currentGraph->addNode("negate");
-	break;
-    case (UnaryOp::Op::BinaryNot):
-	childNode = currentGraph->addNode("tilde");
-	break;
-    default:
+    std::map<UnaryOp::Op, std::string> operators{{UnaryOp::Op::Not, "not"},
+					   {UnaryOp::Op::Negate, "negate"},
+					   {UnaryOp::Op::BinaryNot, "tilde"}};
+    const auto op_it = operators.find(operation->op);
+    if (op_it == operators.end()) {
 	throw std::string("Invalid literal type found parsing openscad file\n");
     }
+
+    QtNodes::NodeId childNode = currentGraph->addNode(QString::fromStdString(op_it->second));
 
     QPointF pos(-depth * 400, 0);
     currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
     
     QtNodes::ConnectionId connection;
     connection.inNodeId = parentNode;
-    connection.inPortIndex = 0;
+    connection.inPortIndex = parentPort;
     connection.outNodeId = childNode;
     connection.outPortIndex = 0;
     currentGraph->addConnection(connection);
 
-    processExpression(program, currentGraph, childNode, operation->expr, context, depth+1);
+    processExpression(program, currentGraph, childNode, 0, operation->expr, context, depth+1);
     
+}
+
+void
+processExpressionBinaryOp(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
+    const BinaryOp *operation,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    )
+{
+    
+    std::map<BinaryOp::Op, std::string> operators{
+	{BinaryOp::Op::LogicalAnd, "and"},
+	{BinaryOp::Op::LogicalOr, "or"},
+	{BinaryOp::Op::Exponent, "exponentiate"},
+	{BinaryOp::Op::Multiply, "multiply"},
+	{BinaryOp::Op::Divide, "divide"},
+	{BinaryOp::Op::Modulo, "modulo"},
+	{BinaryOp::Op::Plus, "add"},
+	{BinaryOp::Op::Minus, "subtract"},
+	{BinaryOp::Op::ShiftLeft, "binary_shl"},
+	{BinaryOp::Op::ShiftRight, "binary_shr"},
+	{BinaryOp::Op::BinaryAnd, "binary_and"},
+	{BinaryOp::Op::BinaryOr, "binary_or"},
+	{BinaryOp::Op::Less, "lt"},
+	{BinaryOp::Op::LessEqual, "le"},
+	{BinaryOp::Op::Greater, "gt"},
+	{BinaryOp::Op::GreaterEqual, "geq"},
+	{BinaryOp::Op::Equal, "eq"},
+	{BinaryOp::Op::NotEqual, "neq"}
+    };
+    
+    const auto op_it = operators.find(operation->op);
+    if (op_it == operators.end()) {
+	throw std::string("Invalid literal type found parsing openscad file\n");
+    }
+
+    QtNodes::NodeId childNode = currentGraph->addNode(QString::fromStdString(op_it->second));
+
+    QPointF pos(-depth * 400, 0);
+    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+    
+    QtNodes::ConnectionId connection;
+    connection.inNodeId = parentNode;
+    connection.inPortIndex = parentPort;
+    connection.outNodeId = childNode;
+    connection.outPortIndex = 0;
+    currentGraph->addConnection(connection);
+
+    processExpression(program, currentGraph, childNode, 0, operation->left, context, depth+1);
+    processExpression(program, currentGraph, childNode, 1, operation->right, context, depth+1);
 }
 
 void
@@ -165,6 +217,7 @@ processExpressionLiteral(
     NodeProgram & program,
     NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
     const Literal *literal,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -206,7 +259,7 @@ processExpressionLiteral(
     
     QtNodes::ConnectionId connection;
     connection.inNodeId = parentNode;
-    connection.inPortIndex = 0;
+    connection.inPortIndex = parentPort;
     connection.outNodeId = childNode;
     connection.outPortIndex = 0;
     currentGraph->addConnection(connection);    
@@ -217,6 +270,7 @@ processExpressionLookup(
     NodeProgram & program,
     NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
     const Lookup *lookup,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -233,7 +287,7 @@ processExpressionLookup(
     
     QtNodes::ConnectionId connection;
     connection.inNodeId = parentNode;
-    connection.inPortIndex = 0;
+    connection.inPortIndex = parentPort;
     connection.outNodeId = childNode;
     connection.outPortIndex = 0;
     currentGraph->addConnection(connection);    
@@ -244,6 +298,7 @@ processExpression(
     NodeProgram & program,
     NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
     const std::shared_ptr<Expression> & expression,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -252,21 +307,22 @@ processExpression(
     // TODO: Switch based on expression type and recursively handle expressions by their type...
     Expression *e = expression.get();
     if (dynamic_cast<UnaryOp*>(e)) {
-	processExpressionUnaryOp(program, currentGraph, parentNode, dynamic_cast<UnaryOp*>(e), context, depth);
+	processExpressionUnaryOp(program, currentGraph, parentNode, parentPort, dynamic_cast<UnaryOp*>(e), context, depth);
     }
     else if (dynamic_cast<BinaryOp*>(e)) {
+	processExpressionBinaryOp(program, currentGraph, parentNode, parentPort, dynamic_cast<BinaryOp*>(e), context, depth);
     }
     else if (dynamic_cast<TernaryOp*>(e)) {
     }
     else if (dynamic_cast<ArrayLookup*>(e)) {
     }
     else if (dynamic_cast<Literal*>(e)) {
-	processExpressionLiteral(program, currentGraph, parentNode, dynamic_cast<Literal*>(e), context, depth);
+	processExpressionLiteral(program, currentGraph, parentNode, parentPort, dynamic_cast<Literal*>(e), context, depth);
     }
     else if (dynamic_cast<Vector*>(e)) {
     }
     else if (dynamic_cast<Lookup*>(e)) {
-	processExpressionLookup(program, currentGraph, parentNode, dynamic_cast<Lookup*>(e), context, depth);
+	processExpressionLookup(program, currentGraph, parentNode, parentPort, dynamic_cast<Lookup*>(e), context, depth);
     }
     else if (dynamic_cast<MemberLookup*>(e)) {
     }
@@ -299,6 +355,7 @@ processLocalScope(
     NodeProgram & program,
     NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
     std::shared_ptr<LocalScope> localScope,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -321,7 +378,7 @@ processLocalScope(
     // Finally instantiate any modules
     int i = 0;
     for (const auto moduleInstantiation : localScope->moduleInstantiations) {
-	processModuleInstantiation(program, currentGraph, parentNode, moduleInstantiation, context, depth+1, i);
+	processModuleInstantiation(program, currentGraph, parentNode, parentPort, moduleInstantiation, context, depth+1, i);
 	i++;
     }
 }
@@ -331,6 +388,7 @@ processModuleInstantiation(
     NodeProgram & program,
     NodeGraph *currentGraph,
     QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
     std::shared_ptr<ModuleInstantiation> moduleInstantiation,
     const std::shared_ptr<const Context>& context,
     int depth,
@@ -339,7 +397,7 @@ processModuleInstantiation(
 {
     const auto it = moduleFactory.find(moduleInstantiation->name());
     if (it != moduleFactory.end()) {
-	it->second->handle(program, currentGraph, parentNode, moduleInstantiation, context, depth, i);
+	it->second->handle(program, currentGraph, parentNode, parentPort, moduleInstantiation, context, depth, i);
     }
     else {
 	fprintf(stderr, "Un-handled module instantiation %s\n", moduleInstantiation->name().c_str());
