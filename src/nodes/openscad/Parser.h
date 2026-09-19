@@ -50,6 +50,28 @@ processExpressionBinaryOp(
     int depth
     );
 
+void
+processExpressionFunctionCall(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
+    const FunctionCall *functionCall,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    );
+
+void
+processExpressionBuiltinFunctionCall(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
+    const BuiltinFunction *functionCall,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    );
+
 void processSourceFile(
     NodeProgram & program,
     SourceFile *sourceFile,

@@ -11,8 +11,9 @@
 #include "nodes/openscad/Builtins.hpp"
 #include "nodes/openscad/NodeProgramSerializerOpenSCAD.hpp"
 
+#include "core/Builtins.h"
+
 using namespace JNodes::core;
-using namespace JNodes::openscad;
 
 int main_parse(int argc, char *argv[])
 {
@@ -35,10 +36,13 @@ int main_parse(int argc, char *argv[])
 	return 3;
     }
 
+    // Register the OpenSCAD builtins
+    Builtins::initialize();
+
     std::string fname(argv[1]);
     std::ifstream input_stream(fname);
     
-    const NodeProgramSerializer & fromSCAD = NodeProgramSerializerOpenSCAD::instance();
+    const NodeProgramSerializer & fromSCAD = JNodes::openscad::NodeProgramSerializerOpenSCAD::instance();
     if (fromSCAD.read(program, input_stream)) {
 	fprintf(stderr, "Could not read file %s\n", argv[1]);
 	return 4;

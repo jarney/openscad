@@ -1,3 +1,4 @@
+#include <variant>
 
 /*************************************************************/
 class ModuleInstantiationASTHandler {
@@ -294,6 +295,99 @@ processExpressionLookup(
 }
 
 void
+processExpressionBuiltinFunctionCall(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    const BuiltinFunction *builtinFunction,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    )
+{
+    // Map between the OpenSCAD function's
+    // arguments and the node's inputs,
+    // calling evaluations for the evaluations
+    // as needed.
+    
+    // TODO:
+    // * Look up the function's node in the node graph so we have the
+    //   names of the inputs along with their indices.
+    // * Look up the function's entry in the context so we know what
+    //   arguments to parse for.
+#if 0
+    Parameters parameters = Parameters::parse(
+	Arguments(moduleInstantiation->arguments, context),
+	moduleInstantiation->location(),
+	sphere_required,
+	sphere_optional);
+						      
+    processExpression(program, currentGraph, childNode, 0, operation->left, context, depth+1);
+    processExpression(program, currentGraph, childNode, 1, operation->right, context, depth+1);
+#endif
+}
+
+void
+processExpressionFunctionCall(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    QtNodes::PortIndex parentPort,
+    const FunctionCall *functionCall,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    )
+{
+    QtNodes::NodeId childNode = currentGraph->addNode(QString::fromStdString(functionCall->name));
+						      
+    QPointF pos(-depth * 400, 0);
+    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+    
+    QtNodes::ConnectionId connection;
+    connection.inNodeId = parentNode;
+    connection.inPortIndex = parentPort;
+    connection.outNodeId = childNode;
+    connection.outPortIndex = 0;
+    currentGraph->addConnection(connection);
+
+    boost::optional<CallableFunction> scad_function;
+    
+    scad_function = context->lookup_function(functionCall->name, functionCall->location());
+    if (!scad_function) {
+	fprintf(stderr, "No such function %s\n", functionCall->name.c_str());
+	throw std::string("Invalid function %s\n", functionCall->name.c_str());
+    }
+    else if (std::holds_alternative<const BuiltinFunction *>(*scad_function)) {
+	fprintf(stderr, "Builtin function %s\n", functionCall->name.c_str());
+	const BuiltinFunction *builtinFunction = std::get<const BuiltinFunction *>(*scad_function);
+	processExpressionBuiltinFunctionCall(
+	    program,
+	    currentGraph,
+	    childNode,
+	    builtinFunction,
+	    context,
+	    depth+1
+	    );
+    }
+    else if (std::holds_alternative<CallableUserFunction>(*scad_function)) {
+	fprintf(stderr, "Callable user function %s\n", functionCall->name.c_str());
+	throw std::string("Callable user functions not yet supported\n");
+    }
+    else if (std::holds_alternative<Value>(*scad_function)) {
+	fprintf(stderr, "Value %s\n", functionCall->name.c_str());
+	throw std::string("Callable values not yet supported\n");
+    }
+    else if (std::holds_alternative<const Value*>(*scad_function)) {
+	fprintf(stderr, "Value pointer %s\n", functionCall->name.c_str());
+	throw std::string("Value pointers not yet supported\n");
+    }
+    else {
+	throw std::string("Unknown variant of callable function\n");
+    }
+
+    
+}
+
+void
 processExpression(
     NodeProgram & program,
     NodeGraph *currentGraph,
@@ -327,6 +421,7 @@ processExpression(
     else if (dynamic_cast<MemberLookup*>(e)) {
     }
     else if (dynamic_cast<FunctionCall*>(e)) {
+	processExpressionFunctionCall(program, currentGraph, parentNode, parentPort, dynamic_cast<FunctionCall*>(e), context, depth);
     }
     else if (dynamic_cast<FunctionDefinition*>(e)) {
     }
