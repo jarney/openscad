@@ -5,6 +5,17 @@
 #include "nodes/Node.hpp"
 #include "nodes/openscad/NodeProgramSerializerOpenSCAD.hpp"
 
+#include "openscad.h"
+
+#include "core/SourceFile.h"
+#include "core/LocalScope.h"
+#include "core/ModuleInstantiation.h"
+#include "core/Assignment.h"
+#include "core/Expression.h"
+#include "core/Parameters.h"
+#include "core/Context.h"
+#include "core/BuiltinContext.h"
+
 using namespace JNodes::core;
 using namespace JNodes::openscad;
 
@@ -24,7 +35,8 @@ findOutputNodes(
     }
 }
 
-static std::vector<QtNodes::ConnectionId> inputConnections(const NodeGraph & graph, QtNodes::NodeId nodeId)
+static std::vector<QtNodes::ConnectionId>
+inputConnections(const NodeGraph & graph, QtNodes::NodeId nodeId)
 {
     auto connections = graph.allConnectionIds(nodeId);
     std::vector<QtNodes::ConnectionId> input_connections;
@@ -35,7 +47,8 @@ static std::vector<QtNodes::ConnectionId> inputConnections(const NodeGraph & gra
     return input_connections;
 }
 
-static std::vector<QtNodes::NodeId> connectedNodes(const std::vector<QtNodes::ConnectionId> & connections)
+static std::vector<QtNodes::NodeId>
+connectedNodes(const std::vector<QtNodes::ConnectionId> & connections)
 {
     std::vector<QtNodes::NodeId> connected_nodes;
     for (auto connection : connections) {
@@ -62,7 +75,6 @@ static void processNode(
     if (processed_nodes.count(nodeId) > 0) {
 	return;
     }
-    fprintf(stderr, "Processing node %d\n", nodeId);
     processed_nodes.insert(nodeId);
 
     std::vector<QtNodes::ConnectionId> input_connections = inputConnections(graph, nodeId);
@@ -74,7 +86,6 @@ static void processNode(
     Node *node = graph.delegateModel<Node>(nodeId);
 
     NodePortData input_data;
-    fprintf(stderr, "Processing input connections %ld\n", input_connections.size());
     for (auto & connection : input_connections) {
 	Node *upstreamNode = graph.delegateModel<Node>(connection.outNodeId);
 	std::string outputPortName = upstreamNode->outputPortName(connection.outPortIndex);
@@ -84,7 +95,7 @@ static void processNode(
 	if (connected_node_data.hasValue(outputPortName)) {
 	    std::string outputValue = connected_node_data.getValue(outputPortName, "");
 	    input_data.setValue(inputPortName, outputValue);
-	    fprintf(stderr, "Node %d:%s => %d:%s = %s\n", connection.outNodeId, outputPortName.c_str(), nodeId, inputPortName.c_str(), outputValue.c_str());
+	    //fprintf(stderr, "Node %d:%s => %d:%s = %s\n", connection.outNodeId, outputPortName.c_str(), nodeId, inputPortName.c_str(), outputValue.c_str());
 	}
     }
     // Create a new entry and pass it by reference.
@@ -96,27 +107,10 @@ static void processNode(
 std::string
 NodeProgramSerializerOpenSCAD::toString(const NodeGraph & graph)
 {
-//    virtual std::unordered_set<NodeId> allNodeIds() const = 0;
     std::vector<QtNodes::NodeId> outputNodes;
 
     // First, find all of the 'output' nodes.
     findOutputNodes(graph, outputNodes);
-
-    // Here's now this needs to work.
-    // Each node gets 'process' called on it
-    // once with all of its upstream data available.
-    // If an upstream data is not available, it has not yet been processed.
-
-    // We start with a map of node and output data.
-    // If the node is not on the map, we place it on the map
-    // with no data.  Once a node has all of its data,
-    // we call 'process' on it and put the result in its data.
-    // If we find a node that has missing data, we put it on the open list
-    // and process it.
-    
-//    std::unordered_set<ConnectionId> connections(NodeId nodeId,
-//                                                 PortType portType,
-//                                                 PortIndex portIndex) const override;
 
     std::set<QtNodes::NodeId> processed_nodes;
     std::map<QtNodes::NodeId, NodePortData> all_node_data;
@@ -129,7 +123,6 @@ NodeProgramSerializerOpenSCAD::toString(const NodeGraph & graph)
 	processNode(graph, processed_nodes, all_node_data, nodeId, 0);
 	output += all_node_data[nodeId].getValue("out", "");
     }
-
 
     return output;
 }
@@ -162,12 +155,225 @@ NodeProgramSerializerOpenSCAD::write(const NodeProgram &program, std::ostream & 
     std::string scadOutput = toString(*graph);
     output_stream << scadOutput;
 }
+
+void processSourceFile(
+    NodeProgram & program,
+    SourceFile *sourceFile,
+    const std::shared_ptr<const Context>& context
+    );
+
+void processLocalScope(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    std::shared_ptr<LocalScope> localScope,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    );
+
+void processModuleInstantiation(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    std::shared_ptr<ModuleInstantiation> moduleInstantiation,
+    const std::shared_ptr<const Context>& context,
+    int depth,
+    int i
+    );
+
+
 /**
  * Reads the input stream and fills in the (assumed empty)
  * node program based on the file content.
  */
-void
+int
 NodeProgramSerializerOpenSCAD::read(NodeProgram & program, std::istream & input_stream) const
 {
-    fprintf(stderr, "Nothing done, this doesn't work yet.  The parse entrypoint will go here...\n");
+    std::string fulltext(std::istreambuf_iterator<char>(input_stream), {});
+
+    SourceFile *sourceFile;
+    std::string fname("none");
+    
+    sourceFile = parse(
+	sourceFile,
+	fulltext,
+	fname,
+	fname,
+	false) ? sourceFile : nullptr;
+    if (!sourceFile) {
+	fprintf(stderr, "Unsuccessful parse\n");
+	return -1;
+    }
+    fprintf(stderr, "Got a valid parse tree\n");
+
+    EvaluationSession session{sourceFile->getFullpath()};
+    ContextHandle<BuiltinContext> builtin_context{Context::create<BuiltinContext>(&session)};
+    
+    processSourceFile(program, sourceFile, *builtin_context);
+
+    return 0;
+}
+
+/*************************************************************/
+class ModuleInstantiationASTHandler {
+public:
+    ModuleInstantiationASTHandler() = default;
+    ~ModuleInstantiationASTHandler() = default;
+
+    virtual void handle(
+	NodeProgram & program,
+	NodeGraph *currentGraph,
+	QtNodes::NodeId parentNode,
+	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
+	const std::shared_ptr<const Context>& context,
+	int depth,
+	int i
+	) const = 0;
+    
+};
+
+class ModuleNodeFactorySphere : public ModuleInstantiationASTHandler {
+public:
+    virtual void handle(
+	NodeProgram & program,
+	NodeGraph *currentGraph,
+	QtNodes::NodeId parentNode,
+	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
+	const std::shared_ptr<const Context>& context,
+	int depth,
+	int i
+	) const;
+};
+
+void
+ModuleNodeFactorySphere::handle(
+	NodeProgram & program,
+	NodeGraph *currentGraph,
+	QtNodes::NodeId parentNode,
+	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
+	const std::shared_ptr<const Context>& context,
+	int depth,
+	int i
+	) const
+{
+    // Create a new node and connect it to
+    // our parent node with the output of the module's node
+    // connected to the input of our parent's node.
+    QtNodes::NodeId childNode = currentGraph->addNode(QString::fromStdString(moduleInstantiation->name()));
+    QPointF pos(-depth * 400, -i * 400);
+    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+
+    QtNodes::ConnectionId connection;
+    connection.inNodeId = parentNode;
+    connection.inPortIndex = 0;
+    connection.outNodeId = childNode;
+    connection.outPortIndex = 0;
+    currentGraph->addConnection(connection);
+
+    // First, we parse the arguments to get the
+    // list of parameters to the module.
+//  static Parameters parse(Arguments arguments, const Location& loc,
+//                          const std::vector<std::string>& required_parameters,
+//                          const std::vector<std::string>& optional_parameters = {});
+    const std::vector<std::string> sphere_required{"r"};
+    const std::vector<std::string> sphere_optional{"d"};
+    
+    Parameters parameters = Parameters::parse(
+	Arguments(moduleInstantiation->arguments, context),
+	moduleInstantiation->location(),
+	sphere_required,
+	sphere_optional);
+    fprintf(stderr, "Parsed parametrs\n");
+    
+    
+    // Next, we handle the suff in the curly-braces
+    // that is the body of the node.
+    processLocalScope(program, currentGraph, childNode, moduleInstantiation->scope, context, depth);
+	
+}
+
+static std::map<std::string, std::shared_ptr<ModuleInstantiationASTHandler>> moduleFactory;
+
+void
+processSourceFile(
+    NodeProgram & program,
+    SourceFile *sourceFile,
+    const std::shared_ptr<const Context>& context
+    )
+{
+
+    //////////// Initialization
+
+    moduleFactory["sphere"] = std::make_shared<ModuleNodeFactorySphere>();
+    moduleFactory["cube"] = moduleFactory["sphere"];
+    moduleFactory["for"] = moduleFactory["sphere"];
+    
+    ////////////
+    NodeGraph *main = program.newGraph("main");
+    QtNodes::NodeId outputNode = main->addNode("output");
+
+    // A source file is just a single large scope.
+    processLocalScope(program, main, outputNode, sourceFile->scope, context, 0);
+}
+
+void
+processLocalScope(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    std::shared_ptr<LocalScope> localScope,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    )
+{
+
+    // First process any variable assignments in this scope.
+
+    // Next, process any function definitions
+
+    // Next, process any module definitions
+
+    // We probably want to push the context after we do this so we can perform
+    // lookups in terms of the new context.
+
+    
+    // Finally instantiate any modules
+    int i = 0;
+    for (const auto moduleInstantiation : localScope->moduleInstantiations) {
+	processModuleInstantiation(program, currentGraph, parentNode, moduleInstantiation, context, depth+1, i);
+	i++;
+    }
+}
+
+void
+processModuleInstantiation(
+    NodeProgram & program,
+    NodeGraph *currentGraph,
+    QtNodes::NodeId parentNode,
+    std::shared_ptr<ModuleInstantiation> moduleInstantiation,
+    const std::shared_ptr<const Context>& context,
+    int depth,
+    int i
+    )
+{
+    const auto it = moduleFactory.find(moduleInstantiation->name());
+    if (it != moduleFactory.end()) {
+	it->second->handle(program, currentGraph, parentNode, moduleInstantiation, context, depth, i);
+    }
+    else {
+	fprintf(stderr, "Un-handled module instantiation %s\n", moduleInstantiation->name().c_str());
+    }
+    
+#if 0
+    auto as = mi->arguments.at(0);
+    Expression *expr = as->getExpr().get();
+    
+    Lookup *lit = dynamic_cast<Lookup*>(expr);
+    if (lit) {
+	fprintf(stderr, "It is a literal %s\n", lit->get_name().c_str());
+    }
+    else {
+	fprintf(stderr, "It is not a literal\n");
+    }
+#endif
 }

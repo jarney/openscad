@@ -36,7 +36,7 @@ NodeProgramSerializerJSON::write(const NodeProgram &program, std::ostream & outp
  * Reads the input stream and fills in the (assumed empty)
  * node program based on the file content.
  */
-void
+int
 NodeProgramSerializerJSON::read(NodeProgram & program, std::istream & input_stream) const
 {
     std::string json_string(std::istreambuf_iterator<char>(input_stream), {});
@@ -44,7 +44,7 @@ NodeProgramSerializerJSON::read(NodeProgram & program, std::istream & input_stre
     QJsonDocument document = QJsonDocument().fromJson(QByteArray::fromStdString(json_string), &errors);
     if (errors.error != QJsonParseError::NoError) {
 	fprintf(stderr, "Parse error: %s\n", errors.errorString().toStdString().c_str());
-	return;
+	return -1;
     }
     
     QJsonObject document_object = document.object();
@@ -58,4 +58,5 @@ NodeProgramSerializerJSON::read(NodeProgram & program, std::istream & input_stre
 	NodeGraph *dataFlowGraphModel = program.newGraph(key.toStdString());
 	dataFlowGraphModel->load(object);
     }
+    return 0;
 }

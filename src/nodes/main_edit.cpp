@@ -51,7 +51,10 @@ int main_edit(int argc, char *argv[])
     
     const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
     std::ifstream exampleInputFile(argv[1]);
-    serializer.read(program, exampleInputFile);
+    if (serializer.read(program, exampleInputFile)) {
+	fprintf(stderr, "Could not read file %s\n", argv[1]);
+	return 3;
+    }
 
     // Register builtins...
     Builtins::initialize();

@@ -13,7 +13,7 @@ class NodeProgramSerializer {
 public:
     virtual ~NodeProgramSerializer() = default;
     virtual void write(const NodeProgram &program, std::ostream & output_stream) const = 0;
-    virtual void read(NodeProgram & program, std::istream & input_stream) const = 0;
+    virtual int read(NodeProgram & program, std::istream & input_stream) const = 0;
 };
 
 /**
@@ -53,7 +53,7 @@ public:
      * Reads the input stream and fills in the (assumed empty)
      * node program based on the file content.
      */
-    void read(NodeProgram & program, std::istream & input_stream) const override;
+    int read(NodeProgram & program, std::istream & input_stream) const override;
 };
 
     } // End core

@@ -36,7 +36,10 @@ int main_process(int argc, char *argv[])
     const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
     std::string filename(argv[1]);
     std::ifstream exampleInputFile(filename);
-    serializer.read(program, exampleInputFile);
+    if (serializer.read(program, exampleInputFile)) {
+	fprintf(stderr, "Could not read file %s\n", argv[1]);
+	return 4;
+    }
     
     NodeGraph *graph = program.getGraph("main");
     if (!graph) {
@@ -45,7 +48,7 @@ int main_process(int argc, char *argv[])
     }
 
     NodeProgramSerializerOpenSCAD::instance().write(program, std::cout);
-//    std::cout << evaluateToSCAD(*graph);
+    std::cout << std::endl;
 
     return 0;
 }

@@ -40,7 +40,7 @@ public:
      * Reads the input stream and fills in the (assumed empty)
      * node program based on the file content.
      */
-    void read(JNodes::core::NodeProgram & program, std::istream & input_stream) const override;
+    int read(JNodes::core::NodeProgram & program, std::istream & input_stream) const override;
 
     static std::string toString(const JNodes::core::NodeGraph & model);
     
