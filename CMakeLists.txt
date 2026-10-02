@@ -43,6 +43,7 @@ option(USE_MANIFOLD_TRIANGULATOR "Use Manifold's triangulator instead of CGAL's"
 option(USE_MANIFOLD_MINKOWSKI "Use Manifold's Minkowski instead of CGAL's" OFF)
 option(USE_BUILTIN_MANIFOLD "Use manifold from submodule" ON)
 option(USE_BUILTIN_CLIPPER2 "Use Clipper2 from submodule" ON)
+option(USE_NODE_EDITOR "Built with node-editor interface" ON)
 option(USE_POLYSET_FOR_CGAL "Force CGAL backend to use PolySetRenderer instead of CGALRenderer." OFF)
 option(SNAPSHOT "Create dev snapshot, uses nightly icons" OFF)
 option(HEADLESS "Build without GUI frontend" OFF)
@@ -148,7 +149,9 @@ set_target_properties(OpenSCADNodes PROPERTIES
   OUTPUT_NAME "nodes"
 )
 
+
 add_library(OpenSCADLibInternal STATIC)
+
 target_link_libraries(OpenSCADExe PUBLIC OpenSCADLibInternal)
 target_link_libraries(OpenSCADNodes PUBLIC OpenSCADLibInternal)
 set_target_properties(OpenSCADLibInternal PROPERTIES
@@ -428,6 +431,10 @@ add_subdirectory(submodules)
 
 # The submodules will set up mimalloc if needed, and we need to defer any
 # target_link_libraries() calls until after that.
+
+if (USE_NODE_EDITOR)
+    target_link_libraries(OpenSCADLibInternal PUBLIC NodeJS)
+endif()
 
 macro(find_graphics)
   # NULLGL - Allow us to build without OpenGL(TM). run 'cmake .. -DNULLGL=1'
@@ -1326,21 +1333,22 @@ set(GUI_SOURCES
   src/nodes/NodeFactoryRegistry.cpp
   src/nodes/NodeProgramSerializer.cpp
 
-  src/nodes/openscad/Builtins.cpp
-  src/nodes/openscad/BuiltinsSyntax.cpp
-  src/nodes/openscad/BuiltinsConstants.cpp
-  src/nodes/openscad/BuiltinsOperators.cpp
-  src/nodes/openscad/Builtins2D.cpp
-  src/nodes/openscad/Builtins3D.cpp
-  src/nodes/openscad/BuiltinsTransforms.cpp
-  src/nodes/openscad/BuiltinsList.cpp
-  src/nodes/openscad/BuiltinsBooleanOperations.cpp
-  src/nodes/openscad/BuiltinsFlowControl.cpp
-  src/nodes/openscad/BuiltinsTypeTest.cpp
-  src/nodes/openscad/BuiltinsOther.cpp
-  src/nodes/openscad/BuiltinsFunctions.cpp
-  src/nodes/openscad/BuiltinsMath.cpp
-  src/nodes/openscad/NodeProgramSerializerOpenSCAD.cpp
+#  src/nodes/openscad/Builtins.cpp
+#  src/nodes/openscad/BuiltinsSyntax.cpp
+#  src/nodes/openscad/BuiltinsConstants.cpp
+#  src/nodes/openscad/BuiltinsOperators.cpp
+#  src/nodes/openscad/Builtins2D.cpp
+#  src/nodes/openscad/Builtins3D.cpp
+#  src/nodes/openscad/BuiltinsTransforms.cpp
+#  src/nodes/openscad/BuiltinsList.cpp
+#  src/nodes/openscad/BuiltinsBooleanOperations.cpp
+#  src/nodes/openscad/BuiltinsFlowControl.cpp
+#  src/nodes/openscad/BuiltinsTypeTest.cpp
+#  src/nodes/openscad/BuiltinsOther.cpp
+#  src/nodes/openscad/BuiltinsFunctions.cpp
+#  src/nodes/openscad/BuiltinsMath.cpp
+  src/nodes/openscad/Parser.cpp
+#  src/nodes/openscad/NodeProgramSerializerOpenSCAD.cpp
   
   src/nodes/gui/BreadcrumbsWidget.cpp
   src/nodes/gui/NodeEditorWidget.cpp

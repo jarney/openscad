@@ -13,6 +13,7 @@ static std::string get_test_path(const std::string& name)
 
 TEST_CASE("NodeProgramSerializer", "[nodes][NodeProgramSerializer]")
 {
+#if 0
     SECTION("Node program write to file")
     {
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
@@ -26,5 +27,6 @@ TEST_CASE("NodeProgramSerializer", "[nodes][NodeProgramSerializer]")
 	serializer.read(loadedProgram, exampleInputFile);
 	serializer.write(loadedProgram, exampleOutputFile);
     }
+#endif
 }
 

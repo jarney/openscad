@@ -17,6 +17,7 @@ using namespace JNodes::openscad;
 
 int main_process(int argc, char *argv[])
 {
+#if 0
     QApplication app(argc, argv);
     
     if (argc != 2) {
@@ -49,6 +50,7 @@ int main_process(int argc, char *argv[])
 
     NodeProgramSerializerOpenSCAD::instance().write(program, std::cout);
     std::cout << std::endl;
-
+#endif
+    
     return 0;
 }

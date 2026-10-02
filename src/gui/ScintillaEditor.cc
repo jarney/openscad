@@ -118,7 +118,11 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
   qsci = new QsciScintilla(qtab);
 
   JNodes::gui::NodeEditorWidget::initializeStyles();
+#if 0
   qnode_registry = JNodes::openscad::Builtins::registerDataModels();
+#else
+  qnode_registry = nullptr;
+#endif
 
   qnode_program = std::make_shared<JNodes::core::NodeProgram>(qnode_registry);
   

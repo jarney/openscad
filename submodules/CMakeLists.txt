@@ -67,3 +67,7 @@ if(USE_MIMALLOC)
     endif()
   endif()
 endif()
+
+if (USE_NODE_EDITOR)
+    add_subdirectory(node--js EXCLUDE_FROM_ALL)
+endif()

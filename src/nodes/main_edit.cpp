@@ -34,7 +34,7 @@ using namespace JNodes::core;
 int main_edit(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-
+#if 0
     if (argc != 2) {
 	fprintf(stderr, "Usage: edit filename\n");
 	return 1;
@@ -128,4 +128,7 @@ int main_edit(int argc, char *argv[])
     mainWidget.showNormal();
 
     return app.exec();
+#else
+    return 0;
+#endif
 }

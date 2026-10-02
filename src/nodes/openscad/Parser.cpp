@@ -1,4 +1,11 @@
+#include "Parser.h"
 #include <variant>
+#include <fstream>
+#include <iostream>
+#include "node--js/SerializerError.hpp"
+#include "node--js/xml/Serializer.hpp"
+
+using namespace NodeJS::core;
 
 /*************************************************************/
 class ModuleInstantiationASTHandler {
@@ -7,10 +14,10 @@ public:
     ~ModuleInstantiationASTHandler() = default;
 
     virtual void handle(
-	NodeProgram & program,
+	NodeModule & program,
 	NodeGraph *currentGraph,
-	QtNodes::NodeId parentNode,
-	QtNodes::PortIndex parentPort,
+	NodeId parentNode,
+	PortId parentPort,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	const std::shared_ptr<const Context>& context,
 	int depth,
@@ -22,10 +29,10 @@ public:
 class ModuleNodeFactorySphere : public ModuleInstantiationASTHandler {
 public:
     virtual void handle(
-	NodeProgram & program,
+	NodeModule & program,
 	NodeGraph *currentGraph,
-	QtNodes::NodeId parentNode,
-	QtNodes::PortIndex parentPort,
+	NodeId parentNode,
+	PortId parentPort,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	const std::shared_ptr<const Context>& context,
 	int depth,
@@ -35,10 +42,10 @@ public:
 
 void
 ModuleNodeFactorySphere::handle(
-	NodeProgram & program,
+	NodeModule & program,
 	NodeGraph *currentGraph,
-	QtNodes::NodeId parentNode,
-	QtNodes::PortIndex parentPort,
+	NodeId parentNode,
+	PortId parentPort,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	const std::shared_ptr<const Context>& context,
 	int depth,
@@ -48,16 +55,32 @@ ModuleNodeFactorySphere::handle(
     // Create a new node and connect it to
     // our parent node with the output of the module's node
     // connected to the input of our parent's node.
-    QtNodes::NodeId childNode = currentGraph->addNode(QString::fromStdString(moduleInstantiation->name()));
-    QPointF pos(-depth * 400, -i * 400);
-    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+//    NodeId childNode = currentGraph->addNode(moduleInstantiation->name());
 
-    QtNodes::ConnectionId connection;
-    connection.inNodeId = parentNode;
-    connection.inPortIndex = parentPort;
-    connection.outNodeId = childNode;
-    connection.outPortIndex = 0;
-    currentGraph->addConnection(connection);
+    const NodeType *nodeType = currentGraph->getNodeType(moduleInstantiation->name());
+    if (nodeType == nullptr) {
+	fprintf(stderr, "Error loading node of type %s\n", moduleInstantiation->name().c_str());
+	return;
+    }
+    ConnectionData defaultData;
+    Node & childNode = currentGraph->newNode(
+	*nodeType,
+	moduleInstantiation->name(),
+	defaultData
+	);
+    childNode.setPosition(std::make_pair(-depth * 400, -i * 400));
+    
+//    QPointF pos(-depth * 400, -i * 400);
+//    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+
+//    QtNodes::ConnectionId connection;
+//    connection.inNodeId = parentNode;
+//    connection.inPortIndex = parentPort;
+//    connection.outNodeId = childNode.getId();
+//    connection.outPortIndex = 0;
+//    currentGraph->addConnection(connection);
+    currentGraph->newEdge(parentNode, parentPort,
+			  childNode.getId(), "output");
 
     // First, we parse the arguments to get the
     // list of parameters to the module.
@@ -77,7 +100,7 @@ ModuleNodeFactorySphere::handle(
     
     // Next, we handle the suff in the curly-braces
     // that is the body of the node.
-    processLocalScope(program, currentGraph, childNode, 0, moduleInstantiation->scope, context, depth);
+    processLocalScope(program, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), moduleInstantiation->scope, context, depth);
 	
 }
 
@@ -85,7 +108,7 @@ static std::map<std::string, std::shared_ptr<ModuleInstantiationASTHandler>> mod
 
 void
 processSourceFile(
-    NodeProgram & program,
+    NodeModule & program,
     SourceFile *sourceFile,
     const std::shared_ptr<const Context>& context
     )
@@ -97,39 +120,70 @@ processSourceFile(
     moduleFactory["sphere"] = std::make_shared<ModuleNodeFactorySphere>();
     moduleFactory["cube"] = moduleFactory["sphere"];
     moduleFactory["for"] = moduleFactory["sphere"];
+
+    // At this point, we need to load the
+    // openscad.xml to load the type definitions for the
+    // builtins.
+    std::unique_ptr<NodeModule> openscad_module = std::make_unique<NodeModule>();
+    std::ifstream in("../submodules/node--js/doc/openscad.xml");
+    SerializerErrorReporterStream err(std::cerr);
+
+    const auto & ser = NodeJS::xml::Serializer::instance();
+    
+    bool rc = ser.read(
+	*openscad_module,
+	in,
+	err);
     
     ////////////
-    NodeGraph *main = program.newGraph("main");
-    QtNodes::NodeId outputNode = main->addNode("output");
+    NodeGraph *main = program.addGraph("main");
+    main->addScope(std::move(openscad_module));
+    
+    const NodeType *outputType = main->getNodeType("output");
+    ConnectionData defaultData;
+    Node & outputNode = main->newNode(
+	*outputType,
+	"output",
+	defaultData
+	);
 
     // A source file is just a single large scope.
-    processLocalScope(program, main, outputNode, 0, sourceFile->scope, *file_context, 0);
+    processLocalScope(program, main, outputNode.getId(), outputNode.getType().getInputPortName(0), sourceFile->scope, *file_context, 0);
 }
 
 void
 processAssignment(
-    NodeProgram & program,
+    NodeModule & program,
     NodeGraph *currentGraph,
     const std::shared_ptr<Assignment> & assignment,
     const std::shared_ptr<const Context>& context,
     int depth
     )
 {
-    QtNodes::NodeId assignmentNode = currentGraph->addNode("assign");
-    QPointF pos(-depth * 400, 0);
-    currentGraph->setNodeData(assignmentNode, QtNodes::NodeRole::Position, pos);
-    Node *node = currentGraph->getNode(assignmentNode);
-    node->setValue("variable_name", assignment->getName().c_str());
+//    NodeId assignmentNode = currentGraph->addNode("assign");
 
-    processExpression(program, currentGraph, assignmentNode, 0, assignment->getExpr(), context, depth+1);
+    const NodeType *nodeType = currentGraph->getNodeType("assign");
+    ConnectionData defaultData;
+    Node & assignmentNode = currentGraph->newNode(
+	*nodeType,
+	"assign",
+	defaultData
+	);
+    assignmentNode.setPosition(std::make_pair(-depth * 400, 0));
+    
+//    currentGraph->setNodeData(assignmentNode, QtNodes::NodeRole::Position, pos);
+//    Node *node = currentGraph->getNode(assignmentNode);
+    assignmentNode.getData().setValue("variable_name", assignment->getName().c_str());
+
+    processExpression(program, currentGraph, assignmentNode.getId(), assignmentNode.getType().getInputPortName(0), assignment->getExpr(), context, depth+1);
 }
 
 void
 processExpressionUnaryOp(
-    NodeProgram & program,
+    NodeModule & program,
     NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeId parentNode,
+    PortId parentPort,
     const UnaryOp *operation,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -143,28 +197,43 @@ processExpressionUnaryOp(
 	throw std::string("Invalid literal type found parsing openscad file\n");
     }
 
-    QtNodes::NodeId childNode = currentGraph->addNode(QString::fromStdString(op_it->second));
+    const NodeType *nodeType = currentGraph->getNodeType(op_it->second);
+    if (nodeType == nullptr) {
+	fprintf(stderr, "Error loading node of type %s\n", op_it->second.c_str());
+	return;
+    }
+    ConnectionData defaultData;
+    Node & childNode = currentGraph->newNode(
+	*nodeType,
+	op_it->second,
+	defaultData
+	);
+    childNode.setPosition(std::make_pair(-depth * 400, 0));
 
-    QPointF pos(-depth * 400, 0);
-    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+//    NodeId childNode = currentGraph->addNode(op_it->second);
+//
+//    QPointF pos(-depth * 400, 0);
+//    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
     
-    QtNodes::ConnectionId connection;
-    connection.inNodeId = parentNode;
-    connection.inPortIndex = parentPort;
-    connection.outNodeId = childNode;
-    connection.outPortIndex = 0;
-    currentGraph->addConnection(connection);
+//    QtNodes::ConnectionId connection;
+//    connection.inNodeId = parentNode;
+//    connection.inPortIndex = parentPort;
+//    connection.outNodeId = childNode;
+//    connection.outPortIndex = 0;
+//    currentGraph->addConnection(connection);
+    currentGraph->newEdge(parentNode, parentPort,
+			  childNode.getId(), childNode.getType().getOutputPortName(0));
 
-    processExpression(program, currentGraph, childNode, 0, operation->expr, context, depth+1);
+    processExpression(program, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), operation->expr, context, depth+1);
     
 }
 
 void
 processExpressionBinaryOp(
-    NodeProgram & program,
+    NodeModule & program,
     NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeId parentNode,
+    PortId parentPort,
     const BinaryOp *operation,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -197,87 +266,190 @@ processExpressionBinaryOp(
 	throw std::string("Invalid literal type found parsing openscad file\n");
     }
 
-    QtNodes::NodeId childNode = currentGraph->addNode(QString::fromStdString(op_it->second));
+    const NodeType *nodeType = currentGraph->getNodeType(op_it->second);
+    if (nodeType == nullptr) {
+	fprintf(stderr, "Error loading node of type %s\n", op_it->second.c_str());
+	return;
+    }
+    ConnectionData defaultData;
+    Node & childNode = currentGraph->newNode(
+	*nodeType,
+	op_it->second,
+	defaultData
+	);
+    childNode.setPosition(std::make_pair(-depth * 400, 0));
 
-    QPointF pos(-depth * 400, 0);
-    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+    currentGraph->newEdge(
+	parentNode, parentPort,
+	childNode.getId(), childNode.getType().getOutputPortName(0)
+	);
     
-    QtNodes::ConnectionId connection;
-    connection.inNodeId = parentNode;
-    connection.inPortIndex = parentPort;
-    connection.outNodeId = childNode;
-    connection.outPortIndex = 0;
-    currentGraph->addConnection(connection);
+//    NodeId childNode = currentGraph->addNode(op_it->second);
+//
+//    QPointF pos(-depth * 400, 0);
+//    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+//    
+//    QtNodes::ConnectionId connection;
+//    connection.inNodeId = parentNode;
+//    connection.inPortIndex = parentPort;
+//    connection.outNodeId = childNode;
+//    connection.outPortIndex = 0;
+//    currentGraph->addConnection(connection);
 
-    processExpression(program, currentGraph, childNode, 0, operation->left, context, depth+1);
-    processExpression(program, currentGraph, childNode, 1, operation->right, context, depth+1);
+    processExpression(program, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), operation->left, context, depth+1);
+    processExpression(program, currentGraph, childNode.getId(), childNode.getType().getInputPortName(1), operation->right, context, depth+1);
 }
 
 void
 processExpressionLiteral(
-    NodeProgram & program,
+    NodeModule & program,
     NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeId parentNode,
+    PortId parentPort,
     const Literal *literal,
     const std::shared_ptr<const Context>& context,
     int depth
     )
 {
-    QtNodes::NodeId childNode;
+//    NodeId childNode;
+    Node *childNode;
     if (literal->isBool()) {
-	childNode = currentGraph->addNode(literal->toBool() ? "true" : "false");
+	//childNode = currentGraph->addNode(nodeType
+	std::string nodeTypeName = literal->toBool() ? "true" : "false";
+	const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+	if (nodeType == nullptr) {
+	    fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
+	    return;
+	}
+	ConnectionData defaultData;
+	childNode = &currentGraph->newNode(
+	    *nodeType,
+	    nodeTypeName,
+	    defaultData
+	    );
     }
     else if (literal->isString()) {
-	childNode = currentGraph->addNode("const_string");
-	Node *node = currentGraph->getNode(childNode);
-	node->setValue("value", literal->toString());
+	//childNode = currentGraph->addNode("const_string");
+	std::string nodeTypeName = "const_string";
+	const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+	if (nodeType == nullptr) {
+	    fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
+	    return;
+	}
+	ConnectionData defaultData;
+	defaultData.setValue("value", literal->toString());
+	childNode = &currentGraph->newNode(
+	    *nodeType,
+	    nodeTypeName,
+	    defaultData);
     }
     else if (literal->isDouble()) {
 	double lit_double = literal->toDouble();
 	long lit_long = (long)lit_double;
 	double lit_recast = (double)lit_long;
 	if (abs(lit_double - lit_recast) < 1e-9) {
-	    childNode = currentGraph->addNode("const_int");
-	    Node *node = currentGraph->getNode(childNode);
-	    node->setValue("value", std::to_string(lit_long));
+	    //childNode = currentGraph->addNode("const_int");
+	    //Node *node = currentGraph->getNode(childNode);
+	    //node->setValue("value", std::to_string(lit_long));
+	    std::string nodeTypeName = "const_int";
+	    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+	    if (nodeType == nullptr) {
+		fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
+		return;
+	    }
+	    ConnectionData defaultData;
+	    defaultData.setValue("value", std::to_string(lit_long));
+	    childNode = &currentGraph->newNode(
+		*nodeType,
+		nodeTypeName,
+		defaultData);
+	    
 	}
 	else {
-	    childNode = currentGraph->addNode("const_float");
-	    Node *node = currentGraph->getNode(childNode);
-	    node->setValue("value", std::to_string(lit_double));
+	    //childNode = currentGraph->addNode("const_float");
+	    //Node *node = currentGraph->getNode(childNode);
+	    //node->setValue("value", std::to_string(lit_double));
+	    std::string nodeTypeName = "const_float";
+	    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+	    if (nodeType == nullptr) {
+		fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
+		return;
+	    }
+	    ConnectionData defaultData;
+	    defaultData.setValue("value", std::to_string(lit_double));
+	    childNode = &currentGraph->newNode(
+		*nodeType,
+		nodeTypeName,
+		defaultData);
 	}
     }
     else if (literal->isUndefined()) {
-	childNode = currentGraph->addNode("undef");
+	//childNode = currentGraph->addNode("undef");
+	std::string nodeTypeName = "undef";
+	const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+	if (nodeType == nullptr) {
+	    fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
+	    return;
+	}
+	ConnectionData defaultData;
+	childNode = &currentGraph->newNode(
+	    *nodeType,
+	    nodeTypeName,
+	    defaultData);
     }
     else {
 	throw std::string("Invalid literal type found parsing openscad file\n");
     }
+
+    childNode->setPosition(std::make_pair(-depth * 400, 0));
+    //QPointF pos(-depth * 400, 0);
+    //currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
     
-    QPointF pos(-depth * 400, 0);
-    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
+    //QtNodes::ConnectionId connection;
+    //connection.inNodeId = parentNode;
+    //connection.inPortIndex = parentPort;
+    //connection.outNodeId = childNode;
+    //connection.outPortIndex = 0;
+    //currentGraph->addConnection(connection);
+    currentGraph->newEdge(
+	parentNode, parentPort,
+	childNode->getId(), childNode->getType().getInputPortName(0)
+	);
     
-    QtNodes::ConnectionId connection;
-    connection.inNodeId = parentNode;
-    connection.inPortIndex = parentPort;
-    connection.outNodeId = childNode;
-    connection.outPortIndex = 0;
-    currentGraph->addConnection(connection);    
 }
 
 void
 processExpressionLookup(
-    NodeProgram & program,
+    NodeModule & program,
     NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeId parentNode,
+    PortId parentPort,
     const Lookup *lookup,
     const std::shared_ptr<const Context>& context,
     int depth
     )
 {
-    QtNodes::NodeId childNode;
+    std::string nodeTypeName = "variable";
+    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+    if (nodeType == nullptr) {
+	fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
+	return;
+    }
+    ConnectionData defaultData;
+    defaultData.setValue("variable_name", lookup->get_name());
+    Node *childNode = &currentGraph->newNode(
+	*nodeType,
+	nodeTypeName,
+	defaultData);
+    
+    childNode->setPosition(std::make_pair(-depth * 400, 0));
+    
+    currentGraph->newEdge(
+	parentNode, parentPort,
+	childNode->getId(), childNode->getType().getInputPortName(0)
+	);
+#if 0
+    NodeId childNode;
 
     childNode = currentGraph->addNode("variable");
     Node *node = currentGraph->getNode(childNode);
@@ -291,14 +463,15 @@ processExpressionLookup(
     connection.inPortIndex = parentPort;
     connection.outNodeId = childNode;
     connection.outPortIndex = 0;
-    currentGraph->addConnection(connection);    
+    currentGraph->addConnection(connection);
+#endif
 }
 
 void
 processExpressionBuiltinFunctionCall(
-    NodeProgram & program,
+    NodeModule & program,
     NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
+    NodeId parentNode,
     const BuiltinFunction *builtinFunction,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -328,16 +501,35 @@ processExpressionBuiltinFunctionCall(
 
 void
 processExpressionFunctionCall(
-    NodeProgram & program,
+    NodeModule & program,
     NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeId parentNode,
+    PortId parentPort,
     const FunctionCall *functionCall,
     const std::shared_ptr<const Context>& context,
     int depth
     )
 {
-    QtNodes::NodeId childNode = currentGraph->addNode(QString::fromStdString(functionCall->name));
+    std::string nodeTypeName  = functionCall->name;
+    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+    if (nodeType == nullptr) {
+	fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
+	return;
+    }
+    ConnectionData defaultData;
+    Node *childNode = &currentGraph->newNode(
+	*nodeType,
+	nodeTypeName,
+	defaultData);
+    
+    childNode->setPosition(std::make_pair(-depth * 400, 0));
+    
+    currentGraph->newEdge(
+	parentNode, parentPort,
+	childNode->getId(), childNode->getType().getInputPortName(0)
+	);
+#if 0
+    NodeId childNode = currentGraph->addNode(functionCall->name);
 						      
     QPointF pos(-depth * 400, 0);
     currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
@@ -348,7 +540,8 @@ processExpressionFunctionCall(
     connection.outNodeId = childNode;
     connection.outPortIndex = 0;
     currentGraph->addConnection(connection);
-
+#endif
+    
     boost::optional<CallableFunction> scad_function;
     
     scad_function = context->lookup_function(functionCall->name, functionCall->location());
@@ -362,7 +555,7 @@ processExpressionFunctionCall(
 	processExpressionBuiltinFunctionCall(
 	    program,
 	    currentGraph,
-	    childNode,
+	    childNode->getId(),
 	    builtinFunction,
 	    context,
 	    depth+1
@@ -389,10 +582,10 @@ processExpressionFunctionCall(
 
 void
 processExpression(
-    NodeProgram & program,
+    NodeModule & program,
     NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeId parentNode,
+    PortId parentPort,
     const std::shared_ptr<Expression> & expression,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -447,10 +640,10 @@ processExpression(
     
 void
 processLocalScope(
-    NodeProgram & program,
+    NodeModule & program,
     NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeId parentNode,
+    PortId parentPort,
     std::shared_ptr<LocalScope> localScope,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -480,10 +673,10 @@ processLocalScope(
 
 void
 processModuleInstantiation(
-    NodeProgram & program,
+    NodeModule & program,
     NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeId parentNode,
+    PortId parentPort,
     std::shared_ptr<ModuleInstantiation> moduleInstantiation,
     const std::shared_ptr<const Context>& context,
     int depth,

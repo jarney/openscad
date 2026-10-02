@@ -1,3 +1,7 @@
+#pragma once
+
+#include <memory>
+
 #include "core/SourceFile.h"
 #include "core/LocalScope.h"
 #include "core/ModuleInstantiation.h"
@@ -8,10 +12,15 @@
 #include "core/BuiltinContext.h"
 #include "core/ScopeContext.h"
 
+#include "node--js/NodeModule.hpp"
+#include "node--js/NodeGraph.hpp"
+#include "node--js/NodeType.hpp"
+#include "node--js/NodePort.hpp"
+
 void
 processAssignment(
-    NodeProgram & program,
-    NodeGraph *currentGraph,
+    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeGraph *currentGraph,
     const std::shared_ptr<Assignment> & assignment,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -19,10 +28,10 @@ processAssignment(
 
 void
 processExpression(
-    NodeProgram & program,
-    NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeGraph *currentGraph,
+    NodeJS::core::NodeId parentNode,
+    NodeJS::core::PortId parentPort,
     const std::shared_ptr<Expression> & expression,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -30,10 +39,10 @@ processExpression(
 
 void
 processExpressionUnaryOp(
-    NodeProgram & program,
-    NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeGraph *currentGraph,
+    NodeJS::core::NodeId parentNode,
+    NodeJS::core::PortId parentPort,
     const UnaryOp *operation,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -41,10 +50,10 @@ processExpressionUnaryOp(
 
 void
 processExpressionBinaryOp(
-    NodeProgram & program,
-    NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeGraph *currentGraph,
+    NodeJS::core::NodeId parentNode,
+    NodeJS::core::PortId parentPort,
     const BinaryOp *operation,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -52,10 +61,10 @@ processExpressionBinaryOp(
 
 void
 processExpressionFunctionCall(
-    NodeProgram & program,
-    NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeGraph *currentGraph,
+    NodeJS::core::NodeId parentNode,
+    NodeJS::core::PortId parentPort,
     const FunctionCall *functionCall,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -63,36 +72,36 @@ processExpressionFunctionCall(
 
 void
 processExpressionBuiltinFunctionCall(
-    NodeProgram & program,
-    NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeGraph *currentGraph,
+    NodeJS::core::NodeId parentNode,
+    NodeJS::core::PortId parentPort,
     const BuiltinFunction *functionCall,
     const std::shared_ptr<const Context>& context,
     int depth
     );
 
 void processSourceFile(
-    NodeProgram & program,
+    NodeJS::core::NodeModule & program,
     SourceFile *sourceFile,
     const std::shared_ptr<const Context>& context
     );
 
 void processLocalScope(
-    NodeProgram & program,
-    NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeGraph *currentGraph,
+    NodeJS::core::NodeId parentNode,
+    NodeJS::core::PortId parentPort,
     std::shared_ptr<LocalScope> localScope,
     const std::shared_ptr<const Context>& context,
     int depth
     );
 
 void processModuleInstantiation(
-    NodeProgram & program,
-    NodeGraph *currentGraph,
-    QtNodes::NodeId parentNode,
-    QtNodes::PortIndex parentPort,
+    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeGraph *currentGraph,
+    NodeJS::core::NodeId parentNode,
+    NodeJS::core::PortId parentPort,
     std::shared_ptr<ModuleInstantiation> moduleInstantiation,
     const std::shared_ptr<const Context>& context,
     int depth,

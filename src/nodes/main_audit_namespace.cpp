@@ -20,6 +20,7 @@ void dumpNotImplemented(std::shared_ptr<NodeFactoryRegistry> registry);
 
 int main_audit_namespace(int argc, char *argv[])
 {
+#if 0
     if (argc != 2) {
 	fprintf(stderr, "Usage: audit-namespace filename\n");
 	return 1;
@@ -38,10 +39,10 @@ int main_audit_namespace(int argc, char *argv[])
 //    dumpBuiltins();
 
     dumpNotImplemented(registry);
-
+#endif
     return 0;
 }
-
+#if 0
 void dumpBuiltins(void)
 {
     for (const auto & it : Builtins::instance().getModules()) {
@@ -87,3 +88,4 @@ void dumpRegistry(std::shared_ptr<NodeFactoryRegistry> registry)
     }
     
 }
+#endif
