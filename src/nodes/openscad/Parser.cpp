@@ -79,8 +79,10 @@ ModuleNodeFactorySphere::handle(
 //    connection.outNodeId = childNode.getId();
 //    connection.outPortIndex = 0;
 //    currentGraph->addConnection(connection);
-    currentGraph->newEdge(parentNode, parentPort,
-			  childNode.getId(), "output");
+    currentGraph->newEdge(
+	childNode.getId(), childNode.getType().getOutputPortName(0),
+	parentNode, parentPort
+	);
 
     // First, we parse the arguments to get the
     // list of parameters to the module.
@@ -225,8 +227,10 @@ processExpressionUnaryOp(
 //    connection.outNodeId = childNode;
 //    connection.outPortIndex = 0;
 //    currentGraph->addConnection(connection);
-    currentGraph->newEdge(parentNode, parentPort,
-			  childNode.getId(), childNode.getType().getOutputPortName(0));
+    currentGraph->newEdge(
+	childNode.getId(), childNode.getType().getOutputPortName(0),
+	parentNode, parentPort
+	);
 
     processExpression(program, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), operation->expr, context, depth+1);
     
@@ -284,8 +288,8 @@ processExpressionBinaryOp(
     childNode.setPosition(std::make_pair(-depth * 400, 0));
 
     currentGraph->newEdge(
-	parentNode, parentPort,
-	childNode.getId(), childNode.getType().getOutputPortName(0)
+	childNode.getId(), childNode.getType().getOutputPortName(0),
+	parentNode, parentPort
 	);
     
 //    NodeId childNode = currentGraph->addNode(op_it->second);
@@ -416,8 +420,8 @@ processExpressionLiteral(
     //connection.outPortIndex = 0;
     //currentGraph->addConnection(connection);
     currentGraph->newEdge(
-	parentNode, parentPort,
-	childNode->getId(), childNode->getType().getInputPortName(0)
+	childNode->getId(), childNode->getType().getOutputPortName(0),
+	parentNode, parentPort
 	);
     
 }
@@ -449,8 +453,8 @@ processExpressionLookup(
     childNode->setPosition(std::make_pair(-depth * 400, 0));
     
     currentGraph->newEdge(
-	parentNode, parentPort,
-	childNode->getId(), childNode->getType().getInputPortName(0)
+	childNode->getId(), childNode->getType().getOutputPortName(0),
+	parentNode, parentPort
 	);
 #if 0
     NodeId childNode;
@@ -529,8 +533,8 @@ processExpressionFunctionCall(
     childNode->setPosition(std::make_pair(-depth * 400, 0));
     
     currentGraph->newEdge(
-	parentNode, parentPort,
-	childNode->getId(), childNode->getType().getInputPortName(0)
+	childNode->getId(), childNode->getType().getOutputPortName(0),
+	parentNode, parentPort
 	);
 #if 0
     NodeId childNode = currentGraph->addNode(functionCall->name);
