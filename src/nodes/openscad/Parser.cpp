@@ -140,6 +140,10 @@ processSourceFile(
     main->addScope(std::move(openscad_module));
     
     const NodeType *outputType = main->getNodeType("output");
+    if (outputType == nullptr) {
+	fprintf(stderr, "Invalid output port, not found\n");
+	return;
+    }
     ConnectionData defaultData;
     Node & outputNode = main->newNode(
 	*outputType,
