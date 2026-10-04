@@ -17,7 +17,10 @@ public:
 	NodeModule & program,
 	NodeGraph *currentGraph,
 	NodeId parentNode,
-	PortId parentPort,
+	PortId parentAssignments,
+	PortId parentFunctionDefinitions,
+	PortId parentModuleDefinitions,
+	PortId parentModuleInstantiation,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	const std::shared_ptr<const Context>& context,
 	int depth,
@@ -32,7 +35,10 @@ public:
 	NodeModule & program,
 	NodeGraph *currentGraph,
 	NodeId parentNode,
-	PortId parentPort,
+	PortId parentAssignments,
+	PortId parentFunctionDefinitions,
+	PortId parentModuleDefinitions,
+	PortId parentModuleInstantiation,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	const std::shared_ptr<const Context>& context,
 	int depth,
@@ -45,7 +51,10 @@ ModuleNodeFactorySphere::handle(
 	NodeModule & program,
 	NodeGraph *currentGraph,
 	NodeId parentNode,
-	PortId parentPort,
+	PortId parentAssignments,
+	PortId parentFunctionDefinitions,
+	PortId parentModuleDefinitions,
+	PortId parentModuleInstantiation,
 	std::shared_ptr<ModuleInstantiation> moduleInstantiation,
 	const std::shared_ptr<const Context>& context,
 	int depth,
@@ -81,7 +90,7 @@ ModuleNodeFactorySphere::handle(
 //    currentGraph->addConnection(connection);
     currentGraph->newEdge(
 	childNode.getId(), childNode.getType().getOutputPortName(0),
-	parentNode, parentPort
+	parentNode, parentModuleInstantiation
 	);
 
     // First, we parse the arguments to get the
@@ -102,7 +111,17 @@ ModuleNodeFactorySphere::handle(
     
     // Next, we handle the suff in the curly-braces
     // that is the body of the node.
-    processLocalScope(program, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), moduleInstantiation->scope, context, depth);
+    processLocalScope(
+	program,
+	currentGraph,
+	childNode.getId(),
+	parentAssignments,
+	parentFunctionDefinitions,
+	parentModuleDefinitions,
+	childNode.getType().getInputPortName(3), // Module Instantiations
+	moduleInstantiation->scope,
+	context,
+	depth);
 	
 }
 
@@ -154,13 +173,25 @@ processSourceFile(
 	);
 
     // A source file is just a single large scope.
-    processLocalScope(program, main, outputNode.getId(), outputNode.getType().getInputPortName(0), sourceFile->scope, *file_context, 0);
+    processLocalScope(
+	program,
+	main,
+	outputNode.getId(),
+	outputNode.getType().getInputPortName(0), // Assignments
+	outputNode.getType().getInputPortName(1), // Function Definitions
+	outputNode.getType().getInputPortName(2), // Module Definitions
+	outputNode.getType().getInputPortName(3), // Module Instantiations
+	sourceFile->scope,
+	*file_context,
+	0);
 }
 
 void
 processAssignment(
     NodeModule & program,
     NodeGraph *currentGraph,
+    NodeId parentNode,
+    PortId parentAssignments,
     const std::shared_ptr<Assignment> & assignment,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -176,6 +207,13 @@ processAssignment(
 	defaultData
 	);
     assignmentNode.setPosition(std::make_pair(-depth * 400, 0));
+
+    // The output of an assignment needs to link up
+    // with the output node's assignments port.
+    currentGraph->newEdge(
+	assignmentNode.getId(), assignmentNode.getType().getOutputPortName(0),
+	parentNode, parentAssignments
+	);
     
 //    currentGraph->setNodeData(assignmentNode, QtNodes::NodeRole::Position, pos);
 //    Node *node = currentGraph->getNode(assignmentNode);
@@ -262,7 +300,7 @@ processExpressionBinaryOp(
 	{BinaryOp::Op::BinaryAnd, "binary_and"},
 	{BinaryOp::Op::BinaryOr, "binary_or"},
 	{BinaryOp::Op::Less, "lt"},
-	{BinaryOp::Op::LessEqual, "le"},
+	{BinaryOp::Op::LessEqual, "leq"},
 	{BinaryOp::Op::Greater, "gt"},
 	{BinaryOp::Op::GreaterEqual, "geq"},
 	{BinaryOp::Op::Equal, "eq"},
@@ -651,7 +689,10 @@ processLocalScope(
     NodeModule & program,
     NodeGraph *currentGraph,
     NodeId parentNode,
-    PortId parentPort,
+    PortId parentAssignments,
+    PortId parentFunctionDefinitions,
+    PortId parentModuleDefinitions,
+    PortId parentModuleInstantiations,
     std::shared_ptr<LocalScope> localScope,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -660,7 +701,13 @@ processLocalScope(
 
     // First process any variable assignments in this scope.
     for (const auto assignment : localScope->assignments) {
-	processAssignment(program, currentGraph, assignment, context, depth+1);
+	processAssignment(
+	    program,
+	    currentGraph,
+	    parentNode,
+	    parentAssignments,
+	    assignment,
+	    context, depth+1);
     }
 
     // Next, process any function definitions
@@ -674,7 +721,18 @@ processLocalScope(
     // Finally instantiate any modules
     int i = 0;
     for (const auto moduleInstantiation : localScope->moduleInstantiations) {
-	processModuleInstantiation(program, currentGraph, parentNode, parentPort, moduleInstantiation, context, depth+1, i);
+	processModuleInstantiation(
+	    program,
+	    currentGraph,
+	    parentNode,
+	    parentAssignments,
+	    parentFunctionDefinitions,
+	    parentModuleDefinitions,
+	    parentModuleInstantiations,
+	    moduleInstantiation,
+	    context,
+	    depth+1,
+	    i);
 	i++;
     }
 }
@@ -684,7 +742,10 @@ processModuleInstantiation(
     NodeModule & program,
     NodeGraph *currentGraph,
     NodeId parentNode,
-    PortId parentPort,
+    PortId parentAssignments,
+    PortId parentFunctionDefinitions,
+    PortId parentModuleDefinitions,
+    PortId parentModuleInstantiations,
     std::shared_ptr<ModuleInstantiation> moduleInstantiation,
     const std::shared_ptr<const Context>& context,
     int depth,
@@ -693,7 +754,18 @@ processModuleInstantiation(
 {
     const auto it = moduleFactory.find(moduleInstantiation->name());
     if (it != moduleFactory.end()) {
-	it->second->handle(program, currentGraph, parentNode, parentPort, moduleInstantiation, context, depth, i);
+	it->second->handle(
+	    program,
+	    currentGraph,
+	    parentNode,
+	    parentAssignments,
+	    parentFunctionDefinitions,
+	    parentModuleDefinitions,
+	    parentModuleInstantiations,
+	    moduleInstantiation,
+	    context,
+	    depth,
+	    i);
     }
     else {
 	fprintf(stderr, "Un-handled module instantiation %s\n", moduleInstantiation->name().c_str());

@@ -21,6 +21,8 @@ void
 processAssignment(
     NodeJS::core::NodeModule & program,
     NodeJS::core::NodeGraph *currentGraph,
+    NodeJS::core::NodeId parentNode,
+    NodeJS::core::PortId parentAssignments,
     const std::shared_ptr<Assignment> & assignment,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -91,7 +93,10 @@ void processLocalScope(
     NodeJS::core::NodeModule & program,
     NodeJS::core::NodeGraph *currentGraph,
     NodeJS::core::NodeId parentNode,
-    NodeJS::core::PortId parentPort,
+    NodeJS::core::PortId parentAssignments,
+    NodeJS::core::PortId parentFunctionDefinitions,
+    NodeJS::core::PortId parentModuleDefinitions,
+    NodeJS::core::PortId parentModuleInstantiations,
     std::shared_ptr<LocalScope> localScope,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -101,7 +106,10 @@ void processModuleInstantiation(
     NodeJS::core::NodeModule & program,
     NodeJS::core::NodeGraph *currentGraph,
     NodeJS::core::NodeId parentNode,
-    NodeJS::core::PortId parentPort,
+    NodeJS::core::PortId parentAssignments,
+    NodeJS::core::PortId parentFunctionDefinitions,
+    NodeJS::core::PortId parentModuleDefinitions,
+    NodeJS::core::PortId parentModuleInstantiations,
     std::shared_ptr<ModuleInstantiation> moduleInstantiation,
     const std::shared_ptr<const Context>& context,
     int depth,

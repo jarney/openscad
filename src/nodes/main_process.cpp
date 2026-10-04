@@ -12,6 +12,15 @@
 
 using namespace NodeJS::core;
 
+class NodeProcessorOutput : public NodeProcessor {
+public:
+    virtual void process(
+	const Node & node,
+	const ConnectionData & fromData,
+	ConnectionData & toData
+	);
+};
+
 int main_process(int argc, char *argv[])
 {
     if (argc != 2) {
@@ -43,6 +52,7 @@ int main_process(int argc, char *argv[])
 
     // We need to register the 'native' node types here.
     NodeJS::openscad::Builtins::registerProcessors(processor);
+    processor.setNativeImpl("output", std::make_unique<NodeProcessorOutput>());
     
     ConnectionData input;
     ConnectionData output;
@@ -54,7 +64,16 @@ int main_process(int argc, char *argv[])
     }
     processor.processGraph(*graph, input, output);
     
-    fprintf(stderr, "We really processed a graph: %s\n", output.getValue("Geometry").c_str());
-    
     return 0;
+}
+
+void
+NodeProcessorOutput::process(
+    const Node & node,
+    const ConnectionData & input,
+    ConnectionData & output
+    )    
+{
+    fprintf(stderr, "Assignments: %s\n", input.getValue("assignments").c_str());
+    fprintf(stderr, "Module Instantiations %s\n", input.getValue("geometry").c_str());
 }
