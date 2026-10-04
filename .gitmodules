@@ -19,3 +19,6 @@
 [submodule "submodules/node--js"]
 	path = submodules/node--js
 	url = git@github.com:jarney/node--js.git
+[submodule "submodules/nodeeditor"]
+	path = submodules/nodeeditor
+	url = git@github.com:jarney/nodeeditor.git
