@@ -464,6 +464,26 @@ processExpressionBuiltinFunctionCall(
 }
 
 void
+processExpressionCallableUserFunction(
+    NodeModule & nodeModule,
+    NodeGraph *currentGraph,
+    NodeId parentNode,
+    const CallableUserFunction & callableUserFunction,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    )
+{
+#if 0
+    std::string name;
+  AssignmentList parameters;
+  std::shared_ptr<Expression> expr;
+#endif
+  fprintf(stderr, "Handling function call\n");
+  
+}
+
+
+void
 processExpressionFunctionCall(
     NodeModule & nodeModule,
     NodeGraph *currentGraph,
@@ -513,8 +533,15 @@ processExpressionFunctionCall(
 	    );
     }
     else if (std::holds_alternative<CallableUserFunction>(*scad_function)) {
-	fprintf(stderr, "Callable user function %s\n", functionCall->name.c_str());
-	throw std::string("Callable user functions not yet supported\n");
+	const CallableUserFunction & callableUserFunction = std::get<CallableUserFunction>(*scad_function);
+	processExpressionCallableUserFunction(
+	    nodeModule,
+	    currentGraph,
+	    childNode->getId(),
+	    callableUserFunction,
+	    context,
+	    depth+1
+	    );
     }
     else if (std::holds_alternative<Value>(*scad_function)) {
 	fprintf(stderr, "Value %s\n", functionCall->name.c_str());
