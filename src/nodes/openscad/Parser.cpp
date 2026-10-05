@@ -3,9 +3,10 @@
 #include <fstream>
 #include <iostream>
 #include "node--js/SerializerError.hpp"
-#include "node--js/xml/Serializer.hpp"
+#include "node--js/xml/SerializerXML.hpp"
 
 using namespace NodeJS::core;
+using namespace NodeJS::xml;
 
 /*************************************************************/
 class ModuleInstantiationASTHandler {
@@ -149,7 +150,7 @@ processSourceFile(
     std::ifstream in("../submodules/node--js/doc/openscad.xml");
     SerializerErrorReporterStream err(std::cerr);
 
-    const auto & ser = NodeJS::xml::Serializer::instance();
+    const auto & ser = SerializerXML::instance();
     
     bool rc = ser.read(
 	*openscad_module,

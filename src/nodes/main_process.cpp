@@ -7,10 +7,11 @@
 
 #include "node--js/NodeModule.hpp"
 #include "node--js/Processor.hpp"
-#include "node--js/xml/Serializer.hpp"
+#include "node--js/xml/SerializerXML.hpp"
 #include "node--js/engines/openscad/Builtins.hpp"
 
 using namespace NodeJS::core;
+using namespace NodeJS::xml;
 
 class NodeProcessorOutput : public NodeProcessor {
 public:
@@ -35,7 +36,7 @@ int main_process(int argc, char *argv[])
     }
 
     NodeModule program;
-    auto & serializer = NodeJS::xml::Serializer::instance();
+    auto & serializer = SerializerXML::instance();
     std::string filename(argv[1]);
     std::ifstream exampleInputFile(filename);
 

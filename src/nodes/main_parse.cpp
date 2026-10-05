@@ -5,23 +5,14 @@
 #include <QtCore/QFileInfo>
 
 #include "openscad.h"
-//extern bool parse(class SourceFile *& file, const std::string& text, const std::string& filename,
-//                  const std::string& mainFile, int debug);
 
-#if 0
-#include "nodes/NodeFactoryRegistry.hpp"
-#include "nodes/NodeProgram.hpp"
-#include "nodes/NodeType.hpp"
-#include "nodes/NodeProgramSerializer.hpp"
-#include "nodes/openscad/Builtins.hpp"
-#endif
-
-#include "node--js/xml/Serializer.hpp"
+#include "node--js/xml/SerializerXML.hpp"
 #include "nodes/openscad/Parser.h"
 
 #include "core/Builtins.h"
 
 using namespace NodeJS::core;
+using namespace NodeJS::xml;
 
 int main_parse(int argc, char *argv[])
 {
@@ -73,20 +64,9 @@ int main_parse(int argc, char *argv[])
 
     SerializerErrorReporterStream err(std::cerr);
     
-    const auto & xmlSerializer = NodeJS::xml::Serializer::instance();
+    const auto & xmlSerializer = SerializerXML::instance();
     xmlSerializer.write(node_module, std::cout, err);
     
-#if 0
-    const NodeProgramSerializer & fromSCAD = JNodes::openscad::NodeProgramSerializerOpenSCAD::instance();
-    if (fromSCAD.read(program, input_stream)) {
-	fprintf(stderr, "Could not read file %s\n", argv[1]);
-	return 4;
-    }
-
-    const NodeProgramSerializer & toJson = NodeProgramSerializerJSON::instance();
-    toJson.write(program, std::cout);
-#endif
-
     return 0;
 }
 
