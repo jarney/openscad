@@ -27,7 +27,9 @@ int main_parse(int argc, char *argv[])
     }
 
     //std::shared_ptr<NodeFactoryRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
-    NodeModule node_module;
+    ModuleLoaderNodeJSPath loader;
+    loader.setNODEJS_PATH("../submodules/node--js/test-data");
+    NodeModule & node_module = *loader.newModule("anonymous");
     
     if (!QFileInfo::exists(argv[1])) {
 	fprintf(stderr, "File %s does not exist\n", argv[1]);
@@ -59,7 +61,8 @@ int main_parse(int argc, char *argv[])
 	EvaluationSession session{sourceFile->getFullpath()};
 	ContextHandle<BuiltinContext> builtin_context{Context::create<BuiltinContext>(&session)};
 	
-	processSourceFile(node_module, sourceFile, *builtin_context);
+	SerializerErrorReporterStream err(std::cerr);
+	processSourceFile(err, node_module, sourceFile, *builtin_context);
     }
 
     SerializerErrorReporterStream err(std::cerr);

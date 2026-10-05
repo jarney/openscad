@@ -15,7 +15,7 @@ public:
     ~ModuleInstantiationASTHandler() = default;
 
     virtual void handle(
-	NodeModule & program,
+	NodeModule & nodeModule,
 	NodeGraph *currentGraph,
 	NodeId parentNode,
 	PortId parentAssignments,
@@ -33,7 +33,7 @@ public:
 class ModuleNodeFactorySphere : public ModuleInstantiationASTHandler {
 public:
     virtual void handle(
-	NodeModule & program,
+	NodeModule & nodeModule,
 	NodeGraph *currentGraph,
 	NodeId parentNode,
 	PortId parentAssignments,
@@ -49,7 +49,7 @@ public:
 
 void
 ModuleNodeFactorySphere::handle(
-	NodeModule & program,
+	NodeModule & nodeModule,
 	NodeGraph *currentGraph,
 	NodeId parentNode,
 	PortId parentAssignments,
@@ -113,7 +113,7 @@ ModuleNodeFactorySphere::handle(
     // Next, we handle the suff in the curly-braces
     // that is the body of the node.
     processLocalScope(
-	program,
+	nodeModule,
 	currentGraph,
 	childNode.getId(),
 	parentAssignments,
@@ -130,7 +130,8 @@ static std::map<std::string, std::shared_ptr<ModuleInstantiationASTHandler>> mod
 
 void
 processSourceFile(
-    NodeModule & program,
+    SerializerErrorReporter & err,
+    NodeModule & nodeModule,
     SourceFile *sourceFile,
     const std::shared_ptr<const Context>& context
     )
@@ -146,20 +147,13 @@ processSourceFile(
     // At this point, we need to load the
     // openscad.xml to load the type definitions for the
     // builtins.
-    std::unique_ptr<NodeModule> openscad_module = std::make_unique<NodeModule>();
-    std::ifstream in("../submodules/node--js/doc/openscad.xml");
-    SerializerErrorReporterStream err(std::cerr);
+    ModuleLoader & loader = nodeModule.getModuleLoader();
 
-    const auto & ser = SerializerXML::instance();
-    
-    bool rc = ser.read(
-	*openscad_module,
-	in,
-	err);
-    
+    const NodeModule *openscad_module = loader.loadModule("org.ensor.nodejs.openscad", err);
+
     ////////////
-    NodeGraph *main = program.addGraph("main");
-    main->addScope(std::move(openscad_module));
+    NodeGraph *main = nodeModule.addGraph("main");
+    main->addScope(openscad_module);
     
     const NodeType *outputType = main->getNodeType("output");
     if (outputType == nullptr) {
@@ -175,7 +169,7 @@ processSourceFile(
 
     // A source file is just a single large scope.
     processLocalScope(
-	program,
+	nodeModule,
 	main,
 	outputNode.getId(),
 	outputNode.getType().getInputPortName(0), // Assignments
@@ -189,7 +183,7 @@ processSourceFile(
 
 void
 processAssignment(
-    NodeModule & program,
+    NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
     PortId parentAssignments,
@@ -220,12 +214,12 @@ processAssignment(
 //    Node *node = currentGraph->getNode(assignmentNode);
     assignmentNode.getData().setValue("variable_name", assignment->getName().c_str());
 
-    processExpression(program, currentGraph, assignmentNode.getId(), assignmentNode.getType().getInputPortName(0), assignment->getExpr(), context, depth+1);
+    processExpression(nodeModule, currentGraph, assignmentNode.getId(), assignmentNode.getType().getInputPortName(0), assignment->getExpr(), context, depth+1);
 }
 
 void
 processExpressionUnaryOp(
-    NodeModule & program,
+    NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
     PortId parentPort,
@@ -271,13 +265,13 @@ processExpressionUnaryOp(
 	parentNode, parentPort
 	);
 
-    processExpression(program, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), operation->expr, context, depth+1);
+    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), operation->expr, context, depth+1);
     
 }
 
 void
 processExpressionBinaryOp(
-    NodeModule & program,
+    NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
     PortId parentPort,
@@ -343,13 +337,13 @@ processExpressionBinaryOp(
 //    connection.outPortIndex = 0;
 //    currentGraph->addConnection(connection);
 
-    processExpression(program, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), operation->left, context, depth+1);
-    processExpression(program, currentGraph, childNode.getId(), childNode.getType().getInputPortName(1), operation->right, context, depth+1);
+    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), operation->left, context, depth+1);
+    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputPortName(1), operation->right, context, depth+1);
 }
 
 void
 processExpressionLiteral(
-    NodeModule & program,
+    NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
     PortId parentPort,
@@ -467,7 +461,7 @@ processExpressionLiteral(
 
 void
 processExpressionLookup(
-    NodeModule & program,
+    NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
     PortId parentPort,
@@ -516,7 +510,7 @@ processExpressionLookup(
 
 void
 processExpressionBuiltinFunctionCall(
-    NodeModule & program,
+    NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
     const BuiltinFunction *builtinFunction,
@@ -541,14 +535,14 @@ processExpressionBuiltinFunctionCall(
 	sphere_required,
 	sphere_optional);
 						      
-    processExpression(program, currentGraph, childNode, 0, operation->left, context, depth+1);
-    processExpression(program, currentGraph, childNode, 1, operation->right, context, depth+1);
+    processExpression(nodeModule, currentGraph, childNode, 0, operation->left, context, depth+1);
+    processExpression(nodeModule, currentGraph, childNode, 1, operation->right, context, depth+1);
 #endif
 }
 
 void
 processExpressionFunctionCall(
-    NodeModule & program,
+    NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
     PortId parentPort,
@@ -600,7 +594,7 @@ processExpressionFunctionCall(
 	fprintf(stderr, "Builtin function %s\n", functionCall->name.c_str());
 	const BuiltinFunction *builtinFunction = std::get<const BuiltinFunction *>(*scad_function);
 	processExpressionBuiltinFunctionCall(
-	    program,
+	    nodeModule,
 	    currentGraph,
 	    childNode->getId(),
 	    builtinFunction,
@@ -629,7 +623,7 @@ processExpressionFunctionCall(
 
 void
 processExpression(
-    NodeModule & program,
+    NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
     PortId parentPort,
@@ -641,27 +635,27 @@ processExpression(
     // TODO: Switch based on expression type and recursively handle expressions by their type...
     Expression *e = expression.get();
     if (dynamic_cast<UnaryOp*>(e)) {
-	processExpressionUnaryOp(program, currentGraph, parentNode, parentPort, dynamic_cast<UnaryOp*>(e), context, depth);
+	processExpressionUnaryOp(nodeModule, currentGraph, parentNode, parentPort, dynamic_cast<UnaryOp*>(e), context, depth);
     }
     else if (dynamic_cast<BinaryOp*>(e)) {
-	processExpressionBinaryOp(program, currentGraph, parentNode, parentPort, dynamic_cast<BinaryOp*>(e), context, depth);
+	processExpressionBinaryOp(nodeModule, currentGraph, parentNode, parentPort, dynamic_cast<BinaryOp*>(e), context, depth);
     }
     else if (dynamic_cast<TernaryOp*>(e)) {
     }
     else if (dynamic_cast<ArrayLookup*>(e)) {
     }
     else if (dynamic_cast<Literal*>(e)) {
-	processExpressionLiteral(program, currentGraph, parentNode, parentPort, dynamic_cast<Literal*>(e), context, depth);
+	processExpressionLiteral(nodeModule, currentGraph, parentNode, parentPort, dynamic_cast<Literal*>(e), context, depth);
     }
     else if (dynamic_cast<Vector*>(e)) {
     }
     else if (dynamic_cast<Lookup*>(e)) {
-	processExpressionLookup(program, currentGraph, parentNode, parentPort, dynamic_cast<Lookup*>(e), context, depth);
+	processExpressionLookup(nodeModule, currentGraph, parentNode, parentPort, dynamic_cast<Lookup*>(e), context, depth);
     }
     else if (dynamic_cast<MemberLookup*>(e)) {
     }
     else if (dynamic_cast<FunctionCall*>(e)) {
-	processExpressionFunctionCall(program, currentGraph, parentNode, parentPort, dynamic_cast<FunctionCall*>(e), context, depth);
+	processExpressionFunctionCall(nodeModule, currentGraph, parentNode, parentPort, dynamic_cast<FunctionCall*>(e), context, depth);
     }
     else if (dynamic_cast<FunctionDefinition*>(e)) {
     }
@@ -687,7 +681,7 @@ processExpression(
     
 void
 processLocalScope(
-    NodeModule & program,
+    NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
     PortId parentAssignments,
@@ -703,7 +697,7 @@ processLocalScope(
     // First process any variable assignments in this scope.
     for (const auto assignment : localScope->assignments) {
 	processAssignment(
-	    program,
+	    nodeModule,
 	    currentGraph,
 	    parentNode,
 	    parentAssignments,
@@ -723,7 +717,7 @@ processLocalScope(
     int i = 0;
     for (const auto moduleInstantiation : localScope->moduleInstantiations) {
 	processModuleInstantiation(
-	    program,
+	    nodeModule,
 	    currentGraph,
 	    parentNode,
 	    parentAssignments,
@@ -740,7 +734,7 @@ processLocalScope(
 
 void
 processModuleInstantiation(
-    NodeModule & program,
+    NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
     PortId parentAssignments,
@@ -756,7 +750,7 @@ processModuleInstantiation(
     const auto it = moduleFactory.find(moduleInstantiation->name());
     if (it != moduleFactory.end()) {
 	it->second->handle(
-	    program,
+	    nodeModule,
 	    currentGraph,
 	    parentNode,
 	    parentAssignments,

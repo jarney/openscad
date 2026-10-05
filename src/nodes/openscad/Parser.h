@@ -16,10 +16,12 @@
 #include "node--js/NodeGraph.hpp"
 #include "node--js/NodeType.hpp"
 #include "node--js/NodePort.hpp"
+#include "node--js/ModuleLoader.hpp"
+#include "node--js/xml/ModuleLoaderNodeJSPath.hpp"
 
 void
 processAssignment(
-    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeModule & nodeModule,
     NodeJS::core::NodeGraph *currentGraph,
     NodeJS::core::NodeId parentNode,
     NodeJS::core::PortId parentAssignments,
@@ -30,7 +32,7 @@ processAssignment(
 
 void
 processExpression(
-    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeModule & nodeModule,
     NodeJS::core::NodeGraph *currentGraph,
     NodeJS::core::NodeId parentNode,
     NodeJS::core::PortId parentPort,
@@ -41,7 +43,7 @@ processExpression(
 
 void
 processExpressionUnaryOp(
-    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeModule & nodeModule,
     NodeJS::core::NodeGraph *currentGraph,
     NodeJS::core::NodeId parentNode,
     NodeJS::core::PortId parentPort,
@@ -52,7 +54,7 @@ processExpressionUnaryOp(
 
 void
 processExpressionBinaryOp(
-    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeModule & nodeModule,
     NodeJS::core::NodeGraph *currentGraph,
     NodeJS::core::NodeId parentNode,
     NodeJS::core::PortId parentPort,
@@ -63,7 +65,7 @@ processExpressionBinaryOp(
 
 void
 processExpressionFunctionCall(
-    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeModule & nodeModule,
     NodeJS::core::NodeGraph *currentGraph,
     NodeJS::core::NodeId parentNode,
     NodeJS::core::PortId parentPort,
@@ -74,7 +76,7 @@ processExpressionFunctionCall(
 
 void
 processExpressionBuiltinFunctionCall(
-    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeModule & nodeModule,
     NodeJS::core::NodeGraph *currentGraph,
     NodeJS::core::NodeId parentNode,
     NodeJS::core::PortId parentPort,
@@ -84,13 +86,14 @@ processExpressionBuiltinFunctionCall(
     );
 
 void processSourceFile(
-    NodeJS::core::NodeModule & program,
+    NodeJS::core::SerializerErrorReporter & err,
+    NodeJS::core::NodeModule & nodeModule,
     SourceFile *sourceFile,
     const std::shared_ptr<const Context>& context
     );
 
 void processLocalScope(
-    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeModule & nodeModule,
     NodeJS::core::NodeGraph *currentGraph,
     NodeJS::core::NodeId parentNode,
     NodeJS::core::PortId parentAssignments,
@@ -103,7 +106,7 @@ void processLocalScope(
     );
 
 void processModuleInstantiation(
-    NodeJS::core::NodeModule & program,
+    NodeJS::core::NodeModule & nodeModule,
     NodeJS::core::NodeGraph *currentGraph,
     NodeJS::core::NodeId parentNode,
     NodeJS::core::PortId parentAssignments,
