@@ -591,7 +591,64 @@ processExpression(
     
 }
 
+
+void
+processFunctionDefinition(
+    NodeModule & nodeModule,
+    NodeGraph *currentGraph,
+    NodeId parentNode,
+    PortId parentFunctionDefinitions,
+    std::shared_ptr<UserFunction> functionDefinition,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    )
+{
+
+    // Create the node type (this is like a function prototype)
+    std::unique_ptr<NodeType> nodeType = std::make_unique<NodeType>();
+    nodeType->setId(functionDefinition->name);
+    nodeType->setVisibility(NodeType::Visibility::PRIVATE);
+    nodeType->setType(NodeType::Type::GRAPH);
+    for (const auto & assignment : functionDefinition->parameters) {
+	std::unique_ptr<NodePort> port = std::make_unique<NodePort>("variable", assignment->getName(), NodePort::ConnectionPolicy::One);
+	nodeType->addInputPort(assignment->getName(), std::move(port));
+    }
+    std::unique_ptr<NodePort> outputPort = std::make_unique<NodePort>("variable", "out", NodePort::ConnectionPolicy::One);
+    nodeType->addOutputPort("out", std::move(outputPort));
     
+    nodeModule.addNodeType(std::move(nodeType));
+    // TODO: Add this type to the 'currentGraph' scope
+    // because we might want to resolve it in that scope later.
+
+    // Create the graph (this is like the function body)
+    NodeGraph *functionGraph = nodeModule.addGraph(functionDefinition->name);
+    functionGraph->copyScope(currentGraph);
+
+    const NodeType *functionOutputNodeType = functionGraph->getNodeType("function_output");
+    Node & functionOutputNode = functionGraph->newNode(*functionOutputNodeType, "function_output", ConnectionData());
+    processExpression(nodeModule,
+		      functionGraph,
+		      functionOutputNode.getId(),
+		      functionOutputNodeType->getInputPortName(0),
+		      functionDefinition->expr,
+		      context,
+		      depth+1);
+}
+
+void
+processModuleDefinition(
+    NodeModule & nodeModule,
+    NodeGraph *currentGraph,
+    NodeId parentNode,
+    PortId parentFunctionDefinitions,
+    std::shared_ptr<UserModule> moduleDefinition,
+    const std::shared_ptr<const Context>& context,
+    int depth
+    )
+{
+}
+
+
 void
 processLocalScope(
     NodeModule & nodeModule,
@@ -615,12 +672,31 @@ processLocalScope(
 	    parentNode,
 	    parentAssignments,
 	    assignment,
-	    context, depth+1);
+	    context, depth + 1);
     }
 
     // Next, process any function definitions
+    for (const auto functionDefinition : localScope->getUserFunctions()) {
+	processFunctionDefinition(
+	    nodeModule,
+	    currentGraph,
+	    parentNode,
+	    parentFunctionDefinitions,
+	    functionDefinition.second,
+	    context, depth + 1);
+    }
 
     // Next, process any module definitions
+    for (const auto moduleDefinition : localScope->getUserModules()) {
+	processModuleDefinition(
+	    nodeModule,
+	    currentGraph,
+	    parentNode,
+	    parentFunctionDefinitions,
+	    moduleDefinition.second,
+	    context, depth + 1);
+    }
+	    
 
     // We probably want to push the context after we do this so we can perform
     // lookups in terms of the new context.

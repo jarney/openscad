@@ -11,6 +11,7 @@
 #include "core/Context.h"
 #include "core/BuiltinContext.h"
 #include "core/ScopeContext.h"
+#include "core/function.h"
 
 #include "node--js/NodeModule.hpp"
 #include "node--js/NodeGraph.hpp"
