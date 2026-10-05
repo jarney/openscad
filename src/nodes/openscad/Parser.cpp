@@ -65,7 +65,6 @@ ModuleNodeFactorySphere::handle(
     // Create a new node and connect it to
     // our parent node with the output of the module's node
     // connected to the input of our parent's node.
-//    NodeId childNode = currentGraph->addNode(moduleInstantiation->name());
 
     const NodeType *nodeType = currentGraph->getNodeType(moduleInstantiation->name());
     if (nodeType == nullptr) {
@@ -80,25 +79,11 @@ ModuleNodeFactorySphere::handle(
 	);
     childNode.setPosition(std::make_pair(-depth * 400, -i * 400));
     
-//    QPointF pos(-depth * 400, -i * 400);
-//    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
-
-//    QtNodes::ConnectionId connection;
-//    connection.inNodeId = parentNode;
-//    connection.inPortIndex = parentPort;
-//    connection.outNodeId = childNode.getId();
-//    connection.outPortIndex = 0;
-//    currentGraph->addConnection(connection);
     currentGraph->newEdge(
 	childNode.getId(), childNode.getType().getOutputPortName(0),
 	parentNode, parentModuleInstantiation
 	);
 
-    // First, we parse the arguments to get the
-    // list of parameters to the module.
-//  static Parameters parse(Arguments arguments, const Location& loc,
-//                          const std::vector<std::string>& required_parameters,
-//                          const std::vector<std::string>& optional_parameters = {});
     const std::vector<std::string> sphere_required{"r"};
     const std::vector<std::string> sphere_optional{"d"};
     
@@ -192,8 +177,6 @@ processAssignment(
     int depth
     )
 {
-//    NodeId assignmentNode = currentGraph->addNode("assign");
-
     const NodeType *nodeType = currentGraph->getNodeType("assign");
     ConnectionData defaultData;
     Node & assignmentNode = currentGraph->newNode(
@@ -210,8 +193,6 @@ processAssignment(
 	parentNode, parentAssignments
 	);
     
-//    currentGraph->setNodeData(assignmentNode, QtNodes::NodeRole::Position, pos);
-//    Node *node = currentGraph->getNode(assignmentNode);
     assignmentNode.getData().setValue("variable_name", assignment->getName().c_str());
 
     processExpression(nodeModule, currentGraph, assignmentNode.getId(), assignmentNode.getType().getInputPortName(0), assignment->getExpr(), context, depth+1);
@@ -249,17 +230,6 @@ processExpressionUnaryOp(
 	);
     childNode.setPosition(std::make_pair(-depth * 400, 0));
 
-//    NodeId childNode = currentGraph->addNode(op_it->second);
-//
-//    QPointF pos(-depth * 400, 0);
-//    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
-    
-//    QtNodes::ConnectionId connection;
-//    connection.inNodeId = parentNode;
-//    connection.inPortIndex = parentPort;
-//    connection.outNodeId = childNode;
-//    connection.outPortIndex = 0;
-//    currentGraph->addConnection(connection);
     currentGraph->newEdge(
 	childNode.getId(), childNode.getType().getOutputPortName(0),
 	parentNode, parentPort
@@ -325,18 +295,6 @@ processExpressionBinaryOp(
 	parentNode, parentPort
 	);
     
-//    NodeId childNode = currentGraph->addNode(op_it->second);
-//
-//    QPointF pos(-depth * 400, 0);
-//    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
-//    
-//    QtNodes::ConnectionId connection;
-//    connection.inNodeId = parentNode;
-//    connection.inPortIndex = parentPort;
-//    connection.outNodeId = childNode;
-//    connection.outPortIndex = 0;
-//    currentGraph->addConnection(connection);
-
     processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), operation->left, context, depth+1);
     processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputPortName(1), operation->right, context, depth+1);
 }
@@ -352,10 +310,8 @@ processExpressionLiteral(
     int depth
     )
 {
-//    NodeId childNode;
     Node *childNode;
     if (literal->isBool()) {
-	//childNode = currentGraph->addNode(nodeType
 	std::string nodeTypeName = literal->toBool() ? "true" : "false";
 	const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
 	if (nodeType == nullptr) {
@@ -370,7 +326,6 @@ processExpressionLiteral(
 	    );
     }
     else if (literal->isString()) {
-	//childNode = currentGraph->addNode("const_string");
 	std::string nodeTypeName = "const_string";
 	const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
 	if (nodeType == nullptr) {
@@ -389,9 +344,6 @@ processExpressionLiteral(
 	long lit_long = (long)lit_double;
 	double lit_recast = (double)lit_long;
 	if (abs(lit_double - lit_recast) < 1e-9) {
-	    //childNode = currentGraph->addNode("const_int");
-	    //Node *node = currentGraph->getNode(childNode);
-	    //node->setValue("value", std::to_string(lit_long));
 	    std::string nodeTypeName = "const_int";
 	    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
 	    if (nodeType == nullptr) {
@@ -407,9 +359,6 @@ processExpressionLiteral(
 	    
 	}
 	else {
-	    //childNode = currentGraph->addNode("const_float");
-	    //Node *node = currentGraph->getNode(childNode);
-	    //node->setValue("value", std::to_string(lit_double));
 	    std::string nodeTypeName = "const_float";
 	    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
 	    if (nodeType == nullptr) {
@@ -425,7 +374,6 @@ processExpressionLiteral(
 	}
     }
     else if (literal->isUndefined()) {
-	//childNode = currentGraph->addNode("undef");
 	std::string nodeTypeName = "undef";
 	const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
 	if (nodeType == nullptr) {
@@ -443,15 +391,7 @@ processExpressionLiteral(
     }
 
     childNode->setPosition(std::make_pair(-depth * 400, 0));
-    //QPointF pos(-depth * 400, 0);
-    //currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
-    
-    //QtNodes::ConnectionId connection;
-    //connection.inNodeId = parentNode;
-    //connection.inPortIndex = parentPort;
-    //connection.outNodeId = childNode;
-    //connection.outPortIndex = 0;
-    //currentGraph->addConnection(connection);
+
     currentGraph->newEdge(
 	childNode->getId(), childNode->getType().getOutputPortName(0),
 	parentNode, parentPort
@@ -489,23 +429,6 @@ processExpressionLookup(
 	childNode->getId(), childNode->getType().getOutputPortName(0),
 	parentNode, parentPort
 	);
-#if 0
-    NodeId childNode;
-
-    childNode = currentGraph->addNode("variable");
-    Node *node = currentGraph->getNode(childNode);
-    node->setValue("variable_name", lookup->get_name());
-    
-    QPointF pos(-depth * 400, 0);
-    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
-    
-    QtNodes::ConnectionId connection;
-    connection.inNodeId = parentNode;
-    connection.inPortIndex = parentPort;
-    connection.outNodeId = childNode;
-    connection.outPortIndex = 0;
-    currentGraph->addConnection(connection);
-#endif
 }
 
 void
@@ -569,19 +492,6 @@ processExpressionFunctionCall(
 	childNode->getId(), childNode->getType().getOutputPortName(0),
 	parentNode, parentPort
 	);
-#if 0
-    NodeId childNode = currentGraph->addNode(functionCall->name);
-						      
-    QPointF pos(-depth * 400, 0);
-    currentGraph->setNodeData(childNode, QtNodes::NodeRole::Position, pos);
-    
-    QtNodes::ConnectionId connection;
-    connection.inNodeId = parentNode;
-    connection.inPortIndex = parentPort;
-    connection.outNodeId = childNode;
-    connection.outPortIndex = 0;
-    currentGraph->addConnection(connection);
-#endif
     
     boost::optional<CallableFunction> scad_function;
     
@@ -648,6 +558,9 @@ processExpression(
 	processExpressionLiteral(nodeModule, currentGraph, parentNode, parentPort, dynamic_cast<Literal*>(e), context, depth);
     }
     else if (dynamic_cast<Vector*>(e)) {
+	// Vectors are going to be hard because we don't have a 'varargs' version
+	// of a node, so we'll have to do it with a 'list append' node.
+	// We'll do it with a 2,3,many approach since 1,2,3,4 are the most common by far.
     }
     else if (dynamic_cast<Lookup*>(e)) {
 	processExpressionLookup(nodeModule, currentGraph, parentNode, parentPort, dynamic_cast<Lookup*>(e), context, depth);
@@ -765,17 +678,4 @@ processModuleInstantiation(
     else {
 	fprintf(stderr, "Un-handled module instantiation %s\n", moduleInstantiation->name().c_str());
     }
-    
-#if 0
-    auto as = mi->arguments.at(0);
-    Expression *expr = as->getExpr().get();
-    
-    Lookup *lit = dynamic_cast<Lookup*>(expr);
-    if (lit) {
-	fprintf(stderr, "It is a literal %s\n", lit->get_name().c_str());
-    }
-    else {
-	fprintf(stderr, "It is not a literal\n");
-    }
-#endif
 }
