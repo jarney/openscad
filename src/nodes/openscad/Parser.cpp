@@ -603,7 +603,6 @@ processFunctionDefinition(
     int depth
     )
 {
-
     // Create the node type (this is like a function prototype)
     std::unique_ptr<NodeType> nodeType = std::make_unique<NodeType>();
     nodeType->setId(functionDefinition->name);
@@ -616,10 +615,15 @@ processFunctionDefinition(
     std::unique_ptr<NodePort> outputPort = std::make_unique<NodePort>("variable", "out", NodePort::ConnectionPolicy::One);
     nodeType->addOutputPort("out", std::move(outputPort));
     
+    // Add this type to the 'currentGraph' scope
+    // because we might want to call the function
+    // in the same scope where it was defined (or below);
+    //currentGraph->addScope(nodeType.get());
+    fprintf(stderr, "Registering node type %p in module %p\n",
+	    nodeType.get(), &nodeModule);
+    
     nodeModule.addNodeType(std::move(nodeType));
-    // TODO: Add this type to the 'currentGraph' scope
-    // because we might want to resolve it in that scope later.
-
+    
     // Create the graph (this is like the function body)
     NodeGraph *functionGraph = nodeModule.addGraph(functionDefinition->name);
     functionGraph->copyScope(currentGraph);
@@ -633,6 +637,18 @@ processFunctionDefinition(
 		      functionDefinition->expr,
 		      context,
 		      depth+1);
+
+    // Create the function definition in the parent's graph.
+    const NodeType *functionDefinitionNodeType = functionGraph->getNodeType("function");
+    ConnectionData functionDefinitionData;
+    functionDefinitionData.setValue("graph", functionDefinition->name);
+    Node & functionDefinitionNode = currentGraph->newNode(*functionDefinitionNodeType, "function", functionDefinitionData);
+
+    currentGraph->newEdge(
+	functionDefinitionNode.getId(), functionDefinitionNodeType->getOutputPortName(0),
+	parentNode, parentFunctionDefinitions
+	);
+
 }
 
 void
@@ -663,17 +679,9 @@ processLocalScope(
     int depth
     )
 {
-
-    // First process any variable assignments in this scope.
-    for (const auto assignment : localScope->assignments) {
-	processAssignment(
-	    nodeModule,
-	    currentGraph,
-	    parentNode,
-	    parentAssignments,
-	    assignment,
-	    context, depth + 1);
-    }
+    // Order is important here.  Functions get defined first,
+    // then modules, and finally we can define the variables and
+    // instantiate modules.
 
     // Next, process any function definitions
     for (const auto functionDefinition : localScope->getUserFunctions()) {
@@ -698,10 +706,17 @@ processLocalScope(
     }
 	    
 
-    // We probably want to push the context after we do this so we can perform
-    // lookups in terms of the new context.
+    // First process any variable assignments in this scope.
+    for (const auto assignment : localScope->assignments) {
+	processAssignment(
+	    nodeModule,
+	    currentGraph,
+	    parentNode,
+	    parentAssignments,
+	    assignment,
+	    context, depth + 1);
+    }
 
-    
     // Finally instantiate any modules
     int i = 0;
     for (const auto moduleInstantiation : localScope->moduleInstantiations) {

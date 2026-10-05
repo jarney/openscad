@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <string>
 
 int usage()
 {
@@ -27,22 +28,28 @@ int main(int argc, char **argv)
     if (argc < 1) {
 	return usage();
     }
-    if (!strcmp(argv[1], "audit-namespace")) {
-	return main_audit_namespace(--argc, ++argv);
+    try {
+	if (!strcmp(argv[1], "audit-namespace")) {
+	    return main_audit_namespace(--argc, ++argv);
+	}
+	else if (!strcmp(argv[1], "process")) {
+	    return main_process(--argc, ++argv);
+	}
+	else if (!strcmp(argv[1], "parse")) {
+	    return main_parse(--argc, ++argv);
+	}
+	else if (!strcmp(argv[1], "edit")) {
+	    return main_edit(--argc, ++argv);
+	}
+	else if (!strcmp(argv[1], "breadcrumbs")) {
+	    return main_breadcrumbs(--argc, ++argv);
+	}
+	else {
+	    return usage();
+	}
     }
-    else if (!strcmp(argv[1], "process")) {
-	return main_process(--argc, ++argv);
-    }
-    else if (!strcmp(argv[1], "parse")) {
-	return main_parse(--argc, ++argv);
-    }
-    else if (!strcmp(argv[1], "edit")) {
-	return main_edit(--argc, ++argv);
-    }
-    else if (!strcmp(argv[1], "breadcrumbs")) {
-	return main_breadcrumbs(--argc, ++argv);
-    }
-    else {
+    catch (std::string & ex) {
+	fprintf(stderr, "Exception: %s", ex.c_str());
 	return usage();
     }
 }

@@ -17,6 +17,7 @@ using namespace NodeJS::xml;
 class NodeProcessorOutput : public NodeProcessor {
 public:
     virtual void process(
+	Processor & processor,
 	const Node & node,
 	const ConnectionData & fromData,
 	ConnectionData & toData
@@ -68,17 +69,26 @@ int main_process(int argc, char *argv[])
 	return 3;
     }
     processor.processGraph(*graph, input, output);
+
+    fprintf(stdout, "%s\n", output.getValue("out").c_str());
     
     return 0;
 }
 
 void
 NodeProcessorOutput::process(
+    Processor & processor,
     const Node & node,
     const ConnectionData & input,
     ConnectionData & output
     )    
 {
-    fprintf(stderr, "Assignments: %s\n", input.getValue("assignments").c_str());
-    fprintf(stderr, "Module Instantiations %s\n", input.getValue("geometry").c_str());
+    output = input;
+
+    output.setValue("out",
+		    output.getValue("assignments") +
+		    output.getValue("function-definitions") +
+		    output.getValue("module-definitions") +
+		    output.getValue("geometry")
+	);
 }
