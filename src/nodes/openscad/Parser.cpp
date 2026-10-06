@@ -350,6 +350,7 @@ processExpressionLiteral(
 		fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
 		return;
 	    }
+	    fprintf(stderr, "Handling lit_long %ld\n", lit_long);
 	    ConnectionData defaultData;
 	    defaultData.setValue("value", std::to_string(lit_long));
 	    childNode = &currentGraph->newNode(
@@ -436,6 +437,8 @@ processExpressionBuiltinFunctionCall(
     NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
+    PortId parentPort,
+    const FunctionCall *functionCall,
     const BuiltinFunction *builtinFunction,
     const std::shared_ptr<const Context>& context,
     int depth
@@ -451,6 +454,24 @@ processExpressionBuiltinFunctionCall(
     //   names of the inputs along with their indices.
     // * Look up the function's entry in the context so we know what
     //   arguments to parse for.
+    std::string nodeTypeName  = functionCall->name;
+    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+    if (nodeType == nullptr) {
+	fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
+	return;
+    }
+
+    Node *childNode = &currentGraph->newNode(
+	*nodeType,
+	nodeTypeName
+	);
+    childNode->setPosition(std::make_pair(-depth * 400, 0));
+    
+    currentGraph->newEdge(
+	childNode->getId(), childNode->getType().getOutputs().getName(0),
+	parentNode, parentPort
+	);
+    
 #if 0
     Parameters parameters = Parameters::parse(
 	Arguments(moduleInstantiation->arguments, context),
@@ -468,11 +489,58 @@ processExpressionCallableUserFunction(
     NodeModule & nodeModule,
     NodeGraph *currentGraph,
     NodeId parentNode,
+    PortId parentPort,
+    const FunctionCall *functionCall,
     const CallableUserFunction & callableUserFunction,
     const std::shared_ptr<const Context>& context,
     int depth
     )
 {
+    const NodeType *nodeType = currentGraph->getNodeType("function-call");
+    if (nodeType == nullptr) {
+	fprintf(stderr, "Error: no such node type function-call\n");
+	return;
+    }
+
+    const UserFunction *function = callableUserFunction.function;
+    
+    ConnectionData nodeData;
+    nodeData.setValue("function-name", function->name);
+    
+    Node *functionCallNode = &currentGraph->newNode(
+	*nodeType,
+	function->name,
+	nodeData
+	);
+    functionCallNode->setPosition(std::make_pair(-depth * 400, 0));
+    functionCallNode->setOverrideInputs(true);
+    
+    currentGraph->newEdge(
+	functionCallNode->getId(), functionCallNode->getType().getOutputs().getName(0),
+	parentNode, parentPort
+	);
+    NamedPorts & functionInputs = functionCallNode->getOverrideInputs();
+
+    for (const std::shared_ptr<Assignment> & assignment : function->parameters) {
+	std::unique_ptr<NodePort> argumentPort = std::make_unique<NodePort>("variable", assignment->getName(), NodePort::ConnectionPolicy::One);
+	functionInputs.addPort(assignment->getName(), std::move(argumentPort));
+    }
+
+    for (const std::shared_ptr<Assignment> & assignment : functionCall->arguments) {
+	fprintf(stderr, "Setting argument %s\n", assignment->getName().c_str());
+	// Now, for each of the arguments,
+	// we need to evaluate the expression it corresponds to
+	processExpression(
+	    nodeModule,
+	    currentGraph,
+	    functionCallNode->getId(),
+	    assignment->getName(),
+	    assignment->getExpr(),
+	    context,
+	    depth + 1
+	    );
+    }
+    
 #if 0
     std::string name;
   AssignmentList parameters;
@@ -494,25 +562,6 @@ processExpressionFunctionCall(
     int depth
     )
 {
-    std::string nodeTypeName  = functionCall->name;
-    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
-    if (nodeType == nullptr) {
-	fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
-	return;
-    }
-    ConnectionData defaultData;
-    Node *childNode = &currentGraph->newNode(
-	*nodeType,
-	nodeTypeName,
-	defaultData);
-    
-    childNode->setPosition(std::make_pair(-depth * 400, 0));
-    
-    currentGraph->newEdge(
-	childNode->getId(), childNode->getType().getOutputs().getName(0),
-	parentNode, parentPort
-	);
-    
     boost::optional<CallableFunction> scad_function;
     
     scad_function = context->lookup_function(functionCall->name, functionCall->location());
@@ -526,7 +575,9 @@ processExpressionFunctionCall(
 	processExpressionBuiltinFunctionCall(
 	    nodeModule,
 	    currentGraph,
-	    childNode->getId(),
+	    parentNode,
+	    parentPort,
+	    functionCall,
 	    builtinFunction,
 	    context,
 	    depth+1
@@ -537,7 +588,9 @@ processExpressionFunctionCall(
 	processExpressionCallableUserFunction(
 	    nodeModule,
 	    currentGraph,
-	    childNode->getId(),
+	    parentNode,
+	    parentPort,
+	    functionCall,
 	    callableUserFunction,
 	    context,
 	    depth+1
@@ -631,6 +684,7 @@ processFunctionDefinition(
     )
 {
     // Create the node type (this is like a function prototype)
+#if 0
     std::unique_ptr<NodeType> nodeType = std::make_unique<NodeType>();
     nodeType->setId(functionDefinition->name);
     nodeType->setVisibility(NodeType::Visibility::PRIVATE);
@@ -650,7 +704,8 @@ processFunctionDefinition(
 	    nodeType.get(), &nodeModule);
     
     nodeModule.addNodeType(std::move(nodeType));
-    
+#endif
+
     // Create the graph (this is like the function body)
     NodeGraph *functionGraph = nodeModule.addGraph(functionDefinition->name);
     functionGraph->copyScope(currentGraph);
@@ -670,11 +725,31 @@ processFunctionDefinition(
     ConnectionData functionDefinitionData;
     functionDefinitionData.setValue("graph", functionDefinition->name);
     Node & functionDefinitionNode = currentGraph->newNode(*functionDefinitionNodeType, "function", functionDefinitionData);
+    functionDefinitionNode.setPosition(std::make_pair(-depth * 400, 0));
+    functionDefinitionNode.setOverrideInputs(true);
 
     currentGraph->newEdge(
 	functionDefinitionNode.getId(), functionDefinitionNodeType->getOutputs().getName(0),
 	parentNode, parentFunctionDefinitions
 	);
+
+    NamedPorts & functionDefinitionDefaults = functionDefinitionNode.getOverrideInputs();
+    
+    for (const auto & assignment : functionDefinition->parameters) {
+	std::unique_ptr<NodePort> port = std::make_unique<NodePort>("variable", assignment->getName(), NodePort::ConnectionPolicy::One);
+	functionDefinitionDefaults.addPort(assignment->getName(), std::move(port));
+
+	processExpression(
+	    nodeModule,
+	    currentGraph,
+	    functionDefinitionNode.getId(),
+	    assignment->getName(),
+	    assignment->getExpr(),
+	    context,
+	    depth+1
+	    );
+
+	}
 
 }
 
