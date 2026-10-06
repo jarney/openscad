@@ -9,6 +9,7 @@
 #include <QtNodes/Definitions>
 #include <QtNodes/AbstractGraphModel>
 
+#include "node--js/Node.hpp"
 #include "node--js/NodeGraph.hpp"
 
 namespace NodeJS {
@@ -170,6 +171,14 @@ namespace NodeJS {
 	    
 	private:
 	    NodeJS::core::NodeGraph & mGraph;
+
+	    /**
+	     * These map nodes in the UI to nodes in the underlying graph model.
+	     */
+	    std::map<QtNodes::NodeId, NodeJS::core::NodeId> mID_toGraph;
+	    std::map<NodeJS::core::NodeId, QtNodes::NodeId> mID_fromGraph;
+	    QtNodes::NodeId mID_nextNew;
+	    
 	};
     }
 }
