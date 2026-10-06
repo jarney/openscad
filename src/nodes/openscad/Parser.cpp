@@ -461,27 +461,33 @@ processExpressionBuiltinFunctionCall(
 	return;
     }
 
-    Node *childNode = &currentGraph->newNode(
+    Node *functionCallNode = &currentGraph->newNode(
 	*nodeType,
 	nodeTypeName
 	);
-    childNode->setPosition(std::make_pair(-depth * 400, 0));
+    functionCallNode->setPosition(std::make_pair(-depth * 400, 0));
     
     currentGraph->newEdge(
-	childNode->getId(), childNode->getType().getOutputs().getName(0),
+	functionCallNode->getId(), functionCallNode->getType().getOutputs().getName(0),
 	parentNode, parentPort
 	);
-    
-#if 0
-    Parameters parameters = Parameters::parse(
-	Arguments(moduleInstantiation->arguments, context),
-	moduleInstantiation->location(),
-	sphere_required,
-	sphere_optional);
-						      
-    processExpression(nodeModule, currentGraph, childNode, 0, operation->left, context, depth+1);
-    processExpression(nodeModule, currentGraph, childNode, 1, operation->right, context, depth+1);
-#endif
+
+    int i = 0;
+    for (const std::shared_ptr<Assignment> & assignment : functionCall->arguments) {
+	fprintf(stderr, "Setting argument %s\n", assignment->getName().c_str());
+	// Now, for each of the arguments,
+	// we need to evaluate the expression it corresponds to
+	processExpression(
+	    nodeModule,
+	    currentGraph,
+	    functionCallNode->getId(),
+	    functionCallNode->getInputs().getName(i),
+	    assignment->getExpr(),
+	    context,
+	    depth + 1
+	    );
+	i++;
+    }
 }
 
 void
@@ -541,13 +547,6 @@ processExpressionCallableUserFunction(
 	    );
     }
     
-#if 0
-    std::string name;
-  AssignmentList parameters;
-  std::shared_ptr<Expression> expr;
-#endif
-  fprintf(stderr, "Handling function call\n");
-  
 }
 
 
@@ -683,28 +682,6 @@ processFunctionDefinition(
     int depth
     )
 {
-    // Create the node type (this is like a function prototype)
-#if 0
-    std::unique_ptr<NodeType> nodeType = std::make_unique<NodeType>();
-    nodeType->setId(functionDefinition->name);
-    nodeType->setVisibility(NodeType::Visibility::PRIVATE);
-    nodeType->setType(NodeType::Type::GRAPH);
-    for (const auto & assignment : functionDefinition->parameters) {
-	std::unique_ptr<NodePort> port = std::make_unique<NodePort>("variable", assignment->getName(), NodePort::ConnectionPolicy::One);
-	nodeType->getInputs().addPort(assignment->getName(), std::move(port));
-    }
-    std::unique_ptr<NodePort> outputPort = std::make_unique<NodePort>("variable", "out", NodePort::ConnectionPolicy::One);
-    nodeType->getOutputs().addPort("out", std::move(outputPort));
-    
-    // Add this type to the 'currentGraph' scope
-    // because we might want to call the function
-    // in the same scope where it was defined (or below);
-    //currentGraph->addScope(nodeType.get());
-    fprintf(stderr, "Registering node type %p in module %p\n",
-	    nodeType.get(), &nodeModule);
-    
-    nodeModule.addNodeType(std::move(nodeType));
-#endif
 
     // Create the graph (this is like the function body)
     NodeGraph *functionGraph = nodeModule.addGraph(functionDefinition->name);
