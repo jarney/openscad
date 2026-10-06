@@ -18,18 +18,17 @@
 
 #include "core/Builtins.h"
 
-#include "nodes/NodeProgram.hpp"
-#include "nodes/NodeGraph.hpp"
-#include "nodes/NodeProgramSerializer.hpp"
-#include "nodes/NodeFactoryRegistry.hpp"
-#include "nodes/gui/GraphicsScene.hpp"
-#include "nodes/gui/NodeEditorWidget.hpp"
-
-#include "nodes/openscad/Builtins.hpp"
+//#include "nodes/NodeProgram.hpp"
+//#include "nodes/NodeGraph.hpp"
+//#include "nodes/NodeProgramSerializer.hpp"
+//#include "nodes/NodeFactoryRegistry.hpp"
+//#include "nodes/gui/GraphicsScene.hpp"
+//#include "nodes/gui/NodeEditorWidget.hpp"
+//#include "nodes/openscad/Builtins.hpp"
 
 using QtNodes::GraphicsView;
 
-using namespace JNodes::core;
+//using namespace NodeJS::core;
 
 int main_edit(int argc, char *argv[])
 {

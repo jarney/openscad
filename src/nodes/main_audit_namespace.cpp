@@ -1,26 +1,23 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <iostream>
 
 #include "core/Builtins.h"
-
 #include <QtCore/QFileInfo>
-#include "nodes/NodeFactoryRegistry.hpp"
-#include "nodes/NodeGraph.hpp"
-#include "nodes/NodeType.hpp"
 
-#include "nodes/openscad/Builtins.hpp"
-
+#include "node--js/NodeModule.hpp"
+#include "node--js/xml/ModuleLoaderNodeJSPath.hpp"
 #include "nodes/nodes.hpp"
 
-using namespace JNodes::core;
+using namespace NodeJS::core;
+using namespace NodeJS::xml;
 
-void dumpRegistry(std::shared_ptr<NodeFactoryRegistry> registry);
+void dumpRegistry(const NodeModule *openscad_module);
 void dumpBuiltins(void);
-void dumpNotImplemented(std::shared_ptr<NodeFactoryRegistry> registry);
+void dumpNotImplemented(const NodeModule *openscad_module);
 
 int main_audit_namespace(int argc, char *argv[])
 {
-#if 0
     if (argc != 2) {
 	fprintf(stderr, "Usage: audit-namespace filename\n");
 	return 1;
@@ -31,18 +28,22 @@ int main_audit_namespace(int argc, char *argv[])
 	return 2;
     }
 
-    std::shared_ptr<NodeFactoryRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
+    SerializerErrorReporterStream err(std::cerr);
+    
+    ModuleLoaderNodeJSPath loader;
+    loader.setNODEJS_PATH("../submodules/node--js/test-data");
+    const NodeModule *openscad_module = loader.loadModule("org.ensor.nodejs.openscad", err);
 
     // Register builtins...
     Builtins::initialize();
 //    dumpRegistry(registry);
 //    dumpBuiltins();
 
-    dumpNotImplemented(registry);
-#endif
+    dumpNotImplemented(openscad_module);
+
     return 0;
 }
-#if 0
+
 void dumpBuiltins(void)
 {
     for (const auto & it : Builtins::instance().getModules()) {
@@ -50,15 +51,10 @@ void dumpBuiltins(void)
     }
 }
 
-void dumpNotImplemented(std::shared_ptr<NodeFactoryRegistry> registry)
+void dumpNotImplemented(const NodeModule *openscad_module)
 {
-    const NodeFactoryRegistry::RegisteredModelCreatorsMap & registered
-	= registry->getModels();
-
     for (const auto & builtin_it : Builtins::instance().getModules()) {
-	QString registeredName = QString::fromStdString(builtin_it.first);
-	const auto & it = registered.find(registeredName);
-	if (it == registered.end()) {
+	if (!openscad_module->hasNodeType(builtin_it.first)) {
 	    fprintf(stderr, "NO %s (module)\n", builtin_it.first.c_str());
 	}
 	else {
@@ -67,9 +63,7 @@ void dumpNotImplemented(std::shared_ptr<NodeFactoryRegistry> registry)
 
     }
     for (const auto & builtin_it : Builtins::instance().getFunctions()) {
-	QString registeredName = QString::fromStdString(builtin_it.first);
-	const auto & it = registered.find(registeredName);
-	if (it == registered.end()) {
+	if (!openscad_module->hasNodeType(builtin_it.first)) {
 	    fprintf(stderr, "NO %s (function)\n", builtin_it.first.c_str());
 	}
 	else {
@@ -79,13 +73,11 @@ void dumpNotImplemented(std::shared_ptr<NodeFactoryRegistry> registry)
     }
 }
 
-void dumpRegistry(std::shared_ptr<NodeFactoryRegistry> registry)
+void dumpRegistry(const NodeModule *openscad_module)
 {
-    for (const auto & it : registry->getModels()) {
-	fprintf(stderr, "%s : %s\n",
-		it.first.toStdString().c_str(),
-		it.second->getCategory().c_str());
+    for (const auto & it : openscad_module->getNodeTypes()) {
+	fprintf(stderr, "%s\n",
+		it.first.c_str()
+	    );
     }
-    
 }
-#endif

@@ -32,9 +32,7 @@
 #include <string>
 #include <vector>
 
-#include "nodes/NodeProgram.hpp"
-#include "nodes/openscad/NodeProgramSerializerOpenSCAD.hpp"
-#include "nodes/openscad/Builtins.hpp"
+//#include "nodes/NodeProgram.hpp"
 #include "nodes/gui/NodeEditorWidget.hpp"
 
 #include "core/Settings.h"
@@ -118,13 +116,8 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
   qsci = new QsciScintilla(qtab);
 
   JNodes::gui::NodeEditorWidget::initializeStyles();
-#if 0
-  qnode_registry = JNodes::openscad::Builtins::registerDataModels();
-#else
   qnode_registry = nullptr;
-#endif
-
-  qnode_program = std::make_shared<JNodes::core::NodeProgram>(qnode_registry);
+  qnode_program = nullptr; //std::make_shared<JNodes::core::NodeProgram>(qnode_registry);
   
   JNodes::gui::NodeEditorWidget *jw = new JNodes::gui::NodeEditorWidget(*qnode_program);
 

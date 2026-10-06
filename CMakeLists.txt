@@ -1331,24 +1331,8 @@ set(GUI_SOURCES
   src/nodes/NodeCategory.cpp
   src/nodes/NodeFactory.cpp
   src/nodes/NodeFactoryRegistry.cpp
-  src/nodes/NodeProgramSerializer.cpp
 
-#  src/nodes/openscad/Builtins.cpp
-#  src/nodes/openscad/BuiltinsSyntax.cpp
-#  src/nodes/openscad/BuiltinsConstants.cpp
-#  src/nodes/openscad/BuiltinsOperators.cpp
-#  src/nodes/openscad/Builtins2D.cpp
-#  src/nodes/openscad/Builtins3D.cpp
-#  src/nodes/openscad/BuiltinsTransforms.cpp
-#  src/nodes/openscad/BuiltinsList.cpp
-#  src/nodes/openscad/BuiltinsBooleanOperations.cpp
-#  src/nodes/openscad/BuiltinsFlowControl.cpp
-#  src/nodes/openscad/BuiltinsTypeTest.cpp
-#  src/nodes/openscad/BuiltinsOther.cpp
-#  src/nodes/openscad/BuiltinsFunctions.cpp
-#  src/nodes/openscad/BuiltinsMath.cpp
   src/nodes/openscad/Parser.cpp
-#  src/nodes/openscad/NodeProgramSerializerOpenSCAD.cpp
   
   src/nodes/gui/BreadcrumbsWidget.cpp
   src/nodes/gui/NodeEditorWidget.cpp
