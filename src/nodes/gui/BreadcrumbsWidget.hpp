@@ -5,7 +5,7 @@
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QPushButton>
 
-namespace JNodes {
+namespace NodeJS {
   namespace gui {
 
 class BreadcrumbsWidget : public QWidget {
@@ -26,4 +26,4 @@ private:
 };
 
   } // End gui
-} // End JNodes
+} // End NodeJS

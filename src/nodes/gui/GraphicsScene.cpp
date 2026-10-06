@@ -29,10 +29,9 @@
 #include <vector>
 
 #include "nodes/gui/GraphicsScene.hpp"
-#include "nodes/NodeFactoryRegistry.hpp"
 
-using namespace JNodes::gui;
-using namespace JNodes::core;
+using namespace NodeJS::gui;
+using namespace NodeJS::core;
 
 static QtNodes::GroupId jsonValueToGroupId(QJsonValue const &value)
 {
@@ -64,11 +63,14 @@ static QtNodes::GroupId jsonValueToGroupId(QJsonValue const &value)
     return QtNodes::InvalidGroupId;
 }
 
-GraphicsScene::GraphicsScene(NodeGraph &graphModel, QObject *parent)
-    : BasicGraphicsScene(graphModel, parent)
-    , _graphModel(graphModel)
+GraphicsScene::GraphicsScene(
+    std::unique_ptr<GraphModelAdapter> aGraphModel,
+    QObject *parent
+    )
+    : BasicGraphicsScene(*aGraphModel.get(), parent)
+    , mGraphModel(std::move(aGraphModel))
 {
-    auto groupMap = graphModel.getGroups();
+    auto groupMap = mGraphModel->getGroups();
     for (const auto & groupIt : groupMap) {
 	std::vector<QtNodes::NodeGraphicsObject*> nodeGraphicsObjects;
 	for (const auto & nodeId : groupIt.second) {
@@ -77,8 +79,8 @@ GraphicsScene::GraphicsScene(NodeGraph &graphModel, QObject *parent)
 	createGroup(nodeGraphicsObjects, QString::number(groupIt.first), groupIt.first);
     }
     
-    connect(&_graphModel,
-            &NodeGraph::inPortDataWasSet,
+    connect(mGraphModel.get(),
+            &GraphModelAdapter::inPortDataWasSet,
             [this](QtNodes::NodeId const nodeId, QtNodes::PortType const, QtNodes::PortIndex const) { onNodeUpdated(nodeId); });
 }
 
@@ -142,6 +144,7 @@ QMenu *GraphicsScene::createSceneMenu(QPointF const scenePos)
     // 2.
     modelMenu->addAction(treeViewAction);
 
+#if 0
     auto registry = _graphModel.dataModelRegistry();
 
     for (auto const &cat : registry->categories()) {
@@ -165,7 +168,8 @@ QMenu *GraphicsScene::createSceneMenu(QPointF const scenePos)
 	}
 	
     }
-
+#endif
+    
     treeView->expandAll();
 
     connect(treeView,
@@ -214,6 +218,7 @@ QMenu *GraphicsScene::createSceneMenu(QPointF const scenePos)
     return modelMenu;
 }
 
+#if 0
 bool GraphicsScene::save() const
 {
     QString fileName = QFileDialog::getSaveFileName(nullptr,
@@ -321,6 +326,7 @@ bool GraphicsScene::load()
 
     return true;
 }
+#endif
 
 void GraphicsScene::updateConnectionGraphics(
     const std::unordered_set<QtNodes::ConnectionId> &connections, bool state)

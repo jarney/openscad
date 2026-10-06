@@ -15,7 +15,7 @@
 
 #include "nodes/gui/BreadcrumbsWidget.hpp"
 
-using namespace JNodes::gui;
+using namespace NodeJS::gui;
 
 int main_breadcrumbs(int argc, char *argv[])
 {

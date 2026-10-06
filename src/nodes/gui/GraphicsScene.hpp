@@ -2,11 +2,13 @@
 
 #include <QtNodes/BasicGraphicsScene>
 #include <QtNodes/internal/ConnectionGraphicsObject.hpp>
-#include "nodes/NodeGraph.hpp"
+#include "node--js/NodeGraph.hpp"
 #include <QtNodes/internal/Export.hpp>
 #include <QtNodes/internal/NodeConnectionInteraction.hpp>
 
-namespace JNodes {
+#include "nodes/gui/GraphModelAdapter.hpp"
+
+namespace NodeJS {
     namespace gui {
 
 /**
@@ -19,7 +21,10 @@ class NODE_EDITOR_PUBLIC GraphicsScene : public QtNodes::BasicGraphicsScene
 {
     Q_OBJECT
 public:
-    GraphicsScene(JNodes::core::NodeGraph &graphModel, QObject *parent = nullptr);
+    GraphicsScene(
+	std::unique_ptr<NodeJS::gui::GraphModelAdapter> graphModel,
+	QObject *parent = nullptr
+	);
     ~GraphicsScene() = default;
 
 public:
@@ -30,15 +35,17 @@ public:
     QMenu *createGroupMenu(QPointF const scenePos, QtNodes::GroupGraphicsObject *groupGo);
 
 public Q_SLOTS:
+#if 0
     bool save() const;
     bool load();
+#endif
 
 Q_SIGNALS:
     void sceneLoaded();
 
 private:
-    JNodes::core::NodeGraph &_graphModel;
+    std::unique_ptr<NodeJS::gui::GraphModelAdapter> mGraphModel;
 };
 
     } // End gui
-} // End JNodes 
+} // End NodeJS

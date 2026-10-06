@@ -32,7 +32,6 @@
 #include <string>
 #include <vector>
 
-//#include "nodes/NodeProgram.hpp"
 #include "nodes/gui/NodeEditorWidget.hpp"
 
 #include "core/Settings.h"
@@ -115,11 +114,10 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
   scintillaLayout = new QVBoxLayout(this);
   qsci = new QsciScintilla(qtab);
 
-  JNodes::gui::NodeEditorWidget::initializeStyles();
-  qnode_registry = nullptr;
+  NodeJS::gui::NodeEditorWidget::initializeStyles();
   qnode_program = nullptr; //std::make_shared<JNodes::core::NodeProgram>(qnode_registry);
-  
-  JNodes::gui::NodeEditorWidget *jw = new JNodes::gui::NodeEditorWidget(*qnode_program);
+
+  NodeJS::gui::NodeEditorWidget *jw = new NodeJS::gui::NodeEditorWidget(*qnode_program);
 
   QString sourceName("Source");
   QString nodeName("Nodes");

@@ -1,18 +1,18 @@
 #pragma once
 
 #include "nodes/gui/BreadcrumbsWidget.hpp"
-#include "nodes/NodeProgram.hpp"
+#include "node--js/NodeModule.hpp"
 
 namespace QtNodes {
     class NodeGraphicsObject;
 }
 
-namespace JNodes {
+namespace NodeJS {
     namespace gui {
 
 class NodeEditorWidget : public QWidget {
 public:
-    NodeEditorWidget(JNodes::core::NodeProgram & program);
+    NodeEditorWidget(NodeJS::core::NodeModule & program);
     ~NodeEditorWidget();
     void editGraph(std::string editGraph);
 
@@ -27,11 +27,11 @@ private:
      */
     void prepareProgram();
     
-    JNodes::core::NodeProgram &_program;
+    NodeJS::core::NodeModule &_program;
     std::unique_ptr<QVBoxLayout> layout;
     BreadcrumbsWidget *_jbreadcrumbs;
 };
 
 
     } // End gui
-} // End JNodes 
+} // End NodeJS

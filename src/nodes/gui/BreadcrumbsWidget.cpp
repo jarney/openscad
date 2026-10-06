@@ -1,6 +1,6 @@
 #include "nodes/gui/BreadcrumbsWidget.hpp"
 
-using namespace JNodes::gui;
+using namespace NodeJS::gui;
 
 BreadcrumbsWidget::BreadcrumbsWidget()
 {

@@ -1321,22 +1321,12 @@ set(INPUT_DRIVER_SOURCES
 set(GUI_SOURCES
   ${GUI_SOURCES}
 
-  
-  src/nodes/NodeProgram.cpp
-  src/nodes/NodeGraph.cpp
-  src/nodes/Node.cpp
-  src/nodes/NodePort.cpp
-  src/nodes/NodePortData.cpp
-  src/nodes/NodeType.cpp
-  src/nodes/NodeCategory.cpp
-  src/nodes/NodeFactory.cpp
-  src/nodes/NodeFactoryRegistry.cpp
-
   src/nodes/openscad/Parser.cpp
   
   src/nodes/gui/BreadcrumbsWidget.cpp
   src/nodes/gui/NodeEditorWidget.cpp
   src/nodes/gui/GraphicsScene.cpp
+  src/nodes/gui/GraphModelAdapter.cpp
   
   src/openscad_gui.cc
   src/gui/AutoUpdater.cc

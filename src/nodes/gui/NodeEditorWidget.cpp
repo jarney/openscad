@@ -1,16 +1,17 @@
 #include <QtNodes/GraphicsView>
 #include <QtNodes/ConnectionStyle>
 
-#include "nodes/Node.hpp"
-#include "nodes/NodeGraph.hpp"
+#include "node--js/Node.hpp"
+#include "node--js/NodeGraph.hpp"
+#include "node--js/NodeModule.hpp"
 
 #include "nodes/gui/NodeEditorWidget.hpp"
 #include "nodes/gui/GraphicsScene.hpp"
 
-using namespace JNodes::gui;
-using namespace JNodes::core;
+using namespace NodeJS::gui;
+using namespace NodeJS::core;
 
-NodeEditorWidget::NodeEditorWidget(NodeProgram & program)
+NodeEditorWidget::NodeEditorWidget(NodeModule & program)
     : _program(program)
 {
     // Prepare the program by letting it know about
@@ -27,7 +28,7 @@ NodeEditorWidget::NodeEditorWidget(NodeProgram & program)
 
     // If the program is non-trivial, we should
     // edit the 'main' graph.
-    std::vector<NodeProgram::GraphId> graphs = _program.getGraphs();
+    const std::map<NodeModule::GraphId, std::unique_ptr<NodeGraph>> & graphs = _program.getGraphs();
     if (graphs.size() > 0) {
 	// Somehow this we should designate a main
 	// graph through the program itself
@@ -40,8 +41,9 @@ NodeEditorWidget::NodeEditorWidget(NodeProgram & program)
 void
 NodeEditorWidget::prepareProgram()
 {
-    for (const auto & graphId : _program.getGraphs()) {
-	const NodeGraph *graph = _program.getGraph(graphId);
+#if 0
+    for (const auto & graphIt : _program.getGraphs()) {
+	const NodeGraph *graph = graphIt.second.get();
 	for (const auto & nodeId : graph->allNodeIds()) {
 	    Node *node = graph->delegateModel<Node>(nodeId);
 	    node->setEditor(this);
@@ -57,6 +59,7 @@ NodeEditorWidget::prepareProgram()
 	    }
 	);
     }
+#endif
 }
 
 
@@ -71,7 +74,8 @@ NodeEditorWidget::editGraph(std::string editGraph)
     if (graph == nullptr) {
 	return;
     }
-    auto scene = new GraphicsScene(*graph);
+    std::unique_ptr<GraphModelAdapter> model = std::make_unique<GraphModelAdapter>(*graph);
+    auto scene = new GraphicsScene(std::move(model));
 
     // Load up the groups.
     
