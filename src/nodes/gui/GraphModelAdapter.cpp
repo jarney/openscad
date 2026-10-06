@@ -1,6 +1,12 @@
 #include "nodes/gui/GraphModelAdapter.hpp"
+
+#include <QtNodes/NodeDelegateModel>
 #include <QtNodes/ConnectionIdUtils>
 #include <QtNodes/NodeData>
+#include <QtNodes/StyleCollection>
+
+#include <QPoint>
+#include <QSize>
 
 #include <unordered_set>
 #include <stack>
@@ -18,7 +24,6 @@ GraphModelAdapter::GraphModelAdapter(NodeJS::core::NodeGraph & aGraph)
 	mID_nextNew++;
     }
 }
-
 
 QtNodes::NodeId
 GraphModelAdapter::newNodeId()
@@ -248,5 +253,191 @@ bool
 GraphModelAdapter::nodeExists(QtNodes::NodeId const nodeId) const
 {
     return (mID_toGraph.find(nodeId) == mID_toGraph.end());
+}
+
+QVariant GraphModelAdapter::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole role) const
+{
+    QVariant result;
+
+    const auto & graphNodeIdIt = mID_toGraph.find(nodeId);
+    if (graphNodeIdIt == mID_toGraph.end()) {
+	return result;
+    }
+
+    const Node *node = mGraph.getNode(graphNodeIdIt->second);
+    if (node == nullptr) {
+        return result;
+    }
+
+    switch (role) {
+    case QtNodes::NodeRole::Type: {
+        result = QString::fromStdString(node->getId());
+        break;
+    }
+    case QtNodes::NodeRole::Position: {
+	const std::pair<float, float> &graphPos = node->getPosition();
+        QPointF pos(graphPos.first, graphPos.second);
+        result = pos;
+        break;
+    }
+    case QtNodes::NodeRole::Size: {
+	const std::pair<int, int> &graphSize = node->getSize();
+        QSize size(graphSize.first, graphSize.second);
+        result = size;
+        break;
+    }
+#if 0
+    case QtNodes::NodeRole::CaptionVisible:
+	//TODO: push down to the node.
+        result = model->captionVisible();
+        break;
+
+    case QtNodes::NodeRole::Caption:
+	//TODO: push down to the node.
+        result = model->caption();
+        break;
+#endif
+    case QtNodes::NodeRole::Style: {
+	// We will probably never have a reason to change this.
+        result = QtNodes::StyleCollection::nodeStyle().toJson().toVariantMap();
+    } break;
+    case QtNodes::NodeRole::InternalData: {
+	// This has no purpose and should be removed.
+        break;
+    }
+    case QtNodes::NodeRole::InPortCount:
+        result = QVariant::fromValue((int)node->getInputs().getCount());
+        break;
+
+    case QtNodes::NodeRole::OutPortCount:
+        result = QVariant::fromValue((int)node->getOutputs().getCount());
+        break;
+	
+    case QtNodes::NodeRole::Widget: {
+	// TODO: Get these from some editor registration system
+	// because this doesn't belong as a part of the graph,
+	// it is actually a part of the editor/IDE.
+        //auto *w = model->embeddedWidget();
+        //result = QVariant::fromValue(w);
+    } break;
+    case QtNodes::NodeRole::ValidationState: {
+	// State is meaningless for our application right now unless
+	// we do some additional error checking and validation.
+        result = QVariant::fromValue(QtNodes::NodeValidationState::State::Valid);
+    } break;
+    case QtNodes::NodeRole::ProcessingStatus: {
+	// State is meaningless for our application right now unless
+	// we do some additional error checking and validation.
+        result = QVariant::fromValue(QtNodes::NodeProcessingStatus::NoStatus);
+    } break;
+    case QtNodes::NodeRole::ProgressValue:
+        result = QString();
+        break;
+
+#if 0
+
+    case QtNodes::NodeRole::LabelVisible: {
+        auto const labelVisibleIt = _labelsVisible.find(nodeId);
+        result = (labelVisibleIt != _labelsVisible.end()) ? labelVisibleIt->second
+                                                          : model->labelVisible();
+    } break;
+
+    case QtNodes::NodeRole::Label: {
+        auto const labelIt = _labels.find(nodeId);
+        result = (labelIt != _labels.end()) ? labelIt->second : model->label();
+    } break;
+
+    case QtNodes::NodeRole::LabelEditable:
+        result = model->labelEditable();
+        break;
+
+#endif
+    }
+
+    return result;
+}
+
+std::map<QtNodes::GroupId, std::vector<QtNodes::NodeId>>
+GraphModelAdapter::getGroups() const
+{
+    std::map<QtNodes::GroupId, std::vector<QtNodes::NodeId>> groups;
+    QtNodes::GroupId groupId = 0;
+
+    for (const auto & graphGroupIt : mGraph.getGroups()) {
+	for (const auto & nodeIt : graphGroupIt.second->getNodes()) {
+	    const auto & nodeIdIt = mID_fromGraph.find(nodeIt);
+	    if (nodeIdIt == mID_fromGraph.end()) {
+		continue;
+	    }
+	    groups[groupId].push_back(nodeIdIt->second);
+	}
+    }
+    
+    return groups;
+}
+
+
+bool
+GraphModelAdapter::deleteNode(QtNodes::NodeId const nodeId)
+{
+    const auto & it = mID_toGraph.find(nodeId);
+    if (it == mID_toGraph.end()) {
+	return false;
+    }
+    NodeId graphNodeId = it->second;
+    mGraph.removeNode(graphNodeId);
+
+    return true;
+}
+
+void
+GraphModelAdapter::addConnection(QtNodes::ConnectionId const connectionId)
+{
+    const auto & fromNodeIt = mID_toGraph.find(connectionId.outNodeId);
+    const auto & toNodeIt = mID_toGraph.find(connectionId.inNodeId);
+    if (fromNodeIt == mID_toGraph.end() ||
+	toNodeIt == mID_toGraph.end()) {
+	fprintf(stderr, "NODES COULD NOT BE RESOLVED WHEN CREATING CONNECTION\n");
+	return;
+    }
+    
+    NodeId fromNodeId = fromNodeIt->second;
+    NodeId toNodeId = toNodeIt->second;
+
+    Node *fromNode = mGraph.getNode(fromNodeId);
+    Node *toNode = mGraph.getNode(toNodeId);
+
+    std::optional<EdgeId> optEdge = mGraph.newEdge(
+	fromNodeId,
+	fromNode->getOutputs().getName(connectionId.outPortIndex),
+	toNodeId,
+	toNode->getInputs().getName(connectionId.inPortIndex)
+	);
+}
+
+bool
+GraphModelAdapter::deleteConnection(QtNodes::ConnectionId const connectionId)
+{
+    const auto & fromNodeIt = mID_toGraph.find(connectionId.outNodeId);
+    const auto & toNodeIt = mID_toGraph.find(connectionId.inNodeId);
+    if (fromNodeIt == mID_toGraph.end() ||
+	toNodeIt == mID_toGraph.end()) {
+	fprintf(stderr, "NODES COULD NOT BE RESOLVED WHEN CREATING CONNECTION\n");
+	return false;
+    }
+    
+    NodeId fromNodeId = fromNodeIt->second;
+    NodeId toNodeId = toNodeIt->second;
+
+    Node *fromNode = mGraph.getNode(fromNodeId);
+    Node *toNode = mGraph.getNode(toNodeId);
+
+    mGraph.removeEdge(
+	fromNodeId,
+	fromNode->getOutputs().getName(connectionId.outPortIndex),
+	toNodeId,
+	toNode->getInputs().getName(connectionId.inPortIndex)
+	);
+    return true;
 }
 
