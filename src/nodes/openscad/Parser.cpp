@@ -80,7 +80,7 @@ ModuleNodeFactorySphere::handle(
     childNode.setPosition(std::make_pair(-depth * 400, -i * 400));
     
     currentGraph->newEdge(
-	childNode.getId(), childNode.getType().getOutputPortName(0),
+	childNode.getId(), childNode.getType().getOutputs().getName(0),
 	parentNode, parentModuleInstantiation
 	);
 
@@ -104,7 +104,7 @@ ModuleNodeFactorySphere::handle(
 	parentAssignments,
 	parentFunctionDefinitions,
 	parentModuleDefinitions,
-	childNode.getType().getInputPortName(3), // Module Instantiations
+	childNode.getType().getInputs().getName(3), // Module Instantiations
 	moduleInstantiation->scope,
 	context,
 	depth);
@@ -157,10 +157,10 @@ processSourceFile(
 	nodeModule,
 	main,
 	outputNode.getId(),
-	outputNode.getType().getInputPortName(0), // Assignments
-	outputNode.getType().getInputPortName(1), // Function Definitions
-	outputNode.getType().getInputPortName(2), // Module Definitions
-	outputNode.getType().getInputPortName(3), // Module Instantiations
+	outputNode.getType().getInputs().getName(0), // Assignments
+	outputNode.getType().getInputs().getName(1), // Function Definitions
+	outputNode.getType().getInputs().getName(2), // Module Definitions
+	outputNode.getType().getInputs().getName(3), // Module Instantiations
 	sourceFile->scope,
 	*file_context,
 	0);
@@ -189,13 +189,13 @@ processAssignment(
     // The output of an assignment needs to link up
     // with the output node's assignments port.
     currentGraph->newEdge(
-	assignmentNode.getId(), assignmentNode.getType().getOutputPortName(0),
+	assignmentNode.getId(), assignmentNode.getType().getOutputs().getName(0),
 	parentNode, parentAssignments
 	);
     
     assignmentNode.getData().setValue("variable_name", assignment->getName().c_str());
 
-    processExpression(nodeModule, currentGraph, assignmentNode.getId(), assignmentNode.getType().getInputPortName(0), assignment->getExpr(), context, depth+1);
+    processExpression(nodeModule, currentGraph, assignmentNode.getId(), assignmentNode.getType().getInputs().getName(0), assignment->getExpr(), context, depth+1);
 }
 
 void
@@ -231,11 +231,11 @@ processExpressionUnaryOp(
     childNode.setPosition(std::make_pair(-depth * 400, 0));
 
     currentGraph->newEdge(
-	childNode.getId(), childNode.getType().getOutputPortName(0),
+	childNode.getId(), childNode.getType().getOutputs().getName(0),
 	parentNode, parentPort
 	);
 
-    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), operation->expr, context, depth+1);
+    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputs().getName(0), operation->expr, context, depth+1);
     
 }
 
@@ -291,12 +291,12 @@ processExpressionBinaryOp(
     childNode.setPosition(std::make_pair(-depth * 400, 0));
 
     currentGraph->newEdge(
-	childNode.getId(), childNode.getType().getOutputPortName(0),
+	childNode.getId(), childNode.getType().getOutputs().getName(0),
 	parentNode, parentPort
 	);
     
-    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputPortName(0), operation->left, context, depth+1);
-    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputPortName(1), operation->right, context, depth+1);
+    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputs().getName(0), operation->left, context, depth+1);
+    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputs().getName(1), operation->right, context, depth+1);
 }
 
 void
@@ -393,7 +393,7 @@ processExpressionLiteral(
     childNode->setPosition(std::make_pair(-depth * 400, 0));
 
     currentGraph->newEdge(
-	childNode->getId(), childNode->getType().getOutputPortName(0),
+	childNode->getId(), childNode->getType().getOutputs().getName(0),
 	parentNode, parentPort
 	);
     
@@ -426,7 +426,7 @@ processExpressionLookup(
     childNode->setPosition(std::make_pair(-depth * 400, 0));
     
     currentGraph->newEdge(
-	childNode->getId(), childNode->getType().getOutputPortName(0),
+	childNode->getId(), childNode->getType().getOutputs().getName(0),
 	parentNode, parentPort
 	);
 }
@@ -509,7 +509,7 @@ processExpressionFunctionCall(
     childNode->setPosition(std::make_pair(-depth * 400, 0));
     
     currentGraph->newEdge(
-	childNode->getId(), childNode->getType().getOutputPortName(0),
+	childNode->getId(), childNode->getType().getOutputs().getName(0),
 	parentNode, parentPort
 	);
     
@@ -637,10 +637,10 @@ processFunctionDefinition(
     nodeType->setType(NodeType::Type::GRAPH);
     for (const auto & assignment : functionDefinition->parameters) {
 	std::unique_ptr<NodePort> port = std::make_unique<NodePort>("variable", assignment->getName(), NodePort::ConnectionPolicy::One);
-	nodeType->addInputPort(assignment->getName(), std::move(port));
+	nodeType->getInputs().addPort(assignment->getName(), std::move(port));
     }
     std::unique_ptr<NodePort> outputPort = std::make_unique<NodePort>("variable", "out", NodePort::ConnectionPolicy::One);
-    nodeType->addOutputPort("out", std::move(outputPort));
+    nodeType->getOutputs().addPort("out", std::move(outputPort));
     
     // Add this type to the 'currentGraph' scope
     // because we might want to call the function
@@ -660,7 +660,7 @@ processFunctionDefinition(
     processExpression(nodeModule,
 		      functionGraph,
 		      functionOutputNode.getId(),
-		      functionOutputNodeType->getInputPortName(0),
+		      functionOutputNodeType->getInputs().getName(0),
 		      functionDefinition->expr,
 		      context,
 		      depth+1);
@@ -672,7 +672,7 @@ processFunctionDefinition(
     Node & functionDefinitionNode = currentGraph->newNode(*functionDefinitionNodeType, "function", functionDefinitionData);
 
     currentGraph->newEdge(
-	functionDefinitionNode.getId(), functionDefinitionNodeType->getOutputPortName(0),
+	functionDefinitionNode.getId(), functionDefinitionNodeType->getOutputs().getName(0),
 	parentNode, parentFunctionDefinitions
 	);
 
