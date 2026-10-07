@@ -432,10 +432,6 @@ add_subdirectory(submodules)
 # The submodules will set up mimalloc if needed, and we need to defer any
 # target_link_libraries() calls until after that.
 
-if (USE_NODE_EDITOR)
-    target_link_libraries(OpenSCADLibInternal PUBLIC NodeJS)
-endif()
-
 macro(find_graphics)
   # NULLGL - Allow us to build without OpenGL(TM). run 'cmake .. -DNULLGL=1'
   # Most tests will fail, but it can be used for testing/experiments
@@ -492,7 +488,11 @@ macro(find_graphics)
     target_link_libraries(OpenSCADLibInternal PUBLIC ${OPENGL_LIBRARIES})
     message(STATUS "OpenGL: ${OPENGL_LIBRARIES}")
   endif()
-  target_link_libraries(OpenSCADLibInternal PRIVATE QtNodes)
+if (USE_NODE_EDITOR)
+    target_link_libraries(OpenSCADLibInternal PUBLIC NodeJS)
+    target_link_libraries(OpenSCADLibInternal PUBLIC QtNodes)
+endif()
+
 endmacro(find_graphics)
 
 if (MSVC)
