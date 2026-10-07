@@ -357,6 +357,38 @@ QVariant GraphModelAdapter::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole r
     return result;
 }
 
+bool
+GraphModelAdapter::setNodeData(
+    QtNodes::NodeId nodeId,
+    QtNodes::NodeRole role,
+    QVariant value)
+{
+    return true;
+}
+
+QVariant
+GraphModelAdapter::portData(
+    QtNodes::NodeId nodeId,
+    QtNodes::PortType portType,
+    QtNodes::PortIndex index,
+    QtNodes::PortRole role) const
+{
+    QVariant result;
+    return result;
+}
+
+bool
+GraphModelAdapter::setPortData(
+    QtNodes::NodeId nodeId,
+    QtNodes::PortType portType,
+    QtNodes::PortIndex index,
+    QVariant const &value,
+    QtNodes::PortRole role
+    )
+{
+    return true;
+}
+
 std::map<QtNodes::GroupId, std::vector<QtNodes::NodeId>>
 GraphModelAdapter::getGroups() const
 {

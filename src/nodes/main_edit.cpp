@@ -14,50 +14,40 @@
 #include <QtWidgets/QTabWidget>
 
 #include <QtGui/QScreen>
-#include <fstream>
+#include <iostream>
 
-#include "core/Builtins.h"
-
-//#include "nodes/NodeProgram.hpp"
-//#include "nodes/NodeGraph.hpp"
-//#include "nodes/NodeProgramSerializer.hpp"
-//#include "nodes/NodeFactoryRegistry.hpp"
-//#include "nodes/gui/GraphicsScene.hpp"
-//#include "nodes/gui/NodeEditorWidget.hpp"
-//#include "nodes/openscad/Builtins.hpp"
+#include "node--js/NodeModule.hpp"
+#include "node--js/xml/SerializerXML.hpp"
+#include "node--js/xml/ModuleLoaderNodeJSPath.hpp"
+#include "nodes/gui/NodeEditorWidget.hpp"
 
 using QtNodes::GraphicsView;
 
-//using namespace NodeJS::core;
+using namespace NodeJS::core;
+using namespace NodeJS::xml;
+using namespace NodeJS::gui;
 
 int main_edit(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-#if 0
+
     if (argc != 2) {
 	fprintf(stderr, "Usage: edit filename\n");
 	return 1;
     }
-
-    if (!QFileInfo::exists(argv[1])) {
-	fprintf(stderr, "File %s does not exist\n", argv[1]);
-	fprintf(stderr, "Usage: edit filename\n");
+    
+    ModuleLoaderNodeJSPath loader;
+    loader.setNODEJS_PATH("../submodules/node--js/test-data;.");
+    SerializerErrorReporterStream err(std::cerr);
+    NodeModule *loaded = loader.loadModule(argv[1], err);
+    if (loaded == nullptr) {
+	fprintf(stderr, "Could not find module %s in NODEJS_PATH\n", argv[1]);
 	return 2;
     }
-    
-    std::shared_ptr<NodeFactoryRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
-    NodeProgram program(registry);
-    
-    const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
-    std::ifstream exampleInputFile(argv[1]);
-    if (serializer.read(program, exampleInputFile)) {
-	fprintf(stderr, "Could not read file %s\n", argv[1]);
-	return 3;
-    }
+    NodeModule & nodeModule = *loaded;
 
     // Register builtins...
-    Builtins::initialize();
-    JNodes::gui::NodeEditorWidget::initializeStyles();
+    NodeJS::gui::NodeEditorWidget::initializeStyles();
 
     QWidget mainWidget;
 
@@ -82,36 +72,42 @@ int main_edit(int argc, char *argv[])
     auto qtabLayout = new QVBoxLayout(qtab);
     l->addWidget(qtab);
 
-    JNodes::gui::NodeEditorWidget *jw = new JNodes::gui::NodeEditorWidget(program);
+    NodeEditorWidget *jw = new NodeEditorWidget(nodeModule);
     qtab->addTab(jw, "Nodes");
 
     auto qsci = new QsciScintilla(qtab);
     qtab->addTab(qsci, "Source");
 
-    QObject::connect(qtab, &QTabWidget::currentChanged, [&program, &qsci]() {
+    QObject::connect(qtab, &QTabWidget::currentChanged, [&nodeModule, &qsci]() {
+#if 0
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
 	std::ostringstream output;
 	serializer.write(program, output);
 	qsci->setText(QString::fromStdString(output.str()));
+#endif
     });
 
 
-    QObject::connect(saveAction, &QAction::triggered, [&program, argv]() {
+    QObject::connect(saveAction, &QAction::triggered, [&nodeModule, argv]() {
+#if 0
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
 	std::ofstream output(argv[1]);
 	serializer.write(program, output);
+#endif
     });
 
     // This is a hot mess, but fortunately we should not really
     // need to do this in the final product.
-    QObject::connect(loadAction, &QAction::triggered, [qtab, &program, argv]() {
+    QObject::connect(loadAction, &QAction::triggered, [qtab, &nodeModule, argv]() {
+#if 0
 	qtab->removeTab(0);
 	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
 	std::ifstream input(argv[1]);
 	serializer.read(program, input);
-	JNodes::gui::NodeEditorWidget *jw = new JNodes::gui::NodeEditorWidget(program);
+	NodeEditorWidget *jw = new NodeEditorWidget(program);
 	qtab->insertTab(0, jw, "Nodes-");
 	qtab->setTabVisible(0, true);
+#endif
     });
 
     QObject::connect(groupAction, &QAction::triggered, [jw]() {
@@ -127,7 +123,4 @@ int main_edit(int argc, char *argv[])
     mainWidget.showNormal();
 
     return app.exec();
-#else
-    return 0;
-#endif
 }
