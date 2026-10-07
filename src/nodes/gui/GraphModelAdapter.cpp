@@ -11,6 +11,7 @@
 #include <unordered_set>
 #include <stack>
 
+
 using namespace NodeJS::core;
 using namespace NodeJS::gui;
 
@@ -255,6 +256,29 @@ GraphModelAdapter::nodeExists(QtNodes::NodeId const nodeId) const
     return (mID_toGraph.find(nodeId) == mID_toGraph.end());
 }
 
+static float to_float(std::string str, float defaultValue)
+{
+    const char *xp = str.c_str();
+    char *endx{};
+    float value = strtof(xp, &endx);
+    if (endx != xp) {
+	value = defaultValue;
+    }
+    return value;
+}
+
+static int to_int(std::string str, int defaultValue)
+{
+    const char *xp = str.c_str();
+    char *endx{};
+    int value = strtod(xp, &endx);
+    if (endx != xp) {
+	value = defaultValue;
+    }
+    return value;
+}
+
+
 QVariant GraphModelAdapter::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole role) const
 {
     QVariant result;
@@ -264,55 +288,50 @@ QVariant GraphModelAdapter::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole r
 	return result;
     }
 
-    const Node *node = mGraph.getNode(graphNodeIdIt->second);
+    Node *node = mGraph.getNode(graphNodeIdIt->second);
     if (node == nullptr) {
         return result;
     }
 
+    ConnectionData & nodeMetadata = node->getMetadata().getMetadata(METADATA_NAMESPACE_GRAPH_EDITOR);
+    const ConnectionData & nodeTypeMetadata = node->getType().getMetadata().getMetadata(METADATA_NAMESPACE_GRAPH_EDITOR);
+    
     switch (role) {
     case QtNodes::NodeRole::Type: {
         result = QString::fromStdString(node->getId());
-        break;
-    }
+    } break;
     case QtNodes::NodeRole::Position: {
-	const std::pair<float, float> &graphPos = node->getPosition();
-        QPointF pos(graphPos.first, graphPos.second);
+	std::string positionXStr = nodeMetadata.getValue("pos-x", "0.0");
+	std::string positionYStr = nodeMetadata.getValue("pos-y", "0.0");
+        QPointF pos(to_float(positionXStr, 0.0), to_float(positionYStr, 0.0));
         result = pos;
-        break;
-    }
+    } break;
     case QtNodes::NodeRole::Size: {
-	const std::pair<int, int> &graphSize = node->getSize();
-        QSize size(graphSize.first, graphSize.second);
+	std::string positionXStr = nodeMetadata.getValue("width", "0.0");
+	std::string positionYStr = nodeMetadata.getValue("height", "0.0");
+        QSize size(to_int(positionXStr, 0), to_int(positionYStr, 0));
         result = size;
-        break;
-    }
-#if 0
-    case QtNodes::NodeRole::CaptionVisible:
+    } break;
+    case QtNodes::NodeRole::CaptionVisible: {
+	result = nodeMetadata.hasValue("caption");
+    } break;
+    case QtNodes::NodeRole::Caption: {
 	//TODO: push down to the node.
-        result = model->captionVisible();
-        break;
-
-    case QtNodes::NodeRole::Caption:
-	//TODO: push down to the node.
-        result = model->caption();
-        break;
-#endif
+        result = QString::fromStdString(nodeMetadata.getValue("caption"));
+    } break;
     case QtNodes::NodeRole::Style: {
 	// We will probably never have a reason to change this.
         result = QtNodes::StyleCollection::nodeStyle().toJson().toVariantMap();
     } break;
     case QtNodes::NodeRole::InternalData: {
 	// This has no purpose and should be removed.
-        break;
-    }
-    case QtNodes::NodeRole::InPortCount:
+    } break;
+    case QtNodes::NodeRole::InPortCount: {
         result = QVariant::fromValue((int)node->getInputs().getCount());
-        break;
-
-    case QtNodes::NodeRole::OutPortCount:
+    } break;
+    case QtNodes::NodeRole::OutPortCount: {
         result = QVariant::fromValue((int)node->getOutputs().getCount());
-        break;
-	
+    } break;
     case QtNodes::NodeRole::Widget: {
 	// TODO: Get these from some editor registration system
 	// because this doesn't belong as a part of the graph,
@@ -330,28 +349,18 @@ QVariant GraphModelAdapter::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole r
 	// we do some additional error checking and validation.
         result = QVariant::fromValue(QtNodes::NodeProcessingStatus::NoStatus);
     } break;
-    case QtNodes::NodeRole::ProgressValue:
+    case QtNodes::NodeRole::ProgressValue: {
         result = QString();
-        break;
-
-#if 0
-
+    } break;
     case QtNodes::NodeRole::LabelVisible: {
-        auto const labelVisibleIt = _labelsVisible.find(nodeId);
-        result = (labelVisibleIt != _labelsVisible.end()) ? labelVisibleIt->second
-                                                          : model->labelVisible();
+	result = nodeMetadata.hasValue("label");
     } break;
-
     case QtNodes::NodeRole::Label: {
-        auto const labelIt = _labels.find(nodeId);
-        result = (labelIt != _labels.end()) ? labelIt->second : model->label();
+        result = QString::fromStdString(nodeMetadata.getValue("label"));
     } break;
-
-    case QtNodes::NodeRole::LabelEditable:
-        result = model->labelEditable();
-        break;
-
-#endif
+    case QtNodes::NodeRole::LabelEditable: {
+        result = nodeTypeMetadata.getValue("label-editable", "false") == "true";
+    } break;
     }
 
     return result;
@@ -370,10 +379,64 @@ QVariant
 GraphModelAdapter::portData(
     QtNodes::NodeId nodeId,
     QtNodes::PortType portType,
-    QtNodes::PortIndex index,
+    QtNodes::PortIndex portIndex,
     QtNodes::PortRole role) const
 {
     QVariant result;
+
+    const auto & graphNodeIdIt = mID_toGraph.find(nodeId);
+    if (graphNodeIdIt == mID_toGraph.end()) {
+	return result;
+    }
+
+    Node *node = mGraph.getNode(graphNodeIdIt->second);
+    if (node == nullptr) {
+        return result;
+    }
+
+    ConnectionData & nodeMetadata = node->getMetadata().getMetadata(METADATA_NAMESPACE_GRAPH_EDITOR);
+    const ConnectionData & nodeTypeMetadata = node->getType().getMetadata().getMetadata(METADATA_NAMESPACE_GRAPH_EDITOR);
+    const NamedPorts & portData = (portType == QtNodes::PortType::Out) ? node->getInputs() : node->getOutputs();
+    const NodePort * nodePort = portData.getByIndex(portIndex);
+    if (!nodePort) {
+	return result;
+    }
+    const ConnectionData & portMetadata = nodePort->getMetadata().getMetadata(METADATA_NAMESPACE_GRAPH_EDITOR);
+
+    switch (role) {
+    case QtNodes::PortRole::Data: {
+	// We're not supporting runtime data flow in the editor right now.
+    } break;
+    case QtNodes::PortRole::DataType: {
+	const DataType *dataType = mGraph.getDataType(nodePort->getDataType());
+	if (dataType) {
+	    QtNodes::NodeDataType ndt{
+				QString::fromStdString(dataType->getId()),
+				QString::fromStdString(dataType->getName())
+	    };
+	    result = QVariant::fromValue(ndt);
+	}
+	else {
+	    QtNodes::NodeDataType ndt{
+		"generic", "generic"
+	    };
+	    result = QVariant::fromValue(ndt);
+	}
+    } break;
+
+    case QtNodes::PortRole::ConnectionPolicyRole: {
+	QtNodes::ConnectionPolicy policy = nodePort->getConnectionPolicy() == NodePort::ConnectionPolicy::One ?
+	    QtNodes::ConnectionPolicy::One : QtNodes::ConnectionPolicy::Many;
+	result = QVariant::fromValue(policy);
+    } break;
+    case QtNodes::PortRole::CaptionVisible: {
+	return portMetadata.hasValue("caption");
+    } break;
+    case QtNodes::PortRole::Caption: {
+	return QString::fromStdString(portMetadata.getValue("caption"));
+    } break;
+    }
+    
     return result;
 }
 
@@ -381,7 +444,7 @@ bool
 GraphModelAdapter::setPortData(
     QtNodes::NodeId nodeId,
     QtNodes::PortType portType,
-    QtNodes::PortIndex index,
+    QtNodes::PortIndex portIndex,
     QVariant const &value,
     QtNodes::PortRole role
     )

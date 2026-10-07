@@ -14,6 +14,9 @@
 
 namespace NodeJS {
     namespace gui {
+	static const std::string METADATA_NAMESPACE_GRAPH_EDITOR = "http://jarney.github.io/nodejs/editor";
+
+	
 	class  GraphModelAdapter : public QtNodes::AbstractGraphModel {
 	    Q_OBJECT
 	public:
@@ -106,12 +109,12 @@ namespace NodeJS {
 	     */
 	    virtual QVariant portData(QtNodes::NodeId nodeId,
 				      QtNodes::PortType portType,
-				      QtNodes::PortIndex index,
+				      QtNodes::PortIndex portIndex,
 				      QtNodes::PortRole role) const;
 	    
 	    virtual bool setPortData(QtNodes::NodeId nodeId,
 				     QtNodes::PortType portType,
-				     QtNodes::PortIndex index,
+				     QtNodes::PortIndex portIndex,
 				     QVariant const &value,
 				     QtNodes::PortRole role = QtNodes::PortRole::Data);
 	    

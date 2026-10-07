@@ -4,6 +4,7 @@
 #include <iostream>
 #include "node--js/SerializerError.hpp"
 #include "node--js/xml/SerializerXML.hpp"
+#include "nodes/gui/GraphModelAdapter.hpp"
 
 using namespace NodeJS::core;
 using namespace NodeJS::xml;
@@ -47,6 +48,17 @@ public:
 	) const;
 };
 
+static void
+setNodePosition(Node & node, float x, float y)
+{
+    ConnectionData & data = node.getMetadata().getMetadata(
+	NodeJS::gui::METADATA_NAMESPACE_GRAPH_EDITOR
+	);
+    data.setValue("pos-x", std::to_string(x));
+    data.setValue("pos-y", std::to_string(y));
+}
+
+
 void
 ModuleNodeFactorySphere::handle(
 	NodeModule & nodeModule,
@@ -77,7 +89,8 @@ ModuleNodeFactorySphere::handle(
 	moduleInstantiation->name(),
 	defaultData
 	);
-    childNode.setPosition(std::make_pair(-depth * 400, -i * 400));
+    
+    setNodePosition(childNode, -depth * 400, -i * 400);
     
     currentGraph->newEdge(
 	childNode.getId(), childNode.getType().getOutputs().getName(0),
@@ -184,7 +197,7 @@ processAssignment(
 	"assign",
 	defaultData
 	);
-    assignmentNode.setPosition(std::make_pair(-depth * 400, 0));
+    setNodePosition(assignmentNode, -depth * 400, 0);
 
     // The output of an assignment needs to link up
     // with the output node's assignments port.
@@ -228,7 +241,7 @@ processExpressionUnaryOp(
 	op_it->second,
 	defaultData
 	);
-    childNode.setPosition(std::make_pair(-depth * 400, 0));
+    setNodePosition(childNode, -depth * 400, 0);
 
     currentGraph->newEdge(
 	childNode.getId(), childNode.getType().getOutputs().getName(0),
@@ -288,7 +301,7 @@ processExpressionBinaryOp(
 	op_it->second,
 	defaultData
 	);
-    childNode.setPosition(std::make_pair(-depth * 400, 0));
+    setNodePosition(childNode, -depth * 400, 0);
 
     currentGraph->newEdge(
 	childNode.getId(), childNode.getType().getOutputs().getName(0),
@@ -391,7 +404,7 @@ processExpressionLiteral(
 	throw std::string("Invalid literal type found parsing openscad file\n");
     }
 
-    childNode->setPosition(std::make_pair(-depth * 400, 0));
+    setNodePosition(*childNode, -depth * 400, 0);
 
     currentGraph->newEdge(
 	childNode->getId(), childNode->getType().getOutputs().getName(0),
@@ -424,7 +437,7 @@ processExpressionLookup(
 	nodeTypeName,
 	defaultData);
     
-    childNode->setPosition(std::make_pair(-depth * 400, 0));
+    setNodePosition(*childNode, -depth * 400, 0);
     
     currentGraph->newEdge(
 	childNode->getId(), childNode->getType().getOutputs().getName(0),
@@ -465,7 +478,7 @@ processExpressionBuiltinFunctionCall(
 	*nodeType,
 	nodeTypeName
 	);
-    functionCallNode->setPosition(std::make_pair(-depth * 400, 0));
+    setNodePosition(*functionCallNode, -depth * 400, 0);
     
     currentGraph->newEdge(
 	functionCallNode->getId(), functionCallNode->getType().getOutputs().getName(0),
@@ -518,7 +531,7 @@ processExpressionCallableUserFunction(
 	function->name,
 	nodeData
 	);
-    functionCallNode->setPosition(std::make_pair(-depth * 400, 0));
+    setNodePosition(*functionCallNode, -depth * 400, 0);
     functionCallNode->setOverrideInputs(true);
     
     currentGraph->newEdge(
@@ -702,7 +715,7 @@ processFunctionDefinition(
     ConnectionData functionDefinitionData;
     functionDefinitionData.setValue("graph", functionDefinition->name);
     Node & functionDefinitionNode = currentGraph->newNode(*functionDefinitionNodeType, "function", functionDefinitionData);
-    functionDefinitionNode.setPosition(std::make_pair(-depth * 400, 0));
+    setNodePosition(functionDefinitionNode, -depth * 400, 0);
     functionDefinitionNode.setOverrideInputs(true);
 
     currentGraph->newEdge(
