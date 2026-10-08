@@ -316,11 +316,10 @@ QVariant GraphModelAdapter::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole r
         result = size;
     } break;
     case QtNodes::NodeRole::CaptionVisible: {
-	result = nodeMetadata.hasValue("caption");
+	result = nodeTypeMetadata.hasValue("caption");
     } break;
     case QtNodes::NodeRole::Caption: {
-	//TODO: push down to the node.
-        result = QString::fromStdString(nodeMetadata.getValue("caption"));
+	result = QString::fromStdString(nodeTypeMetadata.getValue("caption"));
     } break;
     case QtNodes::NodeRole::Style: {
 	// We will probably never have a reason to change this.
@@ -356,13 +355,23 @@ QVariant GraphModelAdapter::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole r
         result = QString();
     } break;
     case QtNodes::NodeRole::LabelVisible: {
-	result = nodeMetadata.hasValue("label");
+	result = true;  //nodeMetadata.hasValue("label");
     } break;
     case QtNodes::NodeRole::Label: {
-        result = QString::fromStdString(nodeMetadata.getValue("label"));
+	if (nodeMetadata.hasValue("label")) {
+	    result = QString::fromStdString(nodeMetadata.getValue("label"));
+	}
+	else {
+	    result = QString::fromStdString(node->getId());
+	}
     } break;
     case QtNodes::NodeRole::LabelEditable: {
-        result = nodeTypeMetadata.getValue("label-editable", "false") == "true";
+        result = true;
+    } break;
+    case QtNodes::NodeRole::Tooltip: {
+	if (nodeTypeMetadata.hasValue("tooltip")) {
+	    result = QString::fromStdString(nodeTypeMetadata.getValue("tooltip"));
+	}
     } break;
     }
 
