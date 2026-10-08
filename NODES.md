@@ -1,15 +1,12 @@
 # TODO list for node editor project:
 
-* Start building test infrastructure
-  * One main with lots of options/types
-  * Namespace checker to make sure we've covered all the builtins and not polluted the namespace too much."
-  * Evaluator to allow us to evaluate graphs and check the output.
-  * 'node' editor should allow us to specify the name of a file as argv[1] and auto-create if it doesn't exist.
-  * Start dogfooding the thing.
+* Testing:
+  * Start making some actual graphs/drawings with it.
 
 * Context Menus
-  * Icons for each builtin.
-  * Tooltips for each builtin.
+  * Derive 'add' menu from loaded packages.
+      * Icons for each builtin. (from metadata)
+      * Tooltips for each builtin.
   * Translations for each tooltip/accessible text.
   * Allow extraction of node icons from module and function comment text (as base64?)
   * Allow removing nodes from groups (the group/node menu needs attention).
