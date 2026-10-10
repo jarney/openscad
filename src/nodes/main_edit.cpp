@@ -37,7 +37,7 @@ int main_edit(int argc, char *argv[])
     }
     
     ModuleLoaderNodeJSPath loader;
-    loader.setNODEJS_PATH("../submodules/node--js/test-data;.");
+    loader.setNODEJS_PATH("../submodules/node--js/test-data:.");
     SerializerErrorReporterStream err(std::cerr);
     NodeModule *loaded = loader.loadModule(argv[1], err);
     if (loaded == nullptr) {
