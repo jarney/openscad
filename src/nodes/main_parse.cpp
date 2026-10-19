@@ -68,9 +68,22 @@ int main_parse(int argc, char *argv[])
     }
 
     SerializerErrorReporterStream err(std::cerr);
-    
+
+    // Derive the package name from the input filename.
+    std::string package;
+    size_t ext_offset = fname.find_last_of('.');
+    if (ext_offset != std::string::npos) {
+	package = fname.substr(0, ext_offset);
+    }
+    else {
+	package = fname;
+    }
+    node_module.setPackage(package);
+
+    std::ofstream out(node_module.getPackage() + ".xml", std::ios::binary | std::ios::trunc);
     const auto & xmlSerializer = SerializerXML::instance();
-    xmlSerializer.write(node_module.getPackage(), node_module, std::cout, err);
+    xmlSerializer.write(node_module.getPackage(), node_module, out, err);
+    out.close();
     
     return 0;
 }
