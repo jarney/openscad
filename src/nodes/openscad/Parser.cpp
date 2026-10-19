@@ -91,9 +91,9 @@ ModuleNodeFactorySphere::handle(
 	);
     
     setNodePosition(childNode, -depth * 400, -i * 400);
-    
+
     currentGraph->newEdge(
-	childNode.getId(), childNode.getType().getOutputs().getName(0),
+	childNode.getId(), childNode.getOutputs().getName(0),
 	parentNode, parentModuleInstantiation
 	);
 

@@ -64,12 +64,22 @@ GraphModelAdapter::allConnectionIds(QtNodes::NodeId const nodeId) const
 	return allConnections;
     }
     std::string nodeIdGraph = nodeIt->second;
+
+
     
     const auto & edges = mGraph.getEdges();
     for (const auto & edgeIt : edges) {
-	
+
 	QtNodes::ConnectionId connection;
 	const Edge *edge = edgeIt.second.get();
+	
+	fprintf(stderr, "!Connection: for %s is : %s %s => %s %s\n",
+		nodeIdGraph.c_str(),
+		edge->fromNode.c_str(),
+		edge->fromPort.c_str(),
+		edge->toNode.c_str(),
+		edge->toPort.c_str()
+	    );
 	
 	const Node *toNode = mGraph.getNode(edge->toNode);
 	const Node *fromNode = mGraph.getNode(edge->fromNode);
@@ -96,6 +106,10 @@ GraphModelAdapter::allConnectionIds(QtNodes::NodeId const nodeId) const
 	    }
 	    connection.outNodeId = fromNodeIt->second;
 	    connection.inNodeId = nodeId;
+	}
+	else {
+	    // This isn't one of our nodes, so don't worry about it.
+	    continue;
 	}
 	connection.outPortIndex = fromNode->getOutputs().getPortIndex(edge->fromPort);
 	connection.inPortIndex = toNode->getInputs().getPortIndex(edge->toPort);
@@ -488,6 +502,12 @@ GraphModelAdapter::portData(
     const NamedPorts & portData = (portType == QtNodes::PortType::In) ? node->getInputs() : node->getOutputs();
     const NodePort * nodePort = portData.getByIndex(portIndex);
     if (!nodePort) {
+	fprintf(stderr,
+		"!!!! No such port %s: %s %d (%s)\n",
+		graphNodeIdIt->second.c_str(),
+		((portType == QtNodes::PortType::In) ? "in" : "out"),
+		portIndex,
+		portData.getName(portIndex).c_str());
 	return result;
     }
     const ConnectionData & portMetadata = nodePort->getMetadata().getMetadata(METADATA_NAMESPACE_GRAPH_EDITOR);
@@ -499,6 +519,11 @@ GraphModelAdapter::portData(
     case QtNodes::PortRole::DataType: {
 	const DataType *dataType = mGraph.getModule().getDataType(nodePort->getDataType());
 	if (dataType) {
+	    //fprintf(stderr, "node %s port %s data type %s\n",
+	    //      graphNodeIdIt->second.c_str(),
+	    //      portData.getName(portIndex).c_str(),
+	    //      dataType->getFullyQualifiedId().c_str()
+	    //      );
 	    QtNodes::NodeDataType ndt{
 				QString::fromStdString(dataType->getFullyQualifiedId()),
 				QString::fromStdString(dataType->getName())
@@ -506,6 +531,7 @@ GraphModelAdapter::portData(
 	    result = QVariant::fromValue(ndt);
 	}
 	else {
+	    fprintf(stderr, "No port data for this port %s\n", portData.getName(portIndex).c_str());
 	    QtNodes::NodeDataType ndt{
 		"generic", "generic"
 	    };
@@ -522,7 +548,8 @@ GraphModelAdapter::portData(
 	return portMetadata.hasValue("caption");
     } break;
     case QtNodes::PortRole::Caption: {
-	return QString::fromStdString(portMetadata.getValue("caption"));
+	return QString::fromStdString(portData.getName(portIndex));
+	//return QString::fromStdString(portMetadata.getValue("caption"));
     } break;
     }
     
