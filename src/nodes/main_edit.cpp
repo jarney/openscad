@@ -35,10 +35,12 @@ int main_edit(int argc, char *argv[])
 	fprintf(stderr, "Usage: edit filename\n");
 	return 1;
     }
-    
-    ModuleLoaderNodeJSPath loader;
-    loader.setNODEJS_PATH("../submodules/node--js/test-data:.");
     SerializerErrorReporterStream err(std::cerr);
+    
+    ModuleLoader loader;
+    std::unique_ptr<ModuleLoaderNodeJSPath> plugin = std::make_unique<ModuleLoaderNodeJSPath>();
+    plugin->setNODEJS_PATH("../submodules/node--js/test-data/xml/Serializer:.");
+    loader.setPlugin(std::move(plugin));
     NodeModule *loaded = loader.loadModule(argv[1], err);
     if (loaded == nullptr) {
 	fprintf(stderr, "Could not find module %s in NODEJS_PATH\n", argv[1]);

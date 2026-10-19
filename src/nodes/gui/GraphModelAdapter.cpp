@@ -1,4 +1,5 @@
 #include "nodes/gui/GraphModelAdapter.hpp"
+#include "node--js/NodeModule.hpp"
 
 #include <QtNodes/NodeDelegateModel>
 #include <QtNodes/ConnectionIdUtils>
@@ -148,12 +149,13 @@ GraphModelAdapter::addNode(QString const nodeTypeName)
 {
     // If we can't resolve the node type,
     // we cannot create the node.
-    const NodeType *nodeType = mGraph.getNodeType(nodeTypeName.toStdString());
+    const NodeType *nodeType = mGraph.getModule().getNodeType(nodeTypeName.toStdString());
     if (nodeType == nullptr) {
 	return QtNodes::InvalidNodeId;
     }
-    
-    Node &newNode = mGraph.newNode(*nodeType, nodeType->getId());
+
+    ConnectionData emptyData;
+    Node &newNode = mGraph.newNode(*nodeType, nodeType->getLocalId(), emptyData);
     
     // Now that we have the node, we need to keep track of the IDs so we can map correctly.
     QtNodes::NodeId adapterNodeId = newNodeId();
@@ -495,10 +497,10 @@ GraphModelAdapter::portData(
 	// We're not supporting runtime data flow in the editor right now.
     } break;
     case QtNodes::PortRole::DataType: {
-	const DataType *dataType = mGraph.getDataType(nodePort->getDataType());
+	const DataType *dataType = mGraph.getModule().getDataType(nodePort->getDataType());
 	if (dataType) {
 	    QtNodes::NodeDataType ndt{
-				QString::fromStdString(dataType->getId()),
+				QString::fromStdString(dataType->getFullyQualifiedId()),
 				QString::fromStdString(dataType->getName())
 	    };
 	    result = QVariant::fromValue(ndt);
@@ -547,6 +549,9 @@ GraphModelAdapter::getGroups() const
     std::map<QtNodes::GroupId, std::vector<QtNodes::NodeId>> groups;
     QtNodes::GroupId groupId = 0;
 
+#if 0
+    // TODO: Get groups from metadata, it's no longer a part
+    // of the core data model, it's a user/gui bolt-on.
     for (const auto & graphGroupIt : mGraph.getGroups()) {
 	for (const auto & nodeIt : graphGroupIt.second->getNodes()) {
 	    const auto & nodeIdIt = mID_fromGraph.find(nodeIt);
@@ -556,6 +561,7 @@ GraphModelAdapter::getGroups() const
 	    groups[groupId].push_back(nodeIdIt->second);
 	}
     }
+#endif
     
     return groups;
 }

@@ -1,3 +1,4 @@
+
 #include "nodes/nodes.hpp"
 #include <stdio.h>
 #include <unistd.h>
@@ -31,9 +32,6 @@ int main(int argc, char **argv)
     try {
 	if (!strcmp(argv[1], "audit-namespace")) {
 	    return main_audit_namespace(--argc, ++argv);
-	}
-	else if (!strcmp(argv[1], "process")) {
-	    return main_process(--argc, ++argv);
 	}
 	else if (!strcmp(argv[1], "parse")) {
 	    return main_parse(--argc, ++argv);

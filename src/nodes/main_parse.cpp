@@ -27,8 +27,10 @@ int main_parse(int argc, char *argv[])
     }
 
     //std::shared_ptr<NodeFactoryRegistry> registry = JNodes::openscad::Builtins::registerDataModels();
-    ModuleLoaderNodeJSPath loader;
-    loader.setNODEJS_PATH("../submodules/node--js/test-data");
+    ModuleLoader loader;
+    std::unique_ptr<ModuleLoaderNodeJSPath> plugin = std::make_unique<ModuleLoaderNodeJSPath>();
+    plugin->setNODEJS_PATH("../submodules/node--js/test-data/xml/Serializer:.");
+    loader.setPlugin(std::move(plugin));
     NodeModule & node_module = *loader.newModule("anonymous");
     
     if (!QFileInfo::exists(argv[1])) {
@@ -68,7 +70,7 @@ int main_parse(int argc, char *argv[])
     SerializerErrorReporterStream err(std::cerr);
     
     const auto & xmlSerializer = SerializerXML::instance();
-    xmlSerializer.write(node_module, std::cout, err);
+    xmlSerializer.write(node_module.getPackage(), node_module, std::cout, err);
     
     return 0;
 }

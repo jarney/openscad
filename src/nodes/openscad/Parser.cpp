@@ -78,7 +78,7 @@ ModuleNodeFactorySphere::handle(
     // our parent node with the output of the module's node
     // connected to the input of our parent's node.
 
-    const NodeType *nodeType = currentGraph->getNodeType(moduleInstantiation->name());
+    const NodeType *nodeType = nodeModule.getNodeType(moduleInstantiation->name());
     if (nodeType == nullptr) {
 	fprintf(stderr, "Error loading node of type %s\n", moduleInstantiation->name().c_str());
 	return;
@@ -147,15 +147,29 @@ processSourceFile(
     // builtins.
     ModuleLoader & loader = nodeModule.getModuleLoader();
 
+    const NodeModule *core_module = loader.loadModule("org.ensor.nodejs.core", err);
+    if (!core_module) {
+	// TODO: We should report errors better in this parser.
+	fprintf(stderr, "Cannot load nodejs core module\n");
+	return;
+    }
+    nodeModule.addImportModule(core_module);
+    
     const NodeModule *openscad_module = loader.loadModule("org.ensor.nodejs.openscad", err);
+    if (!openscad_module) {
+	// TODO: We should report errors better in this parser.
+	fprintf(stderr, "Cannot load openscad module\n");
+	return;
+    }
+    nodeModule.addImportModule(openscad_module);
 
     ////////////
     NodeGraph *main = nodeModule.addGraph("main");
-    main->addScope(openscad_module);
-    
-    const NodeType *outputType = main->getNodeType("output");
+
+    // Add the mandatory input and ouptut nodes.
+    const NodeType *outputType = nodeModule.getNodeType("org.ensor.nodejs.core.output");
     if (outputType == nullptr) {
-	fprintf(stderr, "Invalid output port, not found\n");
+	fprintf(stderr, "Invalid: node type org.ensor.nodejs.openscad.output not found\n");
 	return;
     }
     ConnectionData defaultData;
@@ -165,15 +179,34 @@ processSourceFile(
 	defaultData
 	);
 
+    // Add the ports to capture the data:
+    outputNode.setOverrideInputs(true);
+    NamedPorts & outputInputs = outputNode.getOverrideInputs();
+    outputInputs.addPort("assignments", std::make_unique<NodePort>("org.ensor.nodejs.openscad.assignment", "Assignments", NodePort::ConnectionPolicy::Multiple));
+    outputInputs.addPort("function-definitions", std::make_unique<NodePort>("org.ensor.nodejs.openscad.function-definition", "Functions", NodePort::ConnectionPolicy::Multiple));
+    outputInputs.addPort("module-definitions", std::make_unique<NodePort>("org.ensor.nodejs.openscad.module-definition", "Modules", NodePort::ConnectionPolicy::Multiple));
+    outputInputs.addPort("module-instantiations", std::make_unique<NodePort>("org.ensor.nodejs.openscad.module-instantiation", "Geometry", NodePort::ConnectionPolicy::Multiple));
+    
+    const NodeType *inputType = nodeModule.getNodeType("org.ensor.nodejs.core.input");
+    if (inputType == nullptr) {
+	fprintf(stderr, "Invalid: node type org.ensor.nodejs.openscad.input not found\n");
+	return;
+    }
+    Node & inputNode = main->newNode(
+	*inputType,
+	"input",
+	defaultData
+	);
+
     // A source file is just a single large scope.
     processLocalScope(
 	nodeModule,
 	main,
 	outputNode.getId(),
-	outputNode.getType().getInputs().getName(0), // Assignments
-	outputNode.getType().getInputs().getName(1), // Function Definitions
-	outputNode.getType().getInputs().getName(2), // Module Definitions
-	outputNode.getType().getInputs().getName(3), // Module Instantiations
+	outputNode.getInputs().getName(0), // Assignments
+	outputNode.getInputs().getName(1), // Function Definitions
+	outputNode.getInputs().getName(2), // Module Definitions
+	outputNode.getInputs().getName(3), // Module Instantiations
 	sourceFile->scope,
 	*file_context,
 	0);
@@ -190,7 +223,7 @@ processAssignment(
     int depth
     )
 {
-    const NodeType *nodeType = currentGraph->getNodeType("assign");
+    const NodeType *nodeType = nodeModule.getNodeType("org.ensor.nodejs.openscad.assign");
     ConnectionData defaultData;
     Node & assignmentNode = currentGraph->newNode(
 	*nodeType,
@@ -208,7 +241,7 @@ processAssignment(
     
     assignmentNode.getData().setValue("variable_name", assignment->getName().c_str());
 
-    processExpression(nodeModule, currentGraph, assignmentNode.getId(), assignmentNode.getType().getInputs().getName(0), assignment->getExpr(), context, depth+1);
+    processExpression(nodeModule, currentGraph, assignmentNode.getId(), assignmentNode.getInputs().getName(0), assignment->getExpr(), context, depth+1);
 }
 
 void
@@ -222,15 +255,15 @@ processExpressionUnaryOp(
     int depth
     )
 {
-    std::map<UnaryOp::Op, std::string> operators{{UnaryOp::Op::Not, "not"},
-					   {UnaryOp::Op::Negate, "negate"},
-					   {UnaryOp::Op::BinaryNot, "tilde"}};
+    std::map<UnaryOp::Op, std::string> operators{{UnaryOp::Op::Not, "org.ensor.nodejs.openscad.not"},
+					   {UnaryOp::Op::Negate, "org.ensor.nodejs.openscad.negate"},
+					   {UnaryOp::Op::BinaryNot, "org.ensor.nodejs.openscad.tilde"}};
     const auto op_it = operators.find(operation->op);
     if (op_it == operators.end()) {
 	throw std::string("Invalid literal type found parsing openscad file\n");
     }
 
-    const NodeType *nodeType = currentGraph->getNodeType(op_it->second);
+    const NodeType *nodeType = nodeModule.getNodeType(op_it->second);
     if (nodeType == nullptr) {
 	fprintf(stderr, "Error loading node of type %s\n", op_it->second.c_str());
 	return;
@@ -248,7 +281,7 @@ processExpressionUnaryOp(
 	parentNode, parentPort
 	);
 
-    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputs().getName(0), operation->expr, context, depth+1);
+    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getInputs().getName(0), operation->expr, context, depth+1);
     
 }
 
@@ -265,24 +298,24 @@ processExpressionBinaryOp(
 {
     
     std::map<BinaryOp::Op, std::string> operators{
-	{BinaryOp::Op::LogicalAnd, "and"},
-	{BinaryOp::Op::LogicalOr, "or"},
-	{BinaryOp::Op::Exponent, "exponentiate"},
-	{BinaryOp::Op::Multiply, "multiply"},
-	{BinaryOp::Op::Divide, "divide"},
-	{BinaryOp::Op::Modulo, "modulo"},
-	{BinaryOp::Op::Plus, "add"},
-	{BinaryOp::Op::Minus, "subtract"},
-	{BinaryOp::Op::ShiftLeft, "binary_shl"},
-	{BinaryOp::Op::ShiftRight, "binary_shr"},
-	{BinaryOp::Op::BinaryAnd, "binary_and"},
-	{BinaryOp::Op::BinaryOr, "binary_or"},
-	{BinaryOp::Op::Less, "lt"},
-	{BinaryOp::Op::LessEqual, "leq"},
-	{BinaryOp::Op::Greater, "gt"},
-	{BinaryOp::Op::GreaterEqual, "geq"},
-	{BinaryOp::Op::Equal, "eq"},
-	{BinaryOp::Op::NotEqual, "neq"}
+	{BinaryOp::Op::LogicalAnd, "org.ensor.nodejs.openscad.and"},
+	{BinaryOp::Op::LogicalOr, "org.ensor.nodejs.openscad.or"},
+	{BinaryOp::Op::Exponent, "org.ensor.nodejs.openscad.exponentiate"},
+	{BinaryOp::Op::Multiply, "org.ensor.nodejs.openscad.multiply"},
+	{BinaryOp::Op::Divide, "org.ensor.nodejs.openscad.divide"},
+	{BinaryOp::Op::Modulo, "org.ensor.nodejs.openscad.modulo"},
+	{BinaryOp::Op::Plus, "org.ensor.nodejs.openscad.add"},
+	{BinaryOp::Op::Minus, "org.ensor.nodejs.openscad.subtract"},
+	{BinaryOp::Op::ShiftLeft, "org.ensor.nodejs.openscad.binary_shl"},
+	{BinaryOp::Op::ShiftRight, "org.ensor.nodejs.openscad.binary_shr"},
+	{BinaryOp::Op::BinaryAnd, "org.ensor.nodejs.openscad.binary_and"},
+	{BinaryOp::Op::BinaryOr, "org.ensor.nodejs.openscad.binary_or"},
+	{BinaryOp::Op::Less, "org.ensor.nodejs.openscad.lt"},
+	{BinaryOp::Op::LessEqual, "org.ensor.nodejs.openscad.leq"},
+	{BinaryOp::Op::Greater, "org.ensor.nodejs.openscad.gt"},
+	{BinaryOp::Op::GreaterEqual, "org.ensor.nodejs.openscad.geq"},
+	{BinaryOp::Op::Equal, "org.ensor.nodejs.openscad.eq"},
+	{BinaryOp::Op::NotEqual, "org.ensor.nodejs.openscad.neq"}
     };
     
     const auto op_it = operators.find(operation->op);
@@ -290,7 +323,7 @@ processExpressionBinaryOp(
 	throw std::string("Invalid literal type found parsing openscad file\n");
     }
 
-    const NodeType *nodeType = currentGraph->getNodeType(op_it->second);
+    const NodeType *nodeType = nodeModule.getNodeType(op_it->second);
     if (nodeType == nullptr) {
 	fprintf(stderr, "Error loading node of type %s\n", op_it->second.c_str());
 	return;
@@ -308,8 +341,8 @@ processExpressionBinaryOp(
 	parentNode, parentPort
 	);
     
-    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputs().getName(0), operation->left, context, depth+1);
-    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getType().getInputs().getName(1), operation->right, context, depth+1);
+    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getInputs().getName(0), operation->left, context, depth+1);
+    processExpression(nodeModule, currentGraph, childNode.getId(), childNode.getInputs().getName(1), operation->right, context, depth+1);
 }
 
 void
@@ -325,8 +358,8 @@ processExpressionLiteral(
 {
     Node *childNode;
     if (literal->isBool()) {
-	std::string nodeTypeName = literal->toBool() ? "true" : "false";
-	const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+	std::string nodeTypeName = literal->toBool() ? "org.ensor.nodejs.openscad.true" : "org.ensor.nodejs.openscad.false";
+	const NodeType *nodeType = nodeModule.getNodeType(nodeTypeName);
 	if (nodeType == nullptr) {
 	    fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
 	    return;
@@ -339,8 +372,8 @@ processExpressionLiteral(
 	    );
     }
     else if (literal->isString()) {
-	std::string nodeTypeName = "const_string";
-	const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+	std::string nodeTypeName = "org.ensor.nodejs.openscad.const_string";
+	const NodeType *nodeType = nodeModule.getNodeType(nodeTypeName);
 	if (nodeType == nullptr) {
 	    fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
 	    return;
@@ -357,8 +390,8 @@ processExpressionLiteral(
 	long lit_long = (long)lit_double;
 	double lit_recast = (double)lit_long;
 	if (abs(lit_double - lit_recast) < 1e-9) {
-	    std::string nodeTypeName = "const_int";
-	    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+	    std::string nodeTypeName = "org.ensor.nodejs.openscad.const_int";
+	    const NodeType *nodeType = nodeModule.getNodeType(nodeTypeName);
 	    if (nodeType == nullptr) {
 		fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
 		return;
@@ -373,8 +406,8 @@ processExpressionLiteral(
 	    
 	}
 	else {
-	    std::string nodeTypeName = "const_float";
-	    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+	    std::string nodeTypeName = "org.ensor.nodejs.openscad.const_float";
+	    const NodeType *nodeType = nodeModule.getNodeType(nodeTypeName);
 	    if (nodeType == nullptr) {
 		fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
 		return;
@@ -388,8 +421,8 @@ processExpressionLiteral(
 	}
     }
     else if (literal->isUndefined()) {
-	std::string nodeTypeName = "undef";
-	const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+	std::string nodeTypeName = "org.ensor.nodejs.openscad.undef";
+	const NodeType *nodeType = nodeModule.getNodeType(nodeTypeName);
 	if (nodeType == nullptr) {
 	    fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
 	    return;
@@ -424,8 +457,8 @@ processExpressionLookup(
     int depth
     )
 {
-    std::string nodeTypeName = "variable";
-    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+    std::string nodeTypeName = "org.ensor.nodejs.openscad.variable";
+    const NodeType *nodeType = nodeModule.getNodeType(nodeTypeName);
     if (nodeType == nullptr) {
 	fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
 	return;
@@ -468,7 +501,7 @@ processExpressionBuiltinFunctionCall(
     // * Look up the function's entry in the context so we know what
     //   arguments to parse for.
     std::string nodeTypeName  = functionCall->name;
-    const NodeType *nodeType = currentGraph->getNodeType(nodeTypeName);
+    const NodeType *nodeType = nodeModule.getNodeType(nodeTypeName);
     if (nodeType == nullptr) {
 	fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
 	return;
@@ -515,7 +548,7 @@ processExpressionCallableUserFunction(
     int depth
     )
 {
-    const NodeType *nodeType = currentGraph->getNodeType("function-call");
+    const NodeType *nodeType = nodeModule.getNodeType("org.ensor.nodejs.openscad.function-call");
     if (nodeType == nullptr) {
 	fprintf(stderr, "Error: no such node type function-call\n");
 	return;
@@ -541,7 +574,7 @@ processExpressionCallableUserFunction(
     NamedPorts & functionInputs = functionCallNode->getOverrideInputs();
 
     for (const std::shared_ptr<Assignment> & assignment : function->parameters) {
-	std::unique_ptr<NodePort> argumentPort = std::make_unique<NodePort>("variable", assignment->getName(), NodePort::ConnectionPolicy::One);
+	std::unique_ptr<NodePort> argumentPort = std::make_unique<NodePort>("org.ensor.nodejs.openscad.variable", assignment->getName(), NodePort::ConnectionPolicy::One);
 	functionInputs.addPort(assignment->getName(), std::move(argumentPort));
     }
 
@@ -698,9 +731,8 @@ processFunctionDefinition(
 
     // Create the graph (this is like the function body)
     NodeGraph *functionGraph = nodeModule.addGraph(functionDefinition->name);
-    functionGraph->copyScope(currentGraph);
 
-    const NodeType *functionOutputNodeType = functionGraph->getNodeType("function_output");
+    const NodeType *functionOutputNodeType = nodeModule.getNodeType("org.ensor.nodejs.openscad.function_output");
     Node & functionOutputNode = functionGraph->newNode(*functionOutputNodeType, "function_output", ConnectionData());
     processExpression(nodeModule,
 		      functionGraph,
@@ -711,7 +743,7 @@ processFunctionDefinition(
 		      depth+1);
 
     // Create the function definition in the parent's graph.
-    const NodeType *functionDefinitionNodeType = functionGraph->getNodeType("function");
+    const NodeType *functionDefinitionNodeType = nodeModule.getNodeType("org.ensor.nodejs.openscad.function");
     ConnectionData functionDefinitionData;
     functionDefinitionData.setValue("graph", functionDefinition->name);
     Node & functionDefinitionNode = currentGraph->newNode(*functionDefinitionNodeType, "function", functionDefinitionData);
@@ -726,7 +758,7 @@ processFunctionDefinition(
     NamedPorts & functionDefinitionDefaults = functionDefinitionNode.getOverrideInputs();
     
     for (const auto & assignment : functionDefinition->parameters) {
-	std::unique_ptr<NodePort> port = std::make_unique<NodePort>("variable", assignment->getName(), NodePort::ConnectionPolicy::One);
+	std::unique_ptr<NodePort> port = std::make_unique<NodePort>("org.ensor.nodejs.openscad.variable", assignment->getName(), NodePort::ConnectionPolicy::One);
 	functionDefinitionDefaults.addPort(assignment->getName(), std::move(port));
 
 	processExpression(
@@ -775,6 +807,8 @@ processLocalScope(
     // then modules, and finally we can define the variables and
     // instantiate modules.
 
+    fprintf(stderr, "Assignments %s\n", parentAssignments.c_str());
+    
     // Next, process any function definitions
     for (const auto functionDefinition : localScope->getUserFunctions()) {
 	processFunctionDefinition(

@@ -138,7 +138,6 @@ endif()
 set(NODE_MAIN_SOURCES
     src/nodes/nodes.cpp
     src/nodes/main_audit_namespace.cpp
-    src/nodes/main_process.cpp
     src/nodes/main_parse.cpp
     src/nodes/main_breadcrumbs.cpp
     src/nodes/main_edit.cpp

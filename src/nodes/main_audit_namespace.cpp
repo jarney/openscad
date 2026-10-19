@@ -6,6 +6,7 @@
 #include <QtCore/QFileInfo>
 
 #include "node--js/NodeModule.hpp"
+#include "node--js/ModuleLoader.hpp"
 #include "node--js/xml/ModuleLoaderNodeJSPath.hpp"
 #include "nodes/nodes.hpp"
 
@@ -29,9 +30,12 @@ int main_audit_namespace(int argc, char *argv[])
     }
 
     SerializerErrorReporterStream err(std::cerr);
+
+    ModuleLoader loader;
+    std::unique_ptr<ModuleLoaderNodeJSPath> plugin = std::make_unique<ModuleLoaderNodeJSPath>();
+    plugin->setNODEJS_PATH("../submodules/node--js/test-data/xml/Serializer:.");
+    loader.setPlugin(std::move(plugin));
     
-    ModuleLoaderNodeJSPath loader;
-    loader.setNODEJS_PATH("../submodules/node--js/test-data");
     const NodeModule *openscad_module = loader.loadModule("org.ensor.nodejs.openscad", err);
 
     // Register builtins...
