@@ -48,7 +48,6 @@ int main_parse(int argc, char *argv[])
 	std::string fulltext(std::istreambuf_iterator<char>(input_stream), {});
 
 	SourceFile *sourceFile;
-	std::string fname("none");
 	
 	sourceFile = parse(
 	    sourceFile,
@@ -64,21 +63,10 @@ int main_parse(int argc, char *argv[])
 	ContextHandle<BuiltinContext> builtin_context{Context::create<BuiltinContext>(&session)};
 	
 	SerializerErrorReporterStream err(std::cerr);
-	processSourceFile(err, node_module, sourceFile, *builtin_context);
+	processSourceFile(fname, err, node_module, sourceFile, *builtin_context);
     }
 
     SerializerErrorReporterStream err(std::cerr);
-
-    // Derive the package name from the input filename.
-    std::string package;
-    size_t ext_offset = fname.find_last_of('.');
-    if (ext_offset != std::string::npos) {
-	package = fname.substr(0, ext_offset);
-    }
-    else {
-	package = fname;
-    }
-    node_module.setPackage(package);
 
     std::ofstream out(node_module.getPackage() + ".xml", std::ios::binary | std::ios::trunc);
     const auto & xmlSerializer = SerializerXML::instance();

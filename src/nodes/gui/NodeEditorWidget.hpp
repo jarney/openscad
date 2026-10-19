@@ -12,7 +12,7 @@ namespace NodeJS {
 
 class NodeEditorWidget : public QWidget {
 public:
-    NodeEditorWidget(NodeJS::core::NodeModule & program);
+    NodeEditorWidget(NodeJS::core::NodeModule & program, std::string graphId);
     ~NodeEditorWidget();
     void editGraph(std::string editGraph);
 

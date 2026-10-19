@@ -17,15 +17,24 @@
 #include <iostream>
 
 #include "node--js/NodeModule.hpp"
+#include "node--js/Natives.hpp"
+#include "node--js/Processor.hpp"
 #include "node--js/xml/SerializerXML.hpp"
 #include "node--js/xml/ModuleLoaderNodeJSPath.hpp"
 #include "nodes/gui/NodeEditorWidget.hpp"
+#include "node--js/engines/openscad/Builtins.hpp"
 
 using QtNodes::GraphicsView;
 
 using namespace NodeJS::core;
 using namespace NodeJS::xml;
 using namespace NodeJS::gui;
+
+void
+write_module_to_source_tab(const NodeModule & nodeModule, QsciScintilla *qsci_source);
+
+void
+write_module_to_output_tab(const NodeModule & nodeModule, QsciScintilla *qsci_output, std::string graphId);
 
 int main_edit(int argc, char *argv[])
 {
@@ -41,7 +50,9 @@ int main_edit(int argc, char *argv[])
     std::unique_ptr<ModuleLoaderNodeJSPath> plugin = std::make_unique<ModuleLoaderNodeJSPath>();
     plugin->setNODEJS_PATH("../submodules/node--js/test-data/xml/Serializer:.");
     loader.setPlugin(std::move(plugin));
-    NodeModule *loaded = loader.loadModule(argv[1], err);
+    std::string moduleName(argv[1]);
+    
+    NodeModule *loaded = loader.loadModule(moduleName, err);
     if (loaded == nullptr) {
 	fprintf(stderr, "Could not find module %s in NODEJS_PATH\n", argv[1]);
 	return 2;
@@ -74,19 +85,23 @@ int main_edit(int argc, char *argv[])
     auto qtabLayout = new QVBoxLayout(qtab);
     l->addWidget(qtab);
 
-    NodeEditorWidget *jw = new NodeEditorWidget(nodeModule);
+    std::string graphId("main");
+    NodeEditorWidget *jw = new NodeEditorWidget(nodeModule, graphId);
     qtab->addTab(jw, "Nodes");
 
-    auto qsci = new QsciScintilla(qtab);
-    qtab->addTab(qsci, "Source");
+    auto qsci_source = new QsciScintilla(qtab);
+    qtab->addTab(qsci_source, "Source");
 
-    QObject::connect(qtab, &QTabWidget::currentChanged, [&nodeModule, &qsci]() {
-#if 0
-	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
-	std::ostringstream output;
-	serializer.write(program, output);
-	qsci->setText(QString::fromStdString(output.str()));
-#endif
+    auto qsci_output = new QsciScintilla(qtab);
+    qtab->addTab(qsci_output, "Output");
+
+    QObject::connect(qtab, &QTabWidget::currentChanged, [&nodeModule, &qsci_source, &qsci_output, &graphId]() {
+	// Just do a vanilla output of the raw package's xml:
+	write_module_to_source_tab(nodeModule, qsci_source);
+
+	// Process the package and show the result.
+	write_module_to_output_tab(nodeModule, qsci_output, graphId);
+	
     });
 
 
@@ -126,3 +141,47 @@ int main_edit(int argc, char *argv[])
 
     return app.exec();
 }
+
+void
+write_module_to_source_tab(const NodeModule & nodeModule, QsciScintilla *qsci_source)
+{
+        const SerializerXML & ser = SerializerXML::instance();
+        SerializerErrorReporterStream err(std::cerr);
+	std::ostringstream output_stream;
+	ser.write(nodeModule.getPackage(), nodeModule, output_stream, err);
+	qsci_source->setText(QString::fromStdString(output_stream.str()));
+
+}
+void
+write_module_to_output_tab(const NodeModule & nodeModule, QsciScintilla *qsci_output, std::string graphId)
+{
+    Processor processor;
+    
+    ConnectionData input;
+    ConnectionData output;
+    NodeGraph *graph = nodeModule.getGraph(graphId);
+    if (!graph) {
+	std::string output_str = std::string("Graph '") + graphId + std::string("' not found in module '") + nodeModule.getPackage().c_str() + std::string("'\n");
+	qsci_output->setText(QString::fromStdString(output_str));
+    }
+    
+    processor.setNativeImpl(NodeProcessor_string::ID, std::make_unique<NodeProcessor_string>());
+    processor.setNativeImpl(NodeProcessor_concatenate::ID, std::make_unique<NodeProcessor_concatenate>());
+    processor.setNativeImpl(NodeProcessor_input::ID, std::make_unique<NodeProcessor_input>());
+    processor.setNativeImpl(NodeProcessor_output::ID, std::make_unique<NodeProcessor_output>());
+
+    NodeJS::openscad::Builtins::registerProcessors(processor);
+
+    processor.processGraph(*graph, input, output);
+
+    std::string assignments_str = output.getValue("assignments");
+    std::string function_definitions_str = output.getValue("function-definitions");
+    std::string module_definitions_str = output.getValue("module-definitions");
+    std::string module_instantiations_str = output.getValue("module-instantiations");
+
+    std::string output_str = function_definitions_str + module_definitions_str + assignments_str + module_instantiations_str;
+    
+    qsci_output->setText(QString::fromStdString(output_str));
+
+}
+

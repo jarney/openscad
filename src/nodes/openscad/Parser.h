@@ -87,6 +87,7 @@ processExpressionBuiltinFunctionCall(
     );
 
 void processSourceFile(
+    std::string filename,
     NodeJS::core::SerializerErrorReporter & err,
     NodeJS::core::NodeModule & nodeModule,
     SourceFile *sourceFile,

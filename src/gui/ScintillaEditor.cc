@@ -117,7 +117,7 @@ ScintillaEditor::ScintillaEditor(QWidget *parent) : EditorInterface(parent)
   NodeJS::gui::NodeEditorWidget::initializeStyles();
   qnode_program = nullptr; //std::make_shared<JNodes::core::NodeProgram>(qnode_registry);
 
-  NodeJS::gui::NodeEditorWidget *jw = new NodeJS::gui::NodeEditorWidget(*qnode_program);
+  NodeJS::gui::NodeEditorWidget *jw = new NodeJS::gui::NodeEditorWidget(*qnode_program, "main");
 
   QString sourceName("Source");
   QString nodeName("Nodes");

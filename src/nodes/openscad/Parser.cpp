@@ -128,6 +128,7 @@ static std::map<std::string, std::shared_ptr<ModuleInstantiationASTHandler>> mod
 
 void
 processSourceFile(
+    std::string filename,
     SerializerErrorReporter & err,
     NodeModule & nodeModule,
     SourceFile *sourceFile,
@@ -135,6 +136,17 @@ processSourceFile(
     )
 {
 
+    // Derive the package name from the input filename.
+    std::string package;
+    size_t ext_offset = filename.find_last_of('.');
+    if (ext_offset != std::string::npos) {
+	package = filename.substr(0, ext_offset);
+    }
+    else {
+	package = filename;
+    }
+    nodeModule.setPackage(package);
+    
     ContextHandle<FileContext> file_context{Context::create<FileContext>(context, sourceFile)};
     //////////// Initialization
 

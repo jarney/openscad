@@ -11,7 +11,7 @@
 using namespace NodeJS::gui;
 using namespace NodeJS::core;
 
-NodeEditorWidget::NodeEditorWidget(NodeModule & program)
+NodeEditorWidget::NodeEditorWidget(NodeModule & program, std::string graphId)
     : _program(program)
 {
     // Prepare the program by letting it know about
@@ -33,7 +33,7 @@ NodeEditorWidget::NodeEditorWidget(NodeModule & program)
 	// Somehow this we should designate a main
 	// graph through the program itself
 	// presumably through some metadata.
-	editGraph("main");
+	editGraph(graphId);
     }
 
 }
