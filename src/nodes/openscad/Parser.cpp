@@ -78,7 +78,7 @@ ModuleNodeFactorySphere::handle(
     // our parent node with the output of the module's node
     // connected to the input of our parent's node.
 
-    const NodeType *nodeType = nodeModule.getNodeType(moduleInstantiation->name());
+    const NodeType *nodeType = nodeModule.getNodeType(std::string("org.ensor.nodejs.openscad.") + moduleInstantiation->name());
     if (nodeType == nullptr) {
 	fprintf(stderr, "Error loading node of type %s\n", moduleInstantiation->name().c_str());
 	return;
@@ -140,6 +140,8 @@ processSourceFile(
 
     moduleFactory["sphere"] = std::make_shared<ModuleNodeFactorySphere>();
     moduleFactory["cube"] = moduleFactory["sphere"];
+    moduleFactory["circle"] = moduleFactory["sphere"];
+    moduleFactory["square"] = moduleFactory["sphere"];
     moduleFactory["for"] = moduleFactory["sphere"];
 
     // At this point, we need to load the
@@ -500,7 +502,7 @@ processExpressionBuiltinFunctionCall(
     //   names of the inputs along with their indices.
     // * Look up the function's entry in the context so we know what
     //   arguments to parse for.
-    std::string nodeTypeName  = functionCall->name;
+    std::string nodeTypeName  = std::string("org.ensor.nodejs.openscad.") + functionCall->name;
     const NodeType *nodeType = nodeModule.getNodeType(nodeTypeName);
     if (nodeType == nullptr) {
 	fprintf(stderr, "Error loading node of type %s\n", nodeTypeName.c_str());
