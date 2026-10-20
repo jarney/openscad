@@ -29,6 +29,9 @@
 #include <vector>
 
 #include "nodes/gui/GraphicsScene.hpp"
+#include "node--js/NodeModule.hpp"
+#include "node--js/NodeType.hpp"
+#include "node--js/Metadata.hpp"
 
 using namespace NodeJS::gui;
 using namespace NodeJS::core;
@@ -119,6 +122,71 @@ static const QIcon & iconCache(std::string name)
     }
 }
 
+static void
+addNodeTypesTo(QTreeWidget *treeParent, QTreeWidgetItem *itemParent, const std::map<std::string, std::unique_ptr<NodeType>> & nodeTypes)
+{
+    std::map<std::string, QTreeWidgetItem *> categories;
+    for (const auto & nodeTypeIt : nodeTypes) {
+	const std::unique_ptr<NodeType> & nodeType = nodeTypeIt.second;
+	const ConnectionData & nodeTypeMetadata = nodeType->getMetadata().getMetadata("http://jarney.github.io/nodejs/editor");
+
+	if (nodeTypeMetadata.hasValue("category")) {
+	    std::string categoryStr = nodeTypeMetadata.getValue("category");
+	    if (categories.find(categoryStr) == categories.end()) {
+		QTreeWidgetItem *categoryItem;
+		if (treeParent) {
+		    categoryItem = new QTreeWidgetItem(treeParent);
+		}
+		else if (itemParent) {
+		    categoryItem = new QTreeWidgetItem(itemParent);
+		}
+		else {
+		    continue;
+		}
+		
+		categoryItem->setFlags(categoryItem->flags() & ~Qt::ItemIsSelectable);
+		categoryItem->setExpanded(false); // Expand by default because there are a lot of nodes.
+		categoryItem->setText(0, QString::fromStdString(categoryStr));
+		categories[categoryStr] = categoryItem;
+	    }
+	}
+	
+    }
+
+    // Locally defined nodes go first in the menu.
+    for (const auto & nodeTypeIt : nodeTypes) {
+	const std::unique_ptr<NodeType> & nodeType = nodeTypeIt.second;
+	const ConnectionData & nodeTypeMetadata = nodeType->getMetadata().getMetadata("http://jarney.github.io/nodejs/editor");
+	
+        QTreeWidgetItem *nodeTypeItem;
+	if (nodeTypeMetadata.hasValue("category")) {
+	    QTreeWidgetItem *itemParent = categories[nodeTypeMetadata.getValue("category")];
+	    nodeTypeItem = new QTreeWidgetItem(itemParent);
+	}
+	else {
+	    if (treeParent) {
+		nodeTypeItem = new QTreeWidgetItem(treeParent);
+	    }
+	    else if (itemParent) {
+		nodeTypeItem = new QTreeWidgetItem(itemParent);
+	    }
+	}
+	if (nodeTypeMetadata.hasValue("name")) {
+	    nodeTypeItem->setText(0, QString::fromStdString(nodeTypeMetadata.getValue("name")));
+	}
+	else {
+	    nodeTypeItem->setText(0, QString::fromStdString(nodeType->getLocalId()));
+	}
+	if (nodeTypeMetadata.hasValue("description")) {
+	    nodeTypeItem->setToolTip(0, QString::fromStdString(nodeTypeMetadata.getValue("description")));
+	}
+        nodeTypeItem->setData(0, Qt::UserRole, QVariant(QString::fromStdString(nodeType->getFullyQualifiedId())));
+	if (nodeTypeMetadata.hasValue("icon")) {
+	    nodeTypeItem->setIcon(0, iconCache(nodeTypeMetadata.getValue("icon")));
+	}
+    }
+}
+
 QMenu *GraphicsScene::createSceneMenu(QPointF const scenePos)
 {
     QMenu *modelMenu = new QMenu();
@@ -144,33 +212,39 @@ QMenu *GraphicsScene::createSceneMenu(QPointF const scenePos)
     // 2.
     modelMenu->addAction(treeViewAction);
 
-#if 0
-    auto registry = _graphModel.dataModelRegistry();
+    // The job here is to inspect the graph/module
+    // and pull out all nodes we could possibly use
+    // organized by module and category.  User is allowed to
+    // search by node name.
+    const NodeGraph & graph = mGraphModel->getNodeGraph();
+    const NodeModule & nodeModule = graph.getModule();
 
-    for (auto const &cat : registry->categories()) {
-        auto categoryItem = new QTreeWidgetItem(treeView);
-	auto categoryObj = registry->getCategory(cat.toStdString());
-	if (categoryObj) {
-	    categoryItem->setText(0, QString::fromStdString(categoryObj->getDescription()));
-	    categoryItem->setIcon(0, iconCache(categoryObj->getIcon()));
+    addNodeTypesTo(treeView, nullptr, nodeModule.getNodeTypes());
+
+    std::vector<std::string> importedModuleList = nodeModule.getImportModuleList();
+    for (const auto & importedModuleId : importedModuleList) {
+        const NodeModule *importedModule = nodeModule.getImportModule(importedModuleId);
+	const ConnectionData & moduleMetadata = importedModule->getMetadata().getMetadata("http://jarney.github.io/nodejs/editor");
+
+	// Imported module
+        auto importedModuleItem = new QTreeWidgetItem(treeView);
+	importedModuleItem->setExpanded(true); // We want to see all of the modules.
+	importedModuleItem->setFlags(importedModuleItem->flags() & ~Qt::ItemIsSelectable);
+	if (moduleMetadata.hasValue("name")) {
+	    importedModuleItem->setText(0, QString::fromStdString(moduleMetadata.getValue("name")));
 	}
 	else {
-	    categoryItem->setText(0, cat);
+	    importedModuleItem->setText(0, QString::fromStdString(importedModuleId));
 	}
-        categoryItem->setFlags(categoryItem->flags() & ~Qt::ItemIsSelectable);
+	if (moduleMetadata.hasValue("description")) {
+	    importedModuleItem->setToolTip(0, QString::fromStdString(moduleMetadata.getValue("description")));
+	}
+	//categoryItem->setIcon(0, iconCache(categoryObj->getIcon())); TODO : Get icons from our module's metadata, probably.
 
-	auto modelsByCategory = registry->getModelsByCategory(categoryObj->getName());
-	for (const NodeFactory *factory : modelsByCategory) {
-	    auto item = new QTreeWidgetItem(categoryItem);
-	    item->setText(0, QString::fromStdString(factory->getDescription()));
-	    item->setIcon(0, iconCache(factory->getIcon()));
-	    item->setData(0, Qt::UserRole, QVariant(QString::fromStdString(factory->getName())));
-	}
-	
+	addNodeTypesTo(nullptr, importedModuleItem, importedModule->getNodeTypes());
     }
-#endif
     
-    treeView->expandAll();
+//    treeView->expandAll();
 
     connect(treeView,
             &QTreeWidget::itemClicked,
@@ -196,7 +270,8 @@ QMenu *GraphicsScene::createSceneMenu(QPointF const scenePos)
         QTreeWidgetItemIterator it(treeView, QTreeWidgetItemIterator::NoChildren);
         while (*it) {
             auto modelName = (*it)->text(0);
-            const bool match = (modelName.contains(text, Qt::CaseInsensitive));
+            const bool match = ((*it)->text(0).contains(text, Qt::CaseInsensitive)) ||
+		((*it)->toolTip(0).contains(text, Qt::CaseInsensitive));
             (*it)->setHidden(!match);
             if (match) {
                 QTreeWidgetItem *parent = (*it)->parent();

@@ -170,6 +170,7 @@ GraphModelAdapter::addNode(QString const nodeTypeName)
     // we cannot create the node.
     const NodeType *nodeType = mGraph.getModule().getNodeType(nodeTypeName.toStdString());
     if (nodeType == nullptr) {
+	fprintf(stderr, "Creating node: %s\n", nodeTypeName.toStdString().c_str());
 	return QtNodes::InvalidNodeId;
     }
 
@@ -181,6 +182,8 @@ GraphModelAdapter::addNode(QString const nodeTypeName)
     mID_toGraph.insert(std::make_pair(adapterNodeId, newNode.getId()));
     mID_fromGraph.insert(std::make_pair(newNode.getId(), adapterNodeId));
 
+    Q_EMIT nodeCreated(adapterNodeId);
+    
     return adapterNodeId;
 }
 
@@ -682,4 +685,9 @@ GraphModelAdapter::deleteConnection(QtNodes::ConnectionId const connectionId)
     Q_EMIT connectionDeleted(connectionId);
 
     return true;
+}
+const NodeJS::core::NodeGraph &
+GraphModelAdapter::getNodeGraph() const
+{
+    return mGraph;
 }

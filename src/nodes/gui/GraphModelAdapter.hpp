@@ -168,6 +168,8 @@ namespace NodeJS {
 
 	    std::map<QtNodes::GroupId, std::vector<QtNodes::NodeId>> getGroups() const;
 
+	    const NodeJS::core::NodeGraph & getNodeGraph() const;
+
 	Q_SIGNALS:
 	    void inPortDataWasSet(QtNodes::NodeId const, QtNodes::PortType const, QtNodes::PortIndex const);
 
