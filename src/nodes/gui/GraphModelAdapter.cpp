@@ -6,6 +6,8 @@
 #include <QtNodes/NodeData>
 #include <QtNodes/StyleCollection>
 
+#include <QJsonArray>
+
 #include <QPoint>
 #include <QSize>
 
@@ -170,7 +172,7 @@ GraphModelAdapter::addNode(QString const nodeTypeName)
     // we cannot create the node.
     const NodeType *nodeType = mGraph.getModule().getNodeType(nodeTypeName.toStdString());
     if (nodeType == nullptr) {
-	fprintf(stderr, "Creating node: %s\n", nodeTypeName.toStdString().c_str());
+	fprintf(stderr, "Creating node: %s, no such type exists\n", nodeTypeName.toStdString().c_str());
 	return QtNodes::InvalidNodeId;
     }
 
@@ -605,12 +607,20 @@ GraphModelAdapter::getGroups() const
 bool
 GraphModelAdapter::deleteNode(QtNodes::NodeId const nodeId)
 {
+    // Delete all connections:
+    auto connectionIds = allConnectionIds(nodeId);
+    for (auto &cId : connectionIds) {
+        deleteConnection(cId);
+    }
+    
     const auto & it = mID_toGraph.find(nodeId);
     if (it == mID_toGraph.end()) {
 	return false;
     }
     NodeId graphNodeId = it->second;
     mGraph.removeNode(graphNodeId);
+    mID_fromGraph.erase(graphNodeId);
+    mID_toGraph.erase(nodeId);
 
     Q_EMIT nodeDeleted(nodeId);
 
@@ -691,3 +701,179 @@ GraphModelAdapter::getNodeGraph() const
 {
     return mGraph;
 }
+
+// These serializers don't need to be bullet-proof because
+// they're only used to manage state inside the editor.
+// Their content should never be used outside of the
+// editor runtime or saved to persistent storage,
+// so we don't have to worry too much about versioning
+// or keeping backward-compatible interfaces here.
+
+static void
+saveConnectionData(QJsonObject & jsonData, const ConnectionData & data)
+{
+    for (const auto & it : data.getData()) {
+	jsonData[QString::fromStdString(it.first)] = QString::fromStdString(it.second);
+    }
+}
+
+static void
+loadConnectionData(ConnectionData & data, const QJsonObject & jsonData)
+{
+    for (const auto & key : jsonData.keys()) {
+	data.setValue(key.toStdString(), jsonData[key].toString().toStdString());
+    }
+}
+
+static void
+saveMetadata(QJsonArray & jsonMetadata, const Metadata & metadata)
+{
+    for (const auto & key : metadata.getNamespaces()) {
+	QJsonObject metadataElement;
+	metadataElement["namespace"] = QString::fromStdString(key);
+
+	QJsonObject metadataDataJson;
+	saveConnectionData(metadataDataJson, metadata.getMetadata(key));
+	metadataElement["data"] = metadataDataJson;
+	jsonMetadata.append(metadataElement);
+    }
+}
+static void
+loadMetadata(Metadata & metadata, const QJsonArray & jsonMetadata)
+{
+    for (QJsonValue val : jsonMetadata) {
+	QJsonObject metadataElement = val.toObject();
+	ConnectionData & data = metadata.getMetadata(metadataElement["namespace"].toString().toStdString());
+	loadConnectionData(data, metadataElement["data"].toObject());
+    }
+}
+
+static void
+saveNamedPorts(QJsonArray & jsonPorts, const NamedPorts & namedPorts)
+{
+    for (size_t i = 0; i < namedPorts.getCount(); i++) {
+	QJsonObject jsonPort;
+	const NodePort *port = namedPorts.getByIndex(i);
+	
+	jsonPort["name"] = QString::fromStdString(namedPorts.getName(i));
+	jsonPort["data-type"] = QString::fromStdString(port->getDataType());
+	jsonPort["description"] = QString::fromStdString(port->getDescription());
+	jsonPort["connection-policy"] = static_cast<qint32>(port->getConnectionPolicy());
+	QJsonArray jsonMetadata;
+	saveMetadata(jsonMetadata, port->getMetadata());
+	jsonPort["metadata"] = jsonMetadata;
+	jsonPorts.append(jsonPort);
+    }
+}
+
+static void
+loadNamedPorts(NamedPorts & namedPorts, const QJsonArray & jsonPorts)
+{
+    for (QJsonValue val : jsonPorts) {
+	QJsonObject jsonPort = val.toObject();
+
+	std::unique_ptr<NodePort> port = std::make_unique<NodePort>(
+	    jsonPort["data-type"].toString().toStdString(),
+	    jsonPort["description"].toString().toStdString(),
+	    static_cast<NodePort::ConnectionPolicy>(jsonPort["connection-policy"].toInt())
+	    );
+	loadMetadata(port->getMetadata(), jsonPort["metadata"].toArray());
+        namedPorts.addPort(jsonPort["name"].toString().toStdString(), std::move(port));
+    }
+}
+
+/**
+ * Used mainly in the 'undo/redo' stack for operations on
+ * nodes and connections.
+ */
+QJsonObject
+GraphModelAdapter::saveNode(QtNodes::NodeId const nodeId) const
+{
+    QJsonObject nodeJson;
+
+    auto const nodeIt = mID_toGraph.find(nodeId);
+    if (nodeIt == mID_toGraph.end()) {
+        return nodeJson;
+    }
+    std::string nodeIdGraph = nodeIt->second;
+    Node *node = mGraph.getNode(nodeIdGraph);
+
+    nodeJson["id"] = static_cast<qint64>(nodeId);
+    nodeJson["type"] = QString::fromStdString(node->getType().getFullyQualifiedId());
+
+    QJsonObject data;
+    saveConnectionData(data, node->getData());
+    data["foo"] = "bar";
+
+    QJsonArray metadata;
+    saveMetadata(metadata, node->getMetadata());
+    nodeJson["metadata"] = metadata;
+    
+    if (node->hasOverrideInputs()) {
+	QJsonArray inputPorts;
+	saveNamedPorts(inputPorts, node->getOverrideInputs());
+	nodeJson["inputPorts"] = inputPorts;
+    }
+    if (node->hasOverrideOutputs()) {
+	QJsonArray outputPorts;
+	saveNamedPorts(outputPorts, node->getOverrideOutputs());
+	nodeJson["outputPorts"] = outputPorts;
+    }
+    
+    QPointF const pos = nodeData(nodeId, QtNodes::NodeRole::Position).value<QPointF>();
+    QJsonObject posJson;
+    posJson["x"] = pos.x();
+    posJson["y"] = pos.y();
+    nodeJson["position"] = posJson;
+
+    return nodeJson;
+}
+
+void
+GraphModelAdapter::loadNode(QJsonObject const &nodeJson)
+{
+    // Possibility of the id clash when reading it from json and not generating a
+    // new value.
+    // 1. When restoring a scene from a file.
+    // Conflict is not possible because the scene must be cleared by the time of
+    // loading.
+    // 2. When undoing the deletion command.  Conflict is not possible
+    // because all the new ids were created past the removed nodes.
+    QtNodes::NodeId restoredNodeId = nodeJson["id"].toInt();
+    NodeTypeId nodeTypeId = nodeJson["type"].toString().toStdString();
+
+    mID_nextNew = std::max(mID_nextNew, restoredNodeId + 1);
+
+    const NodeType *nodeType = mGraph.getModule().getNodeType(nodeTypeId);
+    if (nodeType == nullptr) {
+	fprintf(stderr, "Loading node: %s, no such type exists\n", nodeTypeId.c_str());
+	return;
+    }
+
+    ConnectionData initialData;
+    loadConnectionData(initialData, nodeJson["data"].toObject());
+    // TODO: Pull this out of our json data.
+    Node &newNode = mGraph.newNode(*nodeType, nodeType->getLocalId(), initialData);
+    mID_toGraph[restoredNodeId] = newNode.getId();
+    mID_fromGraph[newNode.getId()] = restoredNodeId;
+
+    newNode.setOverrideInputs(nodeJson.contains("inputPorts"));
+    if (newNode.hasOverrideInputs()) {
+	loadNamedPorts(newNode.getOverrideInputs(), nodeJson["inputPorts"].toArray());
+    }
+
+    newNode.setOverrideOutputs(nodeJson.contains("outputPorts"));
+    if (newNode.hasOverrideOutputs()) {
+	loadNamedPorts(newNode.getOverrideOutputs(), nodeJson["outputPorts"].toArray());
+    }
+
+    loadMetadata(newNode.getMetadata(), nodeJson["metadata"].toArray());
+    
+    
+    Q_EMIT nodeCreated(restoredNodeId);
+
+    QJsonObject posJson = nodeJson["position"].toObject();
+    QPointF const pos(posJson["x"].toDouble(), posJson["y"].toDouble());
+    setNodeData(restoredNodeId, QtNodes::NodeRole::Position, pos);
+}
+

@@ -126,7 +126,7 @@ namespace NodeJS {
 	     * Reimplement the function if you want to store/restore the node's
 	     * inner state during undo/redo node deletion operations.
 	     */
-	    virtual QJsonObject saveNode(QtNodes::NodeId const) const { return {}; }
+	    virtual QJsonObject saveNode(QtNodes::NodeId const) const;
 	    
 	    /**
 	     * Reimplement the function if you want to support:
@@ -150,7 +150,7 @@ namespace NodeJS {
 	     * The function must do almost exacly the same thing as the normal addNode().
 	     * The main difference is in a model-specific `inner-data` processing.
 	     */
-	    virtual void loadNode(QJsonObject const &) {}
+	    virtual void loadNode(QJsonObject const &);
 	    
 	    virtual bool loopsEnabled() const { return false; }
 	    
