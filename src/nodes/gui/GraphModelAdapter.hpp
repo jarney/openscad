@@ -181,7 +181,6 @@ namespace NodeJS {
 	    std::map<QtNodes::NodeId, NodeJS::core::NodeId> mID_toGraph;
 	    std::map<NodeJS::core::NodeId, QtNodes::NodeId> mID_fromGraph;
 	    QtNodes::NodeId mID_nextNew;
-	    
 	};
     }
 }

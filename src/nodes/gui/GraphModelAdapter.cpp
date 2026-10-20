@@ -73,14 +73,6 @@ GraphModelAdapter::allConnectionIds(QtNodes::NodeId const nodeId) const
 	QtNodes::ConnectionId connection;
 	const Edge *edge = edgeIt.second.get();
 	
-	fprintf(stderr, "!Connection: for %s is : %s %s => %s %s\n",
-		nodeIdGraph.c_str(),
-		edge->fromNode.c_str(),
-		edge->fromPort.c_str(),
-		edge->toNode.c_str(),
-		edge->toPort.c_str()
-	    );
-	
 	const Node *toNode = mGraph.getNode(edge->toNode);
 	const Node *fromNode = mGraph.getNode(edge->fromNode);
 	if (toNode == nullptr || fromNode == nullptr) {
@@ -128,18 +120,31 @@ GraphModelAdapter::connections(
 {
     std::unordered_set<QtNodes::ConnectionId> selectedConnections;
 
+    const auto & connectionsIt = mID_toGraph.find(nodeId);
+    const Node *connectionsNode = mGraph.getNode(connectionsIt->second);
+    
     const auto allConnections = allConnectionIds(nodeId);
     for (const auto & connection : allConnections) {
 
-	// Skip if this isn't our node.
-	if (nodeId != connection.outNodeId &&
-	    nodeId != connection.inNodeId) {
+	const auto & fromIt = mID_toGraph.find(connection.outNodeId);
+	const auto & toIt = mID_toGraph.find(connection.inNodeId);
+	if (fromIt == mID_toGraph.end() || toIt == mID_toGraph.end()) {
+	    fprintf(stderr, "Invalid connection, no such nodes %d %d\n", connection.outNodeId, connection.inNodeId);
 	    continue;
 	}
-	if (portType == QtNodes::PortType::In && index == connection.inPortIndex) {
+	const Node *fromNode = mGraph.getNode(fromIt->second);
+	const Node *toNode = mGraph.getNode(toIt->second);
+	
+	if (portType == QtNodes::PortType::In &&
+	    nodeId == connection.inNodeId &&
+	    index == connection.inPortIndex
+	    ) {
 	    selectedConnections.insert(connection);
 	}
-	else if (portType == QtNodes::PortType::Out && index == connection.outPortIndex) {
+	else if (portType == QtNodes::PortType::Out &&
+		 nodeId == connection.outNodeId &&
+	         index == connection.outPortIndex
+	    ) {
 	    selectedConnections.insert(connection);
 	}
     }
@@ -193,6 +198,7 @@ GraphModelAdapter::connectionPossible(QtNodes::ConnectionId const connectionId) 
 {
     // Check if nodes exist
     if (!nodeExists(connectionId.outNodeId) || !nodeExists(connectionId.inNodeId)) {
+	fprintf(stderr, "Connection not possible, nodes do not exist\n");
         return false;
     }
     
@@ -222,16 +228,15 @@ GraphModelAdapter::connectionPossible(QtNodes::ConnectionId const connectionId) 
 
         auto policy = portData(nodeId, portType, portIndex, QtNodes::PortRole::ConnectionPolicyRole)
 	    .value<QtNodes::ConnectionPolicy>();
-
         return connected.empty() || (policy == QtNodes::ConnectionPolicy::Many);
     };
 
     bool typeCheck = dataTypeConnectionAllowed(getDataType(QtNodes::PortType::Out), getDataType(QtNodes::PortType::In));
-
+    
     bool const basicChecks = typeCheck
                              && portVacant(QtNodes::PortType::Out) && portVacant(QtNodes::PortType::In)
                              && checkPortBounds(QtNodes::PortType::Out) && checkPortBounds(QtNodes::PortType::In);
-
+    
     // In data-flow mode (this class) it's important to forbid graph loops.
     // We perform depth-first graph traversal starting from the "Input" port of
     // the given connection. We should never encounter the starting "Out" node.
@@ -269,7 +274,7 @@ GraphModelAdapter::connectionPossible(QtNodes::ConnectionId const connectionId) 
 bool
 GraphModelAdapter::nodeExists(QtNodes::NodeId const nodeId) const
 {
-    return (mID_toGraph.find(nodeId) == mID_toGraph.end());
+    return (mID_toGraph.find(nodeId) != mID_toGraph.end());
 }
 
 static float to_float(std::string str, float defaultValue)
@@ -408,13 +413,13 @@ GraphModelAdapter::setNodeData(
 
     const auto & graphNodeIdIt = mID_toGraph.find(nodeId);
     if (graphNodeIdIt == mID_toGraph.end()) {
-	fprintf(stderr, "Could nog find graph node %d\n", nodeId);
+	fprintf(stderr, "Could not find graph node %d\n", nodeId);
 	return result;
     }
 
     Node *node = mGraph.getNode(graphNodeIdIt->second);
     if (node == nullptr) {
-	fprintf(stderr, "Could nog get node metadata %s\n", graphNodeIdIt->second.c_str());
+	fprintf(stderr, "Could not get node metadata %s\n", graphNodeIdIt->second.c_str());
         return result;
     }
 
@@ -604,6 +609,8 @@ GraphModelAdapter::deleteNode(QtNodes::NodeId const nodeId)
     NodeId graphNodeId = it->second;
     mGraph.removeNode(graphNodeId);
 
+    Q_EMIT nodeDeleted(nodeId);
+
     return true;
 }
 
@@ -624,6 +631,8 @@ GraphModelAdapter::addConnection(QtNodes::ConnectionId const connectionId)
     Node *fromNode = mGraph.getNode(fromNodeId);
     Node *toNode = mGraph.getNode(toNodeId);
 
+    Q_EMIT connectionCreated(connectionId);
+
     std::optional<EdgeId> optEdge = mGraph.newEdge(
 	fromNodeId,
 	fromNode->getOutputs().getName(connectionId.outPortIndex),
@@ -639,7 +648,7 @@ GraphModelAdapter::deleteConnection(QtNodes::ConnectionId const connectionId)
     const auto & toNodeIt = mID_toGraph.find(connectionId.inNodeId);
     if (fromNodeIt == mID_toGraph.end() ||
 	toNodeIt == mID_toGraph.end()) {
-	fprintf(stderr, "NODES COULD NOT BE RESOLVED WHEN CREATING CONNECTION\n");
+	fprintf(stderr, "NODES COULD NOT BE RESOLVED WHEN DELETING CONNECTION\n");
 	return false;
     }
     
@@ -649,12 +658,28 @@ GraphModelAdapter::deleteConnection(QtNodes::ConnectionId const connectionId)
     Node *fromNode = mGraph.getNode(fromNodeId);
     Node *toNode = mGraph.getNode(toNodeId);
 
+    if (!fromNode || !toNode) {
+	fprintf(stderr, "NODES COULD NOT BE RESOLVED WHEN DELETING CONNECTION, not in map\n");
+	return false;
+    }
+
+    if (!mGraph.hasEdge(
+	    fromNodeId,
+	    fromNode->getOutputs().getName(connectionId.outPortIndex),
+	    toNodeId,
+	    toNode->getInputs().getName(connectionId.inPortIndex)
+	    )) {
+	return false;
+    }
+    
     mGraph.removeEdge(
 	fromNodeId,
 	fromNode->getOutputs().getName(connectionId.outPortIndex),
 	toNodeId,
 	toNode->getInputs().getName(connectionId.inPortIndex)
 	);
+
+    Q_EMIT connectionDeleted(connectionId);
+
     return true;
 }
-

@@ -15,6 +15,7 @@
 
 #include <QtGui/QScreen>
 #include <iostream>
+#include <fstream>
 
 #include "node--js/NodeModule.hpp"
 #include "node--js/Natives.hpp"
@@ -104,13 +105,13 @@ int main_edit(int argc, char *argv[])
 	
     });
 
-
-    QObject::connect(saveAction, &QAction::triggered, [&nodeModule, argv]() {
-#if 0
-	const NodeProgramSerializer & serializer = NodeProgramSerializerJSON::instance();
-	std::ofstream output(argv[1]);
-	serializer.write(program, output);
-#endif
+    QObject::connect(saveAction, &QAction::triggered, [&nodeModule]() {
+	fprintf(stderr, "Writing model back to file %s\n", nodeModule.getPackage().c_str());
+        const SerializerXML & ser = SerializerXML::instance();
+        SerializerErrorReporterStream err(std::cerr);
+	std::ofstream output_stream(nodeModule.getPackage() + ".xml", std::ios::binary | std::ios::trunc);
+	ser.write(nodeModule.getPackage(), nodeModule, output_stream, err);
+	output_stream.close();
     });
 
     // This is a hot mess, but fortunately we should not really
