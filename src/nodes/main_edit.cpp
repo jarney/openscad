@@ -22,8 +22,11 @@
 #include "node--js/Processor.hpp"
 #include "node--js/xml/SerializerXML.hpp"
 #include "node--js/xml/ModuleLoaderNodeJSPath.hpp"
-#include "nodes/gui/NodeEditorWidget.hpp"
 #include "node--js/engines/openscad/Builtins.hpp"
+
+#include "nodes/gui/NodeEditorWidget.hpp"
+#include "nodes/gui/openscad/BuiltinWidgets.hpp"
+#include "nodes/gui/core/BuiltinWidgets.hpp"
 
 using QtNodes::GraphicsView;
 
@@ -87,7 +90,12 @@ int main_edit(int argc, char *argv[])
     l->addWidget(qtab);
 
     std::string graphId("main");
-    NodeEditorWidget *jw = new NodeEditorWidget(nodeModule, graphId);
+    NodeEditorWidget *jw = new NodeEditorWidget(nodeModule);
+    NodeJS::gui::core::BuiltinWidgets::registerWidgetFactories(*jw);
+    NodeJS::gui::openscad::BuiltinWidgets::registerWidgetFactories(*jw);
+    
+    jw->editGraph(graphId);
+    
     qtab->addTab(jw, "Nodes");
 
     auto qsci_source = new QsciScintilla(qtab);

@@ -12,6 +12,8 @@
 #include "node--js/Node.hpp"
 #include "node--js/NodeGraph.hpp"
 
+#include "NodeEditorWidget.hpp"
+
 namespace NodeJS {
     namespace gui {
 	static const std::string METADATA_NAMESPACE_GRAPH_EDITOR = "http://jarney.github.io/nodejs/editor";
@@ -20,8 +22,12 @@ namespace NodeJS {
 	class  GraphModelAdapter : public QtNodes::AbstractGraphModel {
 	    Q_OBJECT
 	public:
-	    GraphModelAdapter(NodeJS::core::NodeGraph & aGraph);
-
+	    GraphModelAdapter(
+		NodeJS::core::NodeGraph & aGraph,
+		NodeEditorWidget & aEditorWidget,
+		const std::map<std::string, NodeEditorWidget::WidgetFactory> & aWidgetFactory
+		);
+			      
 	    /// Generates a new unique QtNodes::NodeId.
 	    virtual QtNodes::NodeId newNodeId();
 	    
@@ -182,7 +188,10 @@ namespace NodeJS {
 	     */
 	    std::map<QtNodes::NodeId, NodeJS::core::NodeId> mID_toGraph;
 	    std::map<NodeJS::core::NodeId, QtNodes::NodeId> mID_fromGraph;
+	    std::unique_ptr<std::map<QtNodes::NodeId, QWidget *>> mWidgets;// This is a pointer to fool the const qualifier.
 	    QtNodes::NodeId mID_nextNew;
+	    NodeEditorWidget & mEditorWidget;
+	    const std::map<std::string, NodeEditorWidget::WidgetFactory> & mWidgetFactory;
 	};
     }
 }

@@ -12,9 +12,12 @@ namespace NodeJS {
 
 class NodeEditorWidget : public QWidget {
 public:
-    NodeEditorWidget(NodeJS::core::NodeModule & program, std::string graphId);
+    typedef std::function<QWidget*(NodeEditorWidget & editor, NodeJS::core::Node & node)> WidgetFactory;
+
+    NodeEditorWidget(NodeJS::core::NodeModule & program);
     ~NodeEditorWidget();
     void editGraph(std::string editGraph);
+    void registerNodeWidgetFactory(std::string nodeTypeId, WidgetFactory factory);
 
     std::vector<QtNodes::NodeGraphicsObject*> selectedNodes();
     void createGroup(std::vector<QtNodes::NodeGraphicsObject*> & groupNodes, QString name);
@@ -30,6 +33,7 @@ private:
     NodeJS::core::NodeModule &_program;
     std::unique_ptr<QVBoxLayout> layout;
     BreadcrumbsWidget *_jbreadcrumbs;
+    std::map<std::string, WidgetFactory> mWidgetFactory;
 };
 
 

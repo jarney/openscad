@@ -1326,6 +1326,8 @@ set(GUI_SOURCES
   src/nodes/gui/NodeEditorWidget.cpp
   src/nodes/gui/GraphicsScene.cpp
   src/nodes/gui/GraphModelAdapter.cpp
+  src/nodes/gui/core/BuiltinWidgets.cpp
+  src/nodes/gui/openscad/BuiltinWidgets.cpp
   
   src/openscad_gui.cc
   src/gui/AutoUpdater.cc

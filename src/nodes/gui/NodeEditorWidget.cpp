@@ -11,57 +11,22 @@
 using namespace NodeJS::gui;
 using namespace NodeJS::core;
 
-NodeEditorWidget::NodeEditorWidget(NodeModule & program, std::string graphId)
+NodeEditorWidget::NodeEditorWidget(NodeModule & program)
     : _program(program)
 {
-    // Prepare the program by letting it know about
-    // the editor.
-    prepareProgram();
-
-    
     layout = std::make_unique<QVBoxLayout>(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
     _jbreadcrumbs = new BreadcrumbsWidget();
     layout->addWidget(_jbreadcrumbs);
-
-    // If the program is non-trivial, we should
-    // edit the 'main' graph.
-    const std::map<NodeModule::GraphId, std::unique_ptr<NodeGraph>> & graphs = _program.getGraphs();
-    if (graphs.size() > 0) {
-	// Somehow this we should designate a main
-	// graph through the program itself
-	// presumably through some metadata.
-	editGraph(graphId);
-    }
-
 }
 
 void
-NodeEditorWidget::prepareProgram()
+NodeEditorWidget::registerNodeWidgetFactory(std::string nodeTypeId, WidgetFactory factory)
 {
-#if 0
-    for (const auto & graphIt : _program.getGraphs()) {
-	const NodeGraph *graph = graphIt.second.get();
-	for (const auto & nodeId : graph->allNodeIds()) {
-	    Node *node = graph->delegateModel<Node>(nodeId);
-	    node->setEditor(this);
-	}
-
-	QObject::connect(
-	    graph,
-	    &NodeGraph::nodeCreated,
-	    [graphId, this](QtNodes::NodeId const nodeId) {
-		const NodeGraph *graph = this->_program.getGraph(graphId);
-		Node *node = graph->delegateModel<Node>(nodeId);
-		node->setEditor(this);
-	    }
-	);
-    }
-#endif
+    mWidgetFactory[nodeTypeId] = factory;
 }
-
 
 NodeEditorWidget::~NodeEditorWidget()
 {}
@@ -74,7 +39,7 @@ NodeEditorWidget::editGraph(std::string editGraph)
     if (graph == nullptr) {
 	return;
     }
-    std::unique_ptr<GraphModelAdapter> model = std::make_unique<GraphModelAdapter>(*graph);
+    std::unique_ptr<GraphModelAdapter> model = std::make_unique<GraphModelAdapter>(*graph, *this, mWidgetFactory);
     auto scene = new GraphicsScene(std::move(model));
 
     // Load up the groups.

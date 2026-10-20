@@ -18,8 +18,15 @@
 using namespace NodeJS::core;
 using namespace NodeJS::gui;
 
-GraphModelAdapter::GraphModelAdapter(NodeJS::core::NodeGraph & aGraph)
+GraphModelAdapter::GraphModelAdapter(
+    NodeJS::core::NodeGraph & aGraph,
+    NodeEditorWidget & aEditorWidget,
+    const std::map<std::string, NodeEditorWidget::WidgetFactory> & aWidgetFactory
+    )
     : mGraph(aGraph)
+    , mWidgets(std::make_unique<std::map<QtNodes::NodeId, QWidget *>>()) // This is a pointer to fool the const qualified.
+    , mEditorWidget(aEditorWidget)
+    , mWidgetFactory(aWidgetFactory)
 {
     mID_nextNew = 0;
     for (const auto & it : mGraph.getNodes()) {
@@ -361,11 +368,22 @@ QVariant GraphModelAdapter::nodeData(QtNodes::NodeId nodeId, QtNodes::NodeRole r
         result = QVariant::fromValue((int)node->getOutputs().getCount());
     } break;
     case QtNodes::NodeRole::Widget: {
-	// TODO: Get these from some editor registration system
-	// because this doesn't belong as a part of the graph,
-	// it is actually a part of the editor/IDE.
-        //auto *w = model->embeddedWidget();
-        //result = QVariant::fromValue(w);
+        // We want lazy initialization on the
+	// widgets, but we don't want to give up the
+	// const qualifier here, so our widget cache map needs
+	// to be a pointer instead of a member.
+	const auto & widgetIt = mWidgets->find(nodeId);
+	if (widgetIt == mWidgets->end()) {
+	    const auto & widgetFactoryIt = mWidgetFactory.find(node->getType().getFullyQualifiedId());
+	    if (widgetFactoryIt != mWidgetFactory.end()) {
+		QWidget *widget = widgetFactoryIt->second(mEditorWidget, *node);
+		(*mWidgets)[nodeId] = widget;
+		result = QVariant::fromValue(widget);
+	    }
+	}
+	else {
+	    result = QVariant::fromValue(widgetIt->second);
+	}
     } break;
     case QtNodes::NodeRole::ValidationState: {
 	// State is meaningless for our application right now unless
@@ -621,6 +639,8 @@ GraphModelAdapter::deleteNode(QtNodes::NodeId const nodeId)
     mGraph.removeNode(graphNodeId);
     mID_fromGraph.erase(graphNodeId);
     mID_toGraph.erase(nodeId);
+    // Widget will die when we delete it and may need to be re-created in the event of an undo.
+    mWidgets->erase(nodeId); 
 
     Q_EMIT nodeDeleted(nodeId);
 
@@ -803,7 +823,7 @@ GraphModelAdapter::saveNode(QtNodes::NodeId const nodeId) const
 
     QJsonObject data;
     saveConnectionData(data, node->getData());
-    data["foo"] = "bar";
+    nodeJson["data"] = data;
 
     QJsonArray metadata;
     saveMetadata(metadata, node->getMetadata());
