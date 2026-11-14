@@ -37,7 +37,7 @@ NodeEditorWidget::editGraph(std::string editGraph)
 {
     NodeGraph *graph = _program.getGraph(editGraph);
     if (graph == nullptr) {
-	return;
+	graph = _program.addGraph(editGraph);
     }
     std::unique_ptr<GraphModelAdapter> model = std::make_unique<GraphModelAdapter>(*graph, *this, mWidgetFactory);
     auto scene = new GraphicsScene(std::move(model));
